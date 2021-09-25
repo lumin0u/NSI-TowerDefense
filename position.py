@@ -50,8 +50,11 @@ class Position:
 		return self.x, self.y
 	
 	@staticmethod
-	def of(position: tuple):
-		return TilePosition(position[0], position[1])
+	def of(position):
+		if isinstance(position, tuple):
+			return TilePosition(position[0], position[1])
+		elif isinstance(position, Position):
+			return Position(position.x, position.y)
 
 
 class TilePosition(Position):

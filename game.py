@@ -24,3 +24,7 @@ class Game:
 	
 	def remove_mob(self, mob: Mob):
 		self._mobs.remove(mob)
+		
+	@property
+	def mobs(self):
+		return self._mobs

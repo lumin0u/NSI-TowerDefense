@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+
+import pygame.examples.aliens
+
 from position import TilePosition, Position, Direction
 from mobs.mob import Mob
-
 
 class Tower(ABC):
 	def __init__(self, tile, max_health):
