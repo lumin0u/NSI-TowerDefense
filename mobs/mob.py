@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from position import Position, TilePosition, Direction
 from copy import copy
+import game as game_module
 
 
 class Mob(ABC):
@@ -11,11 +12,11 @@ class Mob(ABC):
 		
 		self._game = game
 		
-		self._relative_position = Position(position.x % 1, position.y % 1)
-		self._tile_position = TilePosition.of(position)
-		self._relative_spawn_pos = copy(self._relative_position)
-
+		self._position = position
+		# TODO: stockage de la position relative a la tuile
+		
 		self._attributes = attributes
+		self._attributes["resistances"][game_module.DAMAGE_TYPE_ABSOLUTE] = 1
 		self._health = self.max_health
 	
 	@abstractmethod
@@ -34,26 +35,19 @@ class Mob(ABC):
 		return float(self._attributes["speed"])
 	
 	@property
-	def absolute_position(self) -> Position:
-		return self._tile_position + self._relative_position
-	
-	@property
-	def tile_position(self) -> TilePosition:
-		return self._tile_position
-	
-	@property
-	def relative_position(self) -> Position:
-		return self._relative_position
+	def position(self) -> Position:
+		return self._position
 	
 	def advance(self):
-		self.move(self._game.board.tile_at(self._tile_position).direction * self.speed)
+		# TODO avancer en fonction de la direction de la tuile
+		pass
 	
 	def move(self, direction: Direction):
-		self.teleport(self.absolute_position + direction)
+		self.teleport(self.position + direction)
 	
 	def teleport(self, position: Position):
-		self._relative_position = Position(position.x % 1, position.y % 1)
-		self._tile_position = TilePosition.of(position)
+		# TODO
+		pass
 	
 	def damage(self, damage: float, type_):
 		self._health -= damage / self._attributes["resistances"][type_]

@@ -1,13 +1,16 @@
+from traceback import print_stack
+
 import pygame
 import sys
+import game
 import graphics
-from game import Game
-from board import Board
+import levels
+import listener
 import board
-from position import Position, TilePosition, Direction
+import pictures
+from position import *
 import time
 
-pygame.init()
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
 
@@ -21,62 +24,38 @@ def tick():
         tower.tick()
 
 
+def set_hand_reason(reason, value):
+    graphics.cursor_hand_reasons[reason] = value
+
+
 if __name__ == '__main__':
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.init()
     
-    the_game = Game(Board(TilePosition(0, 0), TilePosition(2, 0)))
+    pictures.load_pictures()
+    
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE, vsync=True)
+    
+    the_game = game.Game(levels.all_levels[0])
     
     graphics_settings = graphics.GraphicsSettings()
-    
-    mouse_position = Position(0, 0)
     
     is_clicking = False
     
     last_frame = time.time()
+    half_state = graphics.DEFAULT_HALF_STATE.copy()
     
     while True:
         this_frame = time.time()
-        graphics.draw_frame(graphics_settings, screen, the_game, this_frame, last_frame)
+        graphics.draw_frame(half_state, graphics_settings, screen, the_game, this_frame, last_frame)
+        
+        #print(cursor_hand_reasons)
+        if any((v for v in graphics.cursor_hand_reasons.values())):
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+        else:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            elif event.type == pygame.MOUSEMOTION:
-                if pygame.mouse.get_pressed(3)[0]:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                    graphics_settings.camera_pos -= Position.of(event.rel) / 40 / graphics_settings.zoom
-                else:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-                
-                mouse_position = Position.of(pygame.mouse.get_pos())
-
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-            
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 4:
-                    last_zoom = graphics_settings.zoom
-                    graphics_settings.zoom *= 10/9
-                    
-                    mx = (1 - 1/graphics_settings.zoom * last_zoom) * mouse_position.x + (1/graphics_settings.zoom * last_zoom) * SCREEN_WIDTH / 2
-                    my = (1 - 1/graphics_settings.zoom * last_zoom) * mouse_position.y + (1/graphics_settings.zoom * last_zoom) * SCREEN_HEIGHT / 2
-
-                    shift = graphics_settings.camera_pos
-                    
-                    graphics_settings.camera_pos = graphics.get_game_pos(Position(mx, my), shift, last_zoom)
-                elif event.button == 5:
-                    last_zoom = graphics_settings.zoom
-                    graphics_settings.zoom *= 0.9
-                    
-                    mx = (1 - 1/graphics_settings.zoom * last_zoom) * mouse_position.x + (1/graphics_settings.zoom * last_zoom) * SCREEN_WIDTH / 2
-                    my = (1 - 1/graphics_settings.zoom * last_zoom) * mouse_position.y + (1/graphics_settings.zoom * last_zoom) * SCREEN_HEIGHT / 2
-
-                    shift = graphics_settings.camera_pos
-                    
-                    graphics_settings.camera_pos = graphics.get_game_pos(Position(mx, my), shift, last_zoom)
+            listener.catch_event(event, graphics_settings)
         
         time.sleep(max(0.0, 0.01 - this_frame + last_frame))
         last_frame = this_frame

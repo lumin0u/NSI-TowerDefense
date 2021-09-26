@@ -26,8 +26,7 @@ EXAMPLE_MOB_ATTRIBUTES = {
 		game.DAMAGE_TYPE_RAW: 1,
 		game.DAMAGE_TYPE_MAGIC: 1,
 		
-		# TOUJOURS 1
-		game.DAMAGE_TYPE_ABSOLUTE: 1,
+		# le type DAMAGE_TYPE_ABSOLUTE est renseigné par défaut dans mob.py
 	},
 	
 	

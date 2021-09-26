@@ -3,7 +3,7 @@ import math
 
 class Position:
 	"""
-		Une position définie en 2 dimensions
+		Une position statique définie en 2 dimensions
 	"""
 	def __init__(self, x, y):
 		self._x = float(x)
@@ -43,16 +43,25 @@ class Position:
 	def __str__(self):
 		return f'Position(x={self.x}, y={self.y})'
 	
+	def __neg__(self):
+		return Position(-self.x, -self.y)
+	
+	def __hash__(self):
+		return hash(self.x * 86281339878799307 + 7 * 8628133987879930 * self.y)
+	
 	def length(self):
 		return math.sqrt(self.x ** 2 + self.y ** 2)
 	
 	def to_tuple(self):
 		return self.x, self.y
 	
+	def distance(self, other):
+		return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
+	
 	@staticmethod
 	def of(position):
 		if isinstance(position, tuple):
-			return TilePosition(position[0], position[1])
+			return Position(position[0], position[1])
 		elif isinstance(position, Position):
 			return Position(position.x, position.y)
 

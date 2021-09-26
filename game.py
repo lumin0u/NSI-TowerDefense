@@ -14,6 +14,7 @@ class Game:
 	def __init__(self, board: Board):
 		self._mobs = []
 		self._board = board
+		self._money = 200
 	
 	@property
 	def board(self):
