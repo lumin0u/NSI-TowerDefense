@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from position import Position, TilePosition, Direction
 from copy import copy
+import random
 import game as game_module
 
 
@@ -51,3 +52,8 @@ class Mob(ABC):
 	
 	def damage(self, damage: float, type_):
 		self._health -= damage / self._attributes["resistances"][type_]
+		
+	@abstractmethod
+	def get_render(self, time):
+		pass
+	
