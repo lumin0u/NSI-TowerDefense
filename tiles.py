@@ -47,7 +47,7 @@ class PathTile(Tile):
     
     @property
     def from_(self):
-        return self.position + self._from_
+        return self._from_
 
     def get_render(self, time):
         if self.direction == -self._from_:
