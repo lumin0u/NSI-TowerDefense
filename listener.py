@@ -1,7 +1,7 @@
 import pygame
 import sys
 import main
-from position import Position
+from position import Position, TilePosition, Direction
 import graphics
 
 mouse_position = Position(0, 0)

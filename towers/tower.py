@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from position import TilePosition, Position, Direction
-from mobs.mob import Mob
+from position import Position, TilePosition, Direction
+import mobs.mob
 
 
 class Tower(ABC):
@@ -30,5 +30,5 @@ class Tower(ABC):
 	def tile(self):
 		return self._tile
 	
-	def damage(self, amount: float, source: Mob):
+	def damage(self, amount: float, source):
 		self._health -= amount

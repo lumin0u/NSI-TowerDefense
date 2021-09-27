@@ -2,14 +2,16 @@ import math
 
 import board
 import tiles
-from game import Game
 import pygame
-from position import Position, TilePosition
+from position import Position, TilePosition, Direction
 import main
-from pictures import PICTURES
+import pictures
 import ui
 
 cursor_hand_reasons = {}
+
+
+EMPTY_IMAGE = pygame.image.frombuffer(b'', (0, 0), 'ARGB')
 
 
 class GraphicsSettings:

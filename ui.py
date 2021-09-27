@@ -1,7 +1,7 @@
 import math
 
 import tiles
-from game import Game
+import game
 import pygame
 import pictures
 import main
@@ -20,8 +20,8 @@ class HalfState:
 
 
 class Interface:
-    def __init__(self, game):
-        self._game = game
+    def __init__(self, game_):
+        self._game = game_
         self.half_state = HalfState()
         self.graphics_settings = graphics.GraphicsSettings()
         self.volume = 2
@@ -42,12 +42,12 @@ def _render_button(screen, time, button_img, button_img_pos):
         main.set_hand_reason("hover_button_" + str(hash(button_img_pos)), False)
 
 
-def render(interface, game, screen, time, last_frame):
+def render(interface, game_, screen, time, last_frame):
     
     volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img(time, None)
     volume_img_pos = (0, main.SCREEN_HEIGHT - volume_img.get_height())
 
-    _render_game(interface.half_state, interface.graphics_settings, screen, game, time, last_frame)
+    _render_game(interface.half_state, interface.graphics_settings, screen, game_, time, last_frame)
     _render_button(screen, time, volume_img, volume_img_pos)
     
     pygame.display.update()

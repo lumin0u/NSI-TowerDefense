@@ -1,11 +1,11 @@
 from position import TilePosition, Position, Direction
-from abc import ABC, abstractmethod
-from towers.castle import Castle
-from tiles import PathTile, Tile, EmptyTile, SpawnerTile, BuildingTile, CastleTile
+import abc
+import towers.castle
+import tiles
 
 
 class Board:
-	def __init__(self, spawn: SpawnerTile, castle: CastleTile):
+	def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile):
 		self._spawner = spawn
 		self._castle = castle
 		self._tiles = [self._spawner, self._castle]
@@ -17,7 +17,7 @@ class Board:
 				return tile
 		
 		# s'il n'en existe pas, on en créé une vide
-		return EmptyTile(TilePosition.of(position))
+		return tiles.EmptyTile(TilePosition.of(position))
 	
 	@property
 	def tiles(self):

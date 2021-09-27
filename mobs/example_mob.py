@@ -1,5 +1,7 @@
-from mobs.mob import Mob
-from position import Position
+import graphics
+import pictures
+import mobs.mob
+from position import Position, TilePosition, Direction
 import main
 import game
 
@@ -31,8 +33,10 @@ EXAMPLE_MOB_ATTRIBUTES = {
 
 }
 
+pictures.load_picture("example_mob", "mobs/")
 
-class ExampleMob(Mob):
+
+class ExampleMob(mobs.mob.Mob):
 	def __init__(self, game_, position: Position):
 		super().__init__(game_, position, EXAMPLE_MOB_ATTRIBUTES)
 	
@@ -41,3 +45,6 @@ class ExampleMob(Mob):
 		
 		# le mob avance
 		self.advance()
+	
+	def get_render(self, time):
+		return pictures.PICTURES["example_mob"].get_img(time, None)

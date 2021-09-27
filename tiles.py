@@ -1,8 +1,9 @@
-from position import TilePosition, Position, Direction
+import graphics
+from position import Position, TilePosition, Direction
 from abc import ABC, abstractmethod
-from towers.castle import Castle
+import towers.castle
 import pygame
-from pictures import PICTURES
+import pictures
 
 
 class Tile(ABC):
@@ -23,7 +24,7 @@ class EmptyTile(Tile):
         super().__init__(position)
     
     def get_render(self, time):
-        return pygame.image.frombuffer(b'', (0, 0), 'RGB')
+        return graphics.EMPTY_IMAGE
 
 
 def matches_no_order(l1, l2):
@@ -52,14 +53,14 @@ class PathTile(Tile):
 
     def get_render(self, time):
         if self.direction == -self._from_:
-            img = PICTURES["path_WE"].get_img(time, self.position)
+            img = pictures.PICTURES["path_WE"].get_img(time, self.position)
             if self.direction.y == 0:
                 return img
             else:
                 return pygame.transform.rotate(img, 90)
         else:
             l = [self.direction, self._from_]
-            img = PICTURES["path_NE"].get_img(time, self.position)
+            img = pictures.PICTURES["path_NE"].get_img(time, self.position)
             if matches_no_order(l, (Direction(1, 0), Direction(0, -1))):
                 return img
             elif matches_no_order(l, (Direction(1, 0), Direction(0, 1))):
@@ -88,7 +89,7 @@ class BuildingTile(Tile):
         return self._tower is None
     
     def get_render(self, time):
-        img = PICTURES["building_tile"].get_img(time, self.position)
+        img = pictures.PICTURES["building_tile"].get_img(time, self.position)
         
         if not self.is_empty():
             img.blit(self.tower.get_render(time), (0, 0))
@@ -100,11 +101,11 @@ class SpawnerTile(PathTile):
         super().__init__(position, Direction(0, 0), direction)
     
     def get_render(self, time):
-        return PICTURES["spawner"].get_img(time, self.position)
+        return pictures.PICTURES["spawner"].get_img(time, self.position)
 
 
 class CastleTile(BuildingTile):
     def __init__(self, position: TilePosition, max_health):
         super().__init__(position)
         
-        self._tower = Castle(self, max_health)
+        self._tower = towers.castle.Castle(self, max_health)

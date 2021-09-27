@@ -2,15 +2,15 @@ from traceback import print_stack
 
 import pygame
 import sys
+import board
 import game
 import graphics
 import levels
 import listener
-import board
 import pictures
 import ui
-from position import *
 import time
+import tiles
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 700
@@ -21,7 +21,7 @@ TICK_REAL_TIME = 0.1
 def tick():
     for mob in the_game.mobs:
         mob.tick()
-    for tower in (tile.tower for tile in the_game.board.tiles if type(tile) is board.BuildingTile and not tile.is_empty()):
+    for tower in (tile.tower for tile in the_game.board.tiles if type(tile) is tiles.BuildingTile and not tile.is_empty()):
         tower.tick()
 
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE, vsync=True)
     
-    the_game = game.Game(levels.all_levels[0])
+    the_game = game.Game(levels.ALL_LEVELS[0])
     
     is_clicking = False
     
@@ -48,7 +48,6 @@ if __name__ == '__main__':
         this_frame = time.time()
         ui.render(interface, the_game, screen, this_frame, last_frame)
         
-        #print(cursor_hand_reasons)
         if any((v for v in graphics.cursor_hand_reasons.values())):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
         else:
