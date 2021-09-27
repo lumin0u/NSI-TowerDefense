@@ -5,9 +5,9 @@ from tiles import PathTile, Tile, EmptyTile, SpawnerTile, BuildingTile, CastleTi
 
 
 class Board:
-	def __init__(self, spawn: TilePosition, castle: TilePosition, castle_health):
-		self._spawner = SpawnerTile(spawn)
-		self._castle = CastleTile(castle, castle_health)
+	def __init__(self, spawn: SpawnerTile, castle: CastleTile):
+		self._spawner = spawn
+		self._castle = castle
 		self._tiles = [self._spawner, self._castle]
 	
 	def tile_at(self, position: Position):

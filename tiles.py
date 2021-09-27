@@ -36,7 +36,8 @@ class PathTile(Tile):
         
         # la direction ne peut etre que (0, 1), (0, -1), (1, 0), (-1, 0)
         assert direction.length() == 1 and (direction.x == 0 or direction.y == 0)
-        assert from_.length() == 1 and (from_.x == 0 or from_.y == 0)
+        if not isinstance(self, SpawnerTile):
+            assert from_.length() == 1 and (from_.x == 0 or from_.y == 0)
         
         self._direction = direction
         self._from_ = from_

@@ -1,7 +1,7 @@
 import board
 from position import TilePosition, Direction
 
-level1 = board.Board(TilePosition(-4, 0), TilePosition(4, 0), 100)
+level1 = board.Board(board.SpawnerTile(TilePosition(-4, 0), Direction(1, 0)), board.CastleTile(TilePosition(4, 0), 100))
 
 level1.tiles.append(board.PathTile(TilePosition(-3, 0), Direction(-1, 0), Direction(1, 0)))
 level1.tiles.append(board.PathTile(TilePosition(-2, 0), Direction(-1, 0), Direction(1, 0)))

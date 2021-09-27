@@ -8,11 +8,12 @@ import levels
 import listener
 import board
 import pictures
+import ui
 from position import *
 import time
 
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 500
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 700
 
 TICK_REAL_TIME = 0.1
 
@@ -37,16 +38,15 @@ if __name__ == '__main__':
     
     the_game = game.Game(levels.all_levels[0])
     
-    graphics_settings = graphics.GraphicsSettings()
-    
     is_clicking = False
     
     last_frame = time.time()
-    half_state = graphics.DEFAULT_HALF_STATE.copy()
+    
+    interface = ui.Interface(the_game)
     
     while True:
         this_frame = time.time()
-        graphics.draw_frame(half_state, graphics_settings, screen, the_game, this_frame, last_frame)
+        ui.render(interface, the_game, screen, this_frame, last_frame)
         
         #print(cursor_hand_reasons)
         if any((v for v in graphics.cursor_hand_reasons.values())):
@@ -55,7 +55,7 @@ if __name__ == '__main__':
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         
         for event in pygame.event.get():
-            listener.catch_event(event, graphics_settings)
+            listener.catch_event(event, interface.graphics_settings)
         
         time.sleep(max(0.0, 0.01 - this_frame + last_frame))
         last_frame = this_frame
