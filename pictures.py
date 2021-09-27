@@ -22,14 +22,17 @@ def load_gif(filename):
     return frames
 
 
+GIF_FRAMES_DELAY = 0.05
+
+
 def get_frame(img, time):
-    total_length = len(img) * 0.1
+    total_length = len(img) * GIF_FRAMES_DELAY
     time %= total_length
     accumulator = 0
     for frame in img:
-        if 0.1 + accumulator > time:
+        if GIF_FRAMES_DELAY + accumulator > time:
             return frame
-        accumulator += 0.1
+        accumulator += GIF_FRAMES_DELAY
 
 
 class Picture:

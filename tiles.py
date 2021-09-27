@@ -94,9 +94,9 @@ class BuildingTile(Tile):
         return img
 
 
-class SpawnerTile(Tile):
-    def __init__(self, position: TilePosition):
-        super().__init__(position)
+class SpawnerTile(PathTile):
+    def __init__(self, position: TilePosition, direction: Direction):
+        super().__init__(position, Direction(0, 0), direction)
     
     def get_render(self, time):
         return PICTURES["spawner"].get_img(time, self.position)
