@@ -28,8 +28,7 @@ EXAMPLE_MOB_ATTRIBUTES = {
 		
 		# le type DAMAGE_TYPE_ABSOLUTE est renseigné par défaut dans mob.py
 	},
-	
-	
+
 }
 
 
