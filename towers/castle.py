@@ -1,7 +1,7 @@
 import towers.tower
-import mobs.mob
 import game
 import pictures
+import pygame
 
 pictures.load_picture("castle", "towers/")
 
@@ -19,4 +19,5 @@ class Castle(towers.tower.Tower):
 		source.damage(amount, game.DAMAGE_TYPE_ABSOLUTE)
 		
 	def get_render(self, time):
-		return pictures.PICTURES["castle"].get_img(time, self.tile.position)
+		img = pictures.PICTURES["castle"].get_img(time, hash(self.tile.position))
+		return img

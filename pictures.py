@@ -3,6 +3,11 @@ from os.path import isfile, join
 import re
 import pygame
 from PIL import Image, ImageSequence
+import random
+
+RANDOM_HASH = random.randint(-2**63, 2**63-1)
+
+_EXTRA_DATA = eval(open("images/animations.json", mode='r').read())
 
 
 def pilImageToSurface(pilImage):
@@ -22,47 +27,43 @@ def load_gif(filename):
     return frames
 
 
-GIF_FRAMES_DELAY = 0.05
-
-
-def get_frame(img, time):
-    total_length = len(img) * GIF_FRAMES_DELAY
+def get_frame(img, time, animation_delay):
+    total_length = len(img) * animation_delay
     time %= total_length
     accumulator = 0
     for frame in img:
-        if GIF_FRAMES_DELAY + accumulator > time:
+        if animation_delay + accumulator > time:
             return frame
-        accumulator += GIF_FRAMES_DELAY
+        accumulator += animation_delay
 
 
 class Picture:
     def __init__(self, name, directory=""):
         self._possible_images = []
+        self._name = name
         
         directory_path = "images/" + directory
+        self._directory_path = directory_path
         
         for file in [f for f in listdir(directory_path) if isfile(join(directory_path, f))]:
             if re.fullmatch(name + "(\\$\\d+)?\\.\\w+", file):
                 if file.endswith("gif"):
-                    self._possible_images.append(load_gif(directory_path + file))
+                    self._possible_images.append((directory + file, load_gif(directory_path + file)))
                 else:
-                    self._possible_images.append(pygame.image.load(directory_path + file))
+                    self._possible_images.append((directory + file, pygame.image.load(directory_path + file)))
         
         if len(self._possible_images) == 0:
             raise RuntimeError("Missing resource for image " + name)
     
-    def get_img(self, time, tile_position):
+    def get_img(self, time, pseudo_random=0):
         """
             merci de n'utiliser que cette méthode
         """
-        img = self._possible_images[0] if tile_position is None else self._image_from_position(tile_position)
+        file, img = self._possible_images[(pseudo_random ^ RANDOM_HASH) % len(self._possible_images)]
         
         if type(img) is list:
-            return get_frame(img, time)
+            return get_frame(img, time, _EXTRA_DATA[file]["speed"])
         return img.copy()
-
-    def _image_from_position(self, tile_position):
-        return self._possible_images[hash(tile_position) % len(self._possible_images)]
 
 
 PICTURES = {}

@@ -1,5 +1,7 @@
 import board
-import mobs.mob
+import tiles
+import position
+import mobs.example_mob
 
 DAMAGE_TYPE_RAW = 0
 DAMAGE_TYPE_FIRE = 1
@@ -11,10 +13,12 @@ DAMAGE_TYPE_ABSOLUTE = 4
 
 
 class Game:
-	def __init__(self, board_):
+	def __init__(self, board_, money):
 		self._mobs = []
 		self._board = board_
-		self._money = 200
+		self._money = money
+		
+		self.add_mob(mobs.example_mob.ExampleMob(self, position.Position(5, 5)))
 	
 	@property
 	def board(self):
@@ -25,6 +29,12 @@ class Game:
 	
 	def remove_mob(self, mob):
 		self._mobs.remove(mob)
+	
+	def tick(self):
+		for mob in self.mobs:
+			mob.tick()
+		for tower in (tile.tower for tile in self.board.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
+			tower.tick()
 		
 	@property
 	def mobs(self):

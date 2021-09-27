@@ -2,22 +2,22 @@ from abc import ABC, abstractmethod
 from position import Position, TilePosition, Direction
 from copy import copy
 import random
-import game as game_module
+import game
 
 
 class Mob(ABC):
-	def __init__(self, game, position: Position, attributes: dict):
+	def __init__(self, game_, position: Position, attributes: dict):
 		# on copie le dictionnaire pour pouvoir le modifier au besoin
 		
 		attributes = attributes.copy()
 		
-		self._game = game
+		self._game = game_
 		
 		self._position = position
 		# TODO: stockage de la position relative a la tuile
 		
 		self._attributes = attributes
-		self._attributes["resistances"][game_module.DAMAGE_TYPE_ABSOLUTE] = 1
+		self._attributes["resistances"][game.DAMAGE_TYPE_ABSOLUTE] = 1
 		self._health = self.max_health
 	
 	@abstractmethod

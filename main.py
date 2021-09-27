@@ -1,16 +1,18 @@
 from traceback import print_stack
-
 import pygame
+import time
 import sys
-import board
-import game
-import graphics
+
 import levels
+import mobs.mob
+import game
+import board
+import position
+import tiles
+import graphics
 import listener
 import pictures
 import ui
-import time
-import tiles
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 700
@@ -19,10 +21,7 @@ TICK_REAL_TIME = 0.1
 
 
 def tick():
-    for mob in the_game.mobs:
-        mob.tick()
-    for tower in (tile.tower for tile in the_game.board.tiles if type(tile) is tiles.BuildingTile and not tile.is_empty()):
-        tower.tick()
+    the_game.tick()
 
 
 def set_hand_reason(reason, value):
@@ -36,15 +35,21 @@ if __name__ == '__main__':
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE, vsync=True)
     
-    the_game = game.Game(levels.ALL_LEVELS[0])
+    the_game = game.Game(levels.ALL_LEVELS[0], 200)
     
     is_clicking = False
     
     last_frame = time.time()
+    last_tick = time.time()
     
     interface = ui.Interface(the_game)
     
     while True:
+        
+        if time.time() > TICK_REAL_TIME + last_tick:
+            tick()
+            last_tick = time.time()
+        
         this_frame = time.time()
         ui.render(interface, the_game, screen, this_frame, last_frame)
         

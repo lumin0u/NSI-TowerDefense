@@ -31,24 +31,52 @@ class Interface:
         return self._game
 
 
-def _render_button(screen, time, button_img, button_img_pos):
-    screen.blit(button_img, button_img_pos)
+class Button:
+    def __init__(self, onclick, position, img, hover_img, id_: str):
+        self.onclick = onclick
+        self._img = img
+        self._hover_img = hover_img
+        self._position = position
+        self._id = id_
     
-    if pygame.rect.Rect(button_img_pos + (button_img.get_width(), button_img.get_height())).collidepoint(
+    @property
+    def img(self):
+        return self._img
+    
+    @property
+    def hover_img(self):
+        return self._hover_img
+    
+    @property
+    def position(self):
+        return self._position
+    
+    @property
+    def id(self):
+        return self._id
+    
+
+def render_button(screen, button):
+    
+    if pygame.rect.Rect(button.position + (button.img.get_width(), button.img.get_height())).collidepoint(
             pygame.mouse.get_pos()):
-        graphics.draw_image(screen, button_img_pos, button_img)
-        main.set_hand_reason("hover_button_" + str(hash(button_img_pos)), True)
+        graphics.draw_image(screen, button.position, button.hover_img)
+        main.set_hand_reason("hover_button_" + str(hash(button.id)), True)
     else:
-        main.set_hand_reason("hover_button_" + str(hash(button_img_pos)), False)
+        graphics.draw_image(screen, button.position, button.img)
+        main.set_hand_reason("hover_button_" + str(hash(button.id)), False)
 
 
 def render(interface, game_, screen, time, last_frame):
+
+    volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img(time)
+    volume_hover_img = volume_img.copy()
+    volume_hover_img.blit(volume_img, (0, 0))
     
-    volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img(time, None)
-    volume_img_pos = (0, main.SCREEN_HEIGHT - volume_img.get_height())
+    volume = Button(lambda: (), (0, main.SCREEN_HEIGHT - volume_img.get_height()), volume_img, volume_hover_img, "volume")
 
     _render_game(interface.half_state, interface.graphics_settings, screen, game_, time, last_frame)
-    _render_button(screen, time, volume_img, volume_img_pos)
+    render_button(screen, volume)
     
     pygame.display.update()
 
@@ -73,11 +101,19 @@ def _render_game(half_state, graphics_settings, screen, game_, time, last_frame)
         rect = corner_draw + img_new_size
         
         img = tile.get_render(time)
-        graphics.draw_image(screen, corner_draw, pygame.transform.smoothscale(img, img_new_size))
+        graphics.draw_image(screen, corner_draw, img, img_new_size)
         
         if isinstance(tile, tiles.BuildingTile) and tile.is_empty():
             if pygame.rect.Rect(rect).collidepoint(pygame.mouse.get_pos()):
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), True)
-                graphics.draw_image(screen, corner_draw, pygame.transform.smoothscale(pictures.PICTURES["mouse_hover"].get_img(time, None), img_new_size))
+                graphics.draw_image(screen, corner_draw, pictures.PICTURES["mouse_hover"].get_img(time), img_new_size)
             else:
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), False)
+        
+    for mob in game_.mobs:
+        corner_draw = graphics.get_pixel_pos(mob.position, half_state.camera_pos, half_state.zoom).to_tuple()
+        img_new_size = (math.ceil(RELATIVE_SIZE), math.ceil(RELATIVE_SIZE))
+        rect = corner_draw + img_new_size
+        
+        img = mob.get_render(time)
+        graphics.draw_image(screen, corner_draw, img, img_new_size)

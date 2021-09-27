@@ -1,17 +1,18 @@
 import math
+from typing import Union, overload
 
+import main
 import board
 import tiles
 import pygame
 from position import Position, TilePosition, Direction
-import main
 import pictures
 import ui
 
 cursor_hand_reasons = {}
 
 
-EMPTY_IMAGE = pygame.image.frombuffer(b'', (0, 0), 'ARGB')
+EMPTY_IMAGE = pygame.Surface((0, 0))
 
 
 class GraphicsSettings:
@@ -39,6 +40,12 @@ def get_game_pos(pixel_pos, shift, zoom):
 	return (pixel_pos - Position(main.SCREEN_WIDTH/2, main.SCREEN_HEIGHT/2)) / PIXEL_PER_ZOOM / zoom + shift
 
 
-def draw_image(surface, position: tuple, image):
-	if surface.get_rect().inflate(-10, -10).colliderect(image.get_rect().move(position)):
+def draw_image(surface: pygame.Surface, position: tuple, image: pygame.Surface, new_size: Union[tuple, pygame.rect.Rect, type(None)] = None):
+	if image.get_rect().w == 0 and image.get_rect().h == 0:
+		return
+	if new_size is not None:
+		image = pygame.transform.smoothscale(image, new_size)
+		
+	# n'afficher que les images qui sont visibles dans la fenetre
+	if surface.get_rect().colliderect(image.get_rect().move(position)):
 		surface.blit(image, position)

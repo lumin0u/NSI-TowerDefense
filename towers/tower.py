@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from position import Position, TilePosition, Direction
-import mobs.mob
 
 
 class Tower(ABC):

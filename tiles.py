@@ -53,14 +53,14 @@ class PathTile(Tile):
 
     def get_render(self, time):
         if self.direction == -self._from_:
-            img = pictures.PICTURES["path_WE"].get_img(time, self.position)
+            img = pictures.PICTURES["path_WE"].get_img(time, hash(self.position))
             if self.direction.y == 0:
                 return img
             else:
                 return pygame.transform.rotate(img, 90)
         else:
             l = [self.direction, self._from_]
-            img = pictures.PICTURES["path_NE"].get_img(time, self.position)
+            img = pictures.PICTURES["path_NE"].get_img(time, hash(self.position))
             if matches_no_order(l, (Direction(1, 0), Direction(0, -1))):
                 return img
             elif matches_no_order(l, (Direction(1, 0), Direction(0, 1))):
@@ -89,7 +89,7 @@ class BuildingTile(Tile):
         return self._tower is None
     
     def get_render(self, time):
-        img = pictures.PICTURES["building_tile"].get_img(time, self.position)
+        img = pictures.PICTURES["building_tile"].get_img(time, hash(self.position))
         
         if not self.is_empty():
             img.blit(self.tower.get_render(time), (0, 0))
@@ -101,7 +101,7 @@ class SpawnerTile(PathTile):
         super().__init__(position, Direction(0, 0), direction)
     
     def get_render(self, time):
-        return pictures.PICTURES["spawner"].get_img(time, self.position)
+        return pictures.PICTURES["spawner"].get_img(time, hash(self.position))
 
 
 class CastleTile(BuildingTile):
