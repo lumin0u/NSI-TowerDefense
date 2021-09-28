@@ -13,29 +13,34 @@ DAMAGE_TYPE_ABSOLUTE = 4
 
 
 class Game:
-	def __init__(self, board_, money):
-		self._mobs = []
-		self._board = board_
-		self._money = money
-		
-		self.add_mob(mobs.example_mob.ExampleMob(self, position.Position(5, 5)))
-	
-	@property
-	def board(self):
-		return self._board
-	
-	def add_mob(self, mob):
-		self._mobs.append(mob)
-	
-	def remove_mob(self, mob):
-		self._mobs.remove(mob)
-	
-	def tick(self):
-		for mob in self.mobs:
-			mob.tick()
-		for tower in (tile.tower for tile in self.board.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
-			tower.tick()
-		
-	@property
-	def mobs(self):
-		return self._mobs
+    def __init__(self, board_, money):
+        self._mobs = []
+        self._board = board_
+        self._money = money
+        self._id_inc = 0
+        
+        self.add_mob(mobs.example_mob.ExampleMob(self, position.Position(-3.5, 0.5)))
+    
+    @property
+    def board(self):
+        return self._board
+    
+    def add_mob(self, mob):
+        self._mobs.append(mob)
+    
+    def remove_mob(self, mob):
+        self._mobs.remove(mob)
+    
+    def tick(self):
+        for mob in self.mobs:
+            mob.tick()
+        for tower in (tile.tower for tile in self.board.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
+            tower.tick()
+        
+    @property
+    def mobs(self):
+        return self._mobs
+        
+    def next_id(self):
+        self._id_inc += 1
+        return self._id_inc

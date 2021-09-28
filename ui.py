@@ -17,6 +17,7 @@ class HalfState:
     def __init__(self):
         self.camera_pos = Position(0, 0)
         self.zoom = 1 / 100
+        self.mobs_position = {}
 
 
 class Interface:
@@ -81,6 +82,8 @@ def render(interface, game_, screen, time, last_frame):
     pygame.display.update()
 
 
+MOB_SIZE = 0.3
+
 def _render_game(half_state, graphics_settings, screen, game_, time, last_frame):
     pygame.draw.rect(screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
     
@@ -111,8 +114,13 @@ def _render_game(half_state, graphics_settings, screen, game_, time, last_frame)
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), False)
         
     for mob in game_.mobs:
-        corner_draw = graphics.get_pixel_pos(mob.position, half_state.camera_pos, half_state.zoom).to_tuple()
-        img_new_size = (math.ceil(RELATIVE_SIZE), math.ceil(RELATIVE_SIZE))
+        if mob.id_ not in half_state.mobs_position:
+            half_state.mobs_position[mob.id_] = mob.position
+        
+        half_state.mobs_position[mob.id_] = half_state.mobs_position[mob.id_] * (1 - half_movement) + mob.position * half_movement
+        
+        corner_draw = graphics.get_pixel_pos(half_state.mobs_position[mob.id_] - Position(MOB_SIZE / 2, MOB_SIZE / 2), half_state.camera_pos, half_state.zoom).to_tuple()
+        img_new_size = (math.ceil(RELATIVE_SIZE * MOB_SIZE), math.ceil(RELATIVE_SIZE * MOB_SIZE))
         rect = corner_draw + img_new_size
         
         img = mob.get_render(time)
