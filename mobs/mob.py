@@ -3,6 +3,7 @@ from position import Position, TilePosition, Direction
 from copy import copy
 import random
 import game
+import tiles
 
 
 class Mob(ABC):
@@ -14,7 +15,6 @@ class Mob(ABC):
 		self._game = game_
 		
 		self._position = position
-		# TODO: stockage de la position relative a la tuile
 		
 		self._attributes = attributes
 		self._attributes["resistances"][game.DAMAGE_TYPE_ABSOLUTE] = 1
@@ -38,17 +38,21 @@ class Mob(ABC):
 	@property
 	def position(self) -> Position:
 		return self._position
-	
+	 
 	def advance(self):
-		# TODO avancer en fonction de la direction de la tuile
-		pass
+            #avancer en fonction de la direction de la tuile
+            tile = self._game.board.tile_at(self._position)
+            if isinstance(tile, tiles.PathTile):
+                dir_ = tile.direction
+                self.move(dir_ * self.speed)
+                
+	    
 	
 	def move(self, direction: Direction):
 		self.teleport(self.position + direction)
 	
 	def teleport(self, position: Position):
-		# TODO
-		pass
+	    self._position = position 
 	
 	def damage(self, damage: float, type_):
 		self._health -= damage / self._attributes["resistances"][type_]
