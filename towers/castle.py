@@ -8,13 +8,23 @@ pictures.load_picture("castle", "towers/")
 
 class Castle(towers.tower.Tower):
 	def __init__(self, tile, max_health):
-		super().__init__(tile, max_health)
+		super().__init__(tile)
+		self._max_health = max_health
+		self._health = float(max_health)
 		
 	def tick(self):
 		pass
 	
+	@property
+	def max_health(self):
+		return self._max_health
+
+	@property
+	def health(self):
+		return self._health
+	
 	def damage(self, amount: float, source):
-		super().damage(amount, source)
+		self._health -= amount
 		# la tour renvoie les dégats
 		source.damage(amount, game.DAMAGE_TYPE_ABSOLUTE)
 		
