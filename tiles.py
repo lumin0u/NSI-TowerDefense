@@ -17,6 +17,14 @@ class Tile(ABC):
     @abstractmethod
     def get_render(self, time):
         pass
+    
+    @abstractmethod
+    def is_clickable(self):
+        pass
+    
+    @abstractmethod
+    def onclick(self):
+        pass
 
 
 class EmptyTile(Tile):
@@ -25,6 +33,12 @@ class EmptyTile(Tile):
     
     def get_render(self, time):
         return graphics.EMPTY_IMAGE
+    
+    def is_clickable(self):
+        return False
+    
+    def onclick(self):
+        pass
 
 
 def matches_no_order(l1, l2):
@@ -69,6 +83,12 @@ class PathTile(Tile):
                 return pygame.transform.rotate(img, 180)
             else:
                 return pygame.transform.rotate(img, 90)
+    
+    def is_clickable(self):
+        return False
+    
+    def onclick(self):
+        pass
 
 
 class BuildingTile(Tile):
@@ -94,6 +114,15 @@ class BuildingTile(Tile):
         if not self.is_empty():
             img.blit(self.tower.get_render(time), (0, 0))
         return img
+    
+    def is_clickable(self):
+        return self.is_empty()
+    
+    def onclick(self):
+        if not self.is_clickable():
+            return
+        # TODO show popup
+        pass
 
 
 class SpawnerTile(PathTile):
@@ -102,6 +131,12 @@ class SpawnerTile(PathTile):
     
     def get_render(self, time):
         return pictures.PICTURES["spawner"].get_img(time, hash(self.position))
+    
+    def is_clickable(self):
+        return False
+    
+    def onclick(self):
+        pass
 
 
 class CastleTile(BuildingTile):
@@ -109,3 +144,6 @@ class CastleTile(BuildingTile):
         super().__init__(position)
         
         self._tower = towers.castle.Castle(self, max_health)
+    
+    def is_clickable(self):
+        return False

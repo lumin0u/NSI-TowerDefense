@@ -88,7 +88,7 @@ def render(interface, game_, screen, time, last_frame):
     
     volume = Button(volume_onclick, (0, main.SCREEN_HEIGHT - volume_img.get_height()), volume_img, volume_hover_img, "volume")
 
-    _render_game(interface.half_state, interface.graphics_settings, screen, game_, time, last_frame)
+    _render_game(interface, screen, game_, time, last_frame)
     add_button(screen, interface, volume)
     
     pygame.display.update()
@@ -96,7 +96,10 @@ def render(interface, game_, screen, time, last_frame):
 
 MOB_SIZE = 0.3
 
-def _render_game(half_state, graphics_settings, screen, game_, time, last_frame):
+def _render_game( interface, screen, game_, time, last_frame):
+    graphics_settings = interface.graphics_settings
+    half_state = interface.half_state
+    
     pygame.draw.rect(screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
     
     elapsed_time = max(0.01, time - last_frame)
@@ -117,14 +120,16 @@ def _render_game(half_state, graphics_settings, screen, game_, time, last_frame)
         
         img = tile.get_render(time)
         
-        if isinstance(tile, tiles.BuildingTile) and tile.is_empty():
+        if tile.is_clickable():
+            img = pygame.transform.smoothscale(img, img_new_size)
+            button = Button(tile.onclick, corner_draw, img, graphics.highlight(img, 0.15, 2, 0.8), "building_" + str(hash(tile.position)))
+            add_button(screen, interface, button)
             if pygame.rect.Rect(rect).collidepoint(pygame.mouse.get_pos()):
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), True)
-                img = graphics.highlight(img, 0.15, 2, 0.8)
             else:
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), False)
-        
-        graphics.draw_image(screen, corner_draw, img, img_new_size)
+        else:
+            graphics.draw_image(screen, corner_draw, img, img_new_size)
         
     for mob in game_.mobs:
         if mob.id_ not in half_state.mobs_position:
