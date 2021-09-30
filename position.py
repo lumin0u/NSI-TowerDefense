@@ -78,6 +78,9 @@ class TilePosition(Position):
 	def __str__(self):
 		return f'TilePosition(x={self.x}, y={self.y})'
 	
+	def middle(self):
+		return Position(self.x + 0.5, self.y + 0.5)
+	
 	@staticmethod
 	def of(position: Position):
 		return TilePosition(position.x, position.y)

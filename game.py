@@ -1,7 +1,9 @@
-import board
+import levels
 import tiles
 import position
 import mobs.example_mob
+import random
+from copy import deepcopy
 
 DAMAGE_TYPE_RAW = 0
 DAMAGE_TYPE_FIRE = 1
@@ -13,17 +15,17 @@ DAMAGE_TYPE_ABSOLUTE = 4
 
 
 class Game:
-    def __init__(self, board_, money):
+    def __init__(self, level_, money):
         self._mobs = []
-        self._board = board_
+        self._level = level_
         self._money = money
         self._id_inc = 0
-        
-        self.add_mob(mobs.example_mob.ExampleMob(self, position.Position(-3.5, 0.5)))
+        self._wave = 0
+        self._wave_obj = deepcopy(level_.waves[0])
     
     @property
-    def board(self):
-        return self._board
+    def level(self):
+        return self._level
     
     def add_mob(self, mob):
         self._mobs.append(mob)
@@ -31,10 +33,14 @@ class Game:
     def remove_mob(self, mob):
         self._mobs.remove(mob)
     
-    def tick(self):
+    def tick(self, current_tick):
+        for mob_type in self._wave_obj.next_mobs(current_tick):
+            shift = position.Position((random.random() - 0.5) * random.random(), (random.random() - 0.5) * random.random())
+            self.add_mob(mob_type(self, self.level.spawner.position.middle() + shift))
+        
         for mob in self.mobs:
             mob.tick()
-        for tower in (tile.tower for tile in self.board.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
+        for tower in (tile.tower for tile in self.level.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
             tower.tick()
         
     @property

@@ -2,7 +2,7 @@ import math
 from typing import Union, overload
 
 import main
-import board
+import levels
 import tiles
 import pygame
 from position import Position, TilePosition, Direction

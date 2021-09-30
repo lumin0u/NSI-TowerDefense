@@ -1,31 +1,72 @@
-import board
+import mobs.simple_mob
+import mobs.robuste_mob
 from position import Position, TilePosition, Direction
 import tiles
 import random
 
 
 class Wave:
-    def __init__(self, mobs):
+    def __init__(self, mobs_):
         """
             mobs est un dictionnaire avec:
               pour clés les classes des mobs
               pour valeurs le nombre de ces mobs
         """
-        self._remaining = mobs.copy()
-        self._mobs = mobs
+        self._remaining = mobs_.copy()
+        self._mobs = mobs_
         # start_date est exprimé en ticks
         self.start_date = 0
     
     def start(self, start_date):
         self.start_date = start_date
     
+    def is_ended(self):
+        return all((v == 0 for v in self._remaining.values()))
+    
     def next_mobs(self, current_tick):
         to_spawn = []
-        # TODO ne pas retourner une liste vide
+        max_mob_count = max((v for v in self._mobs.values()))
+        for mob_type in self._remaining:
+            if self._remaining[mob_type] > 0 and random.randint(0, max(0, int(max_mob_count / self._mobs[mob_type] * 5) + random.randint(0, 1))) <= 0:
+                to_spawn.append(mob_type)
+                self._remaining[mob_type] -= 1
         return to_spawn
 
 
-level1 = board.Board(tiles.SpawnerTile(TilePosition(-4, 0), Direction(1, 0)), tiles.CastleTile(TilePosition(4, 0), 100))
+class Level:
+    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile):
+        self._spawner = spawn
+        self._castle = castle
+        self._tiles: list[tiles.Tile] = [self._spawner, self._castle]
+        self._waves: list[Wave] = []
+    
+    def tile_at(self, position: Position):
+        # on recherche dans nos tuiles s'il en existe une a cette position
+        for tile in self._tiles:
+            if tile.position == TilePosition.of(position):
+                return tile
+        
+        # s'il n'en existe pas, on en créé une vide
+        return tiles.EmptyTile(TilePosition.of(position))
+    
+    @property
+    def tiles(self):
+        return self._tiles
+    
+    @property
+    def waves(self) -> list[Wave]:
+        return self._waves
+    
+    @property
+    def spawner(self):
+        return self._spawner
+    
+    @property
+    def castle(self):
+        return self._castle
+
+
+level1 = Level(tiles.SpawnerTile(TilePosition(-4, 0), Direction(1, 0)), tiles.CastleTile(TilePosition(4, 0), 100))
 
 level1.tiles.append(tiles.PathTile(TilePosition(-3, 0), Direction(-1, 0), Direction(1, 0)))
 level1.tiles.append(tiles.PathTile(TilePosition(-2, 0), Direction(-1, 0), Direction(1, 0)))
@@ -42,5 +83,9 @@ level1.tiles.append(tiles.BuildingTile(TilePosition(-2, -1)))
 level1.tiles.append(tiles.BuildingTile(TilePosition(-1, -1)))
 level1.tiles.append(tiles.BuildingTile(TilePosition(0, -1)))
 level1.tiles.append(tiles.BuildingTile(TilePosition(2, -1)))
+
+level1.waves.extend([
+    Wave({mobs.simple_mob.SimpleMob: 100, mobs.robuste_mob.RobusteMob: 10}),
+])
 
 ALL_LEVELS = (level1,)

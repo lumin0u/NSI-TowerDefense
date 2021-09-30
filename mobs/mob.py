@@ -47,7 +47,7 @@ class Mob(ABC):
         
     def advance(self):
         #avancer en fonction de la direction de la tuile
-        tile = self._game.board.tile_at(self._position)
+        tile = self._game.level.tile_at(self._position)
         if isinstance(tile, tiles.PathTile):
             dir_ = tile.direction
             self.move(dir_ * self.speed)

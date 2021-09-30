@@ -4,9 +4,7 @@ import time
 import sys
 
 import levels
-import mobs.mob
 import game
-import board
 import position
 import tiles
 import graphics
@@ -19,8 +17,9 @@ SCREEN_HEIGHT = 700
 
 TICK_REAL_TIME = 0.1
 
-def tick():
-    the_game.tick()
+
+def tick(current_tick):
+    the_game.tick(current_tick)
 
 
 def set_hand_reason(reason, value):
@@ -42,11 +41,14 @@ if __name__ == '__main__':
     
     last_frame = time.time()
     last_tick = time.time()
+
+    current_tick = 0
     
     while True:
         
         if time.time() > TICK_REAL_TIME + last_tick:
-            tick()
+            tick(current_tick)
+            current_tick += 1
             last_tick = time.time()
         
         this_frame = time.time()

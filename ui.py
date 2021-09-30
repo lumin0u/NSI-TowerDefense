@@ -96,7 +96,27 @@ def render(interface, game_, screen, time, last_frame):
 
 MOB_SIZE = 0.3
 
-def _render_game( interface, screen, game_, time, last_frame):
+
+def _render_image_game(screen, interface, image, game_position, centered, image_scale=1.):
+    graphics_settings = interface.graphics_settings
+    half_state = interface.half_state
+    
+    corner_draw = graphics.get_pixel_pos(game_position, half_state.camera_pos, half_state.zoom)
+    img_new_size = (math.ceil(graphics.PIXEL_PER_ZOOM * half_state.zoom * image_scale),) * 2
+    
+    if centered:
+        corner_draw -= Direction(img_new_size[0] / 2, img_new_size[1] / 2)
+
+    corner_draw = corner_draw.to_tuple()
+    
+    rect = corner_draw + img_new_size
+    
+    graphics.draw_image(screen, corner_draw, image, img_new_size)
+    
+    return pygame.rect.Rect(*(corner_draw + img_new_size))
+
+
+def _render_game(interface, screen, game_, time, last_frame):
     graphics_settings = interface.graphics_settings
     half_state = interface.half_state
     
@@ -110,26 +130,18 @@ def _render_game( interface, screen, game_, time, last_frame):
     half_state.camera_pos = half_state.camera_pos * (
                 1 - half_movement) + graphics_settings.camera_pos * half_movement
     
-    RELATIVE_SIZE = graphics.PIXEL_PER_ZOOM * half_state.zoom
-    
-    for tile in game_.board.tiles:
-        # concatenation de (cornerX, cornerY) et de (width, height)
-        corner_draw = graphics.get_pixel_pos(tile.position, half_state.camera_pos, half_state.zoom).to_tuple()
-        img_new_size = (math.ceil(RELATIVE_SIZE), math.ceil(RELATIVE_SIZE))
-        rect = corner_draw + img_new_size
-        
-        img = tile.get_render(time)
+    for tile in game_.level.tiles:
+        img_new_size = _render_image_game(screen, interface, tile.get_render(time), tile.position, False)
         
         if tile.is_clickable():
-            img = pygame.transform.smoothscale(img, img_new_size)
-            button = Button(tile.onclick, corner_draw, img, graphics.highlight(img, 0.15, 2, 0.8), "building_" + str(hash(tile.position)))
+            img = pygame.surface.Surface((img_new_size.w, img_new_size.h)).convert_alpha()
+            img.fill((255, 255, 255, 0))
+            button = Button(tile.onclick, (img_new_size.x, img_new_size.y), img, graphics.highlight(img, 0.15, 2, 0.8), "building_" + str(hash(tile.position)))
             add_button(screen, interface, button)
-            if pygame.rect.Rect(rect).collidepoint(pygame.mouse.get_pos()):
+            if img.get_rect().collidepoint(pygame.mouse.get_pos()):
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), True)
             else:
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), False)
-        else:
-            graphics.draw_image(screen, corner_draw, img, img_new_size)
         
     for mob in game_.mobs:
         if mob.id_ not in half_state.mobs_position:
@@ -137,9 +149,5 @@ def _render_game( interface, screen, game_, time, last_frame):
         
         half_state.mobs_position[mob.id_] = half_state.mobs_position[mob.id_] * (1 - half_movement) + mob.position * half_movement
         
-        corner_draw = graphics.get_pixel_pos(half_state.mobs_position[mob.id_] - Position(MOB_SIZE / 2, MOB_SIZE / 2), half_state.camera_pos, half_state.zoom).to_tuple()
-        img_new_size = (math.ceil(RELATIVE_SIZE * MOB_SIZE), math.ceil(RELATIVE_SIZE * MOB_SIZE))
-        rect = corner_draw + img_new_size
+        _render_image_game(screen, interface, mob.get_render(time), half_state.mobs_position[mob.id_], True, MOB_SIZE)
         
-        img = mob.get_render(time)
-        graphics.draw_image(screen, corner_draw, img, img_new_size)
