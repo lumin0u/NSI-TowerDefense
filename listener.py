@@ -7,8 +7,9 @@ import graphics
 mouse_position = Position(0, 0)
 
 
-def catch_event(event, graphics_settings):
+def catch_event(event, interface):
     global mouse_position
+    graphics_settings = interface.graphics_settings
     
     if event.type == pygame.QUIT:
         pygame.quit()
@@ -25,7 +26,11 @@ def catch_event(event, graphics_settings):
         mouse_position = Position.of(pygame.mouse.get_pos())
     
     elif event.type == pygame.MOUSEBUTTONDOWN:
-        if event.button == 4:
+        if event.button == 1:
+            for button in interface.buttons:
+                if button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
+                    button.onclick()
+        elif event.button == 4:
             last_zoom = graphics_settings.zoom
             graphics_settings.zoom *= 10 / 9
             

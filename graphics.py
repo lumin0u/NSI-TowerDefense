@@ -53,10 +53,19 @@ def draw_image(surface: pygame.Surface, position: tuple, image: pygame.Surface,
 
 def highlight(base_image: pygame.Surface, highlight_alpha: float, border_width: float, border_alpha: float):
     image = base_image.copy()
-    if border_width > 0:
-        pygame.draw.rect(image, (int(highlight_alpha * 255), 255, 255, 255), image.get_rect()
-                         .move(border_width, border_width)
-                         .inflate(-border_width * 2, -border_width * 2))
-        # TODO
     
-    return image
+    rect = image.get_rect()
+    
+    pygame.draw.rect(image, (255, 255, 255, 0), rect)
+    
+    pygame.draw.rect(image, (255, 255, 255, int(highlight_alpha * 255)), rect
+                     .inflate(min(0, -border_width), min(0, -border_width)))
+    
+    pygame.draw.rect(image, (255, 255, 255, int(border_alpha * 255)), (0, 0, border_width, rect.h))
+    pygame.draw.rect(image, (255, 255, 255, int(border_alpha * 255)), (0, 0, rect.w, border_width))
+    pygame.draw.rect(image, (255, 255, 255, int(border_alpha * 255)), (rect.w - border_width, border_width, border_width, rect.h - border_width))
+    pygame.draw.rect(image, (255, 255, 255, int(border_alpha * 255)), (border_width, rect.h - border_width, rect.w - border_width, border_width))
+    
+    image1 = base_image.copy()
+    image1.blit(image, (0, 0))
+    return image1

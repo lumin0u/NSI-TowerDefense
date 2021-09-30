@@ -26,6 +26,7 @@ class Interface:
         self.half_state = HalfState()
         self.graphics_settings = graphics.GraphicsSettings()
         self.volume = 2
+        self.buttons = []
     
     @property
     def game(self):
@@ -44,9 +45,14 @@ class Button:
     def img(self):
         return self._img
     
-    @property
-    def hover_img(self):
+    def hover_img(self, clicking):
+        if clicking:
+            return graphics.highlight(self._hover_img, 0.3, 0, 0)
         return self._hover_img
+    
+    @property
+    def rect(self):
+        return self.img.get_rect()
     
     @property
     def position(self):
@@ -57,27 +63,33 @@ class Button:
         return self._id
     
 
-def render_button(screen, button):
+def add_button(screen, interface, button):
+    clicking = pygame.mouse.get_pressed(3)[0]
     
-    if pygame.rect.Rect(button.position + (button.img.get_width(), button.img.get_height())).collidepoint(
+    if pygame.rect.Rect(button.rect.move(button.position)).collidepoint(
             pygame.mouse.get_pos()):
-        graphics.draw_image(screen, button.position, button.hover_img)
+        graphics.draw_image(screen, button.position, button.hover_img(clicking))
         main.set_hand_reason("hover_button_" + str(hash(button.id)), True)
     else:
         graphics.draw_image(screen, button.position, button.img)
         main.set_hand_reason("hover_button_" + str(hash(button.id)), False)
+    
+    interface.buttons.append(button)
 
 
 def render(interface, game_, screen, time, last_frame):
-
-    volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img(time)
-    volume_hover_img = volume_img.copy()
-    volume_hover_img.blit(volume_img, (0, 0))
+    interface.buttons = []
     
-    volume = Button(lambda: (), (0, main.SCREEN_HEIGHT - volume_img.get_height()), volume_img, volume_hover_img, "volume")
+    volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img(time)
+    volume_hover_img = graphics.highlight(volume_img, 0.15, 0, 0)
+    
+    def volume_onclick():
+        interface.volume = (interface.volume - 1) % 3
+    
+    volume = Button(volume_onclick, (0, main.SCREEN_HEIGHT - volume_img.get_height()), volume_img, volume_hover_img, "volume")
 
     _render_game(interface.half_state, interface.graphics_settings, screen, game_, time, last_frame)
-    render_button(screen, volume)
+    add_button(screen, interface, volume)
     
     pygame.display.update()
 
@@ -104,14 +116,15 @@ def _render_game(half_state, graphics_settings, screen, game_, time, last_frame)
         rect = corner_draw + img_new_size
         
         img = tile.get_render(time)
-        graphics.draw_image(screen, corner_draw, img, img_new_size)
         
         if isinstance(tile, tiles.BuildingTile) and tile.is_empty():
             if pygame.rect.Rect(rect).collidepoint(pygame.mouse.get_pos()):
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), True)
-                graphics.draw_image(screen, corner_draw, pictures.PICTURES["mouse_hover"].get_img(time), img_new_size)
+                img = graphics.highlight(img, 0.15, 2, 0.8)
             else:
                 main.set_hand_reason("hover_building_" + str(hash(tile.position)), False)
+        
+        graphics.draw_image(screen, corner_draw, img, img_new_size)
         
     for mob in game_.mobs:
         if mob.id_ not in half_state.mobs_position:

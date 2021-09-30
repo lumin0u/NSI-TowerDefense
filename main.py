@@ -19,7 +19,6 @@ SCREEN_HEIGHT = 700
 
 TICK_REAL_TIME = 0.1
 
-
 def tick():
     the_game.tick()
 
@@ -37,12 +36,12 @@ if __name__ == '__main__':
     
     the_game = game.Game(levels.ALL_LEVELS[0], 200)
     
+    interface = ui.Interface(the_game)
+    
     is_clicking = False
     
     last_frame = time.time()
     last_tick = time.time()
-    
-    interface = ui.Interface(the_game)
     
     while True:
         
@@ -59,7 +58,7 @@ if __name__ == '__main__':
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         
         for event in pygame.event.get():
-            listener.catch_event(event, interface.graphics_settings)
+            listener.catch_event(event, interface)
         
         time.sleep(max(0.0, 0.01 - this_frame + last_frame))
         last_frame = this_frame
