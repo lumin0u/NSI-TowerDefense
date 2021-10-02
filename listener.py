@@ -1,8 +1,10 @@
-import pygame
 import sys
-import main
-from position import Position, TilePosition, Direction
+
+import pygame
+
 import graphics
+import main
+from position import Position
 
 mouse_position = Position(0, 0)
 
@@ -17,19 +19,18 @@ def catch_event(event, interface):
     
     elif event.type == pygame.MOUSEMOTION:
         # déplacement libre
-        if pygame.mouse.get_pressed(3)[0]:
-            main.set_hand_reason("free_camera", True)
-            graphics_settings.camera_pos -= Position.of(event.rel) / 40 / graphics_settings.zoom
-        else:
-            main.set_hand_reason("free_camera", False)
+        if interface.can_free_move():
+            if pygame.mouse.get_pressed(3)[0]:
+                main.set_hand_reason("free_camera", True)
+                graphics_settings.camera_pos -= Position.of(event.rel) / 40 / graphics_settings.zoom
+            else:
+                main.set_hand_reason("free_camera", False)
         
         mouse_position = Position.of(pygame.mouse.get_pos())
     
     elif event.type == pygame.MOUSEBUTTONDOWN:
         if event.button == 1:
-            for button in interface.buttons:
-                if button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
-                    button.onclick()
+            interface.mouse_down(1, pygame.mouse.get_pos())
         elif event.button == 4:
             last_zoom = graphics_settings.zoom
             graphics_settings.zoom *= 10 / 9

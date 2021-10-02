@@ -1,13 +1,7 @@
-import math
-from typing import Union, overload
+import pygame
 
 import main
-import levels
-import tiles
-import pygame
-from position import Position, TilePosition, Direction
-import pictures
-import ui
+from position import Position
 
 cursor_hand_reasons = {}
 
@@ -40,15 +34,18 @@ def get_game_pos(pixel_pos, shift, zoom):
 
 
 def draw_image(surface: pygame.Surface, position: tuple, image: pygame.Surface,
-               new_size: Union[tuple, pygame.rect.Rect, type(None)] = None):
+               new_size: tuple = None):
     if image.get_rect().w == 0 and image.get_rect().h == 0:
         return
-    if new_size is not None:
-        image = pygame.transform.smoothscale(image, new_size)
     
     # n'afficher que les images qui sont visibles dans la fenetre
-    if surface.get_rect().colliderect(image.get_rect().move(position)):
-        surface.blit(image, position)
+    if new_size is not None:
+        if surface.get_rect().colliderect(pygame.rect.Rect(*(position + new_size))):
+            image = pygame.transform.smoothscale(image, new_size)
+            surface.blit(image, position)
+    else:
+        if surface.get_rect().colliderect(image.get_rect().move(position)):
+            surface.blit(image, position)
 
 
 def highlight(base_image: pygame.Surface, highlight_alpha: float, border_width: float, border_alpha: float):

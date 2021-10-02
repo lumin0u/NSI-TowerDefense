@@ -1,9 +1,10 @@
 from os import listdir
 from os.path import isfile, join
 import re
+import random
+
 import pygame
 from PIL import Image, ImageSequence
-import random
 
 RANDOM_HASH = random.randint(-2**63, 2**63-1)
 

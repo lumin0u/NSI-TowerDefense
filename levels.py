@@ -1,8 +1,10 @@
-import mobs.simple_mob
-import mobs.robuste_mob
-from position import Position, TilePosition, Direction
-import tiles
+import math
 import random
+
+import mobs.robuste_mob
+import mobs.simple_mob
+import tiles
+from position import Position, TilePosition, Direction
 
 
 class Wave:
@@ -27,7 +29,10 @@ class Wave:
         to_spawn = []
         max_mob_count = max((v for v in self._mobs.values()))
         for mob_type in self._remaining:
-            if self._remaining[mob_type] > 0 and random.randint(0, max(0, int(max_mob_count / self._mobs[mob_type] * 5) + random.randint(0, 1))) <= 0:
+            
+            r = max_mob_count / self._mobs[mob_type] * 6 * (math.sin(current_tick / 10) + 1.5)
+            
+            if self._remaining[mob_type] > 0 and random.randint(0, max(0, int(r) + random.randint(-1, 1))) <= 0:
                 to_spawn.append(mob_type)
                 self._remaining[mob_type] -= 1
         return to_spawn
@@ -85,7 +90,7 @@ level1.tiles.append(tiles.BuildingTile(TilePosition(0, -1)))
 level1.tiles.append(tiles.BuildingTile(TilePosition(2, -1)))
 
 level1.waves.extend([
-    Wave({mobs.simple_mob.SimpleMob: 100, mobs.robuste_mob.RobusteMob: 10}),
+    Wave({mobs.simple_mob.SimpleMob: 20, mobs.robuste_mob.RobusteMob: 5}),
 ])
 
 ALL_LEVELS = (level1,)

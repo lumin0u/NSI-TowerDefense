@@ -1,8 +1,10 @@
-import graphics
-from position import Position, TilePosition, Direction
 from abc import ABC, abstractmethod
-import towers.castle
+
 import pygame
+
+import graphics
+from position import TilePosition, Direction
+import towers.castle
 import pictures
 
 

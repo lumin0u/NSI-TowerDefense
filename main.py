@@ -1,12 +1,9 @@
-from traceback import print_stack
-import pygame
 import time
-import sys
+
+import pygame
 
 import levels
 import game
-import position
-import tiles
 import graphics
 import listener
 import pictures
@@ -37,15 +34,17 @@ if __name__ == '__main__':
     
     interface = ui.Interface(the_game)
     
-    is_clicking = False
-    
     last_frame = time.time()
     last_tick = time.time()
 
     current_tick = 0
+
+    pygame.mixer.init()
+    pygame.mixer.music.load("musics/buck.mp3")
+    pygame.mixer.music.play(1000)
+    pygame.mixer.music.set_volume((interface.volume / 4) ** 2)
     
     while True:
-        
         if time.time() > TICK_REAL_TIME + last_tick:
             tick(current_tick)
             current_tick += 1
