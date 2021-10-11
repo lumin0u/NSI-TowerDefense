@@ -72,7 +72,6 @@ PICTURES = {}
 
 def load_pictures():
     load_picture("building_tile")
-    load_picture("mouse_hover")
     load_picture("spawner")
     load_picture("path_NE")
     load_picture("path_WE")
