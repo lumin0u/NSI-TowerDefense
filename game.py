@@ -37,9 +37,9 @@ class Game:
             self.add_mob(mob_type(self, self.level.spawner.position.middle() + shift))
         
         for mob in self.mobs:
-            mob.tick()
+            mob.tick(current_tick)
         for tower in (tile.tower for tile in self.level.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
-            tower.tick()
+            tower.tick(current_tick)
         
     @property
     def mobs(self):
