@@ -37,7 +37,7 @@ class BossMob(mobs.mob.Mob):
         }
         super().__init__(game_, position, attributes)
     
-    def tick(self):
+    def tick(self, current_tick):
         # a chaque tick
         
         # le mob avance
