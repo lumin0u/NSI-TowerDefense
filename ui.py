@@ -157,15 +157,11 @@ def _render_game(interface, screen, game_, time, last_frame):
     for tile in game_.level.tiles:
         img_new_size = _render_image_game(screen, interface, tile.get_render(time), tile.position, False)
         
-        if tile.is_clickable():
+        """if tile.is_clickable():
             img = pygame.surface.Surface((img_new_size.w, img_new_size.h)).convert_alpha()
             img.fill((255, 255, 255, 0))
             button = Button(interface, tile.onclick, (img_new_size.x, img_new_size.y), img, graphics.highlight(img, 0.15, 2, 0.8), "building_" + str(hash(tile.position)))
-            add_button(screen, interface, button)
-            if img.get_rect().collidepoint(pygame.mouse.get_pos()):
-                main.set_hand_reason("hover_building_" + str(hash(tile.position)), True)
-            else:
-                main.set_hand_reason("hover_building_" + str(hash(tile.position)), False)
+            add_button(screen, interface, button)"""
         
     for mob in game_.mobs:
         if mob.id_ not in half_state.mobs_position:
