@@ -1,14 +1,13 @@
-import graphics
-import pictures
-import mobs.mob
-from position import Position, TilePosition, Direction
+from interface import pictures
+import mobs.mob as mob
+from position import Position
 import main
 import game
 
 pictures.load_picture("robuste", "mobs/")
 
 
-class RobusteMob(mobs.mob.Mob):
+class RobusteMob(mob.Mob):
     def __init__(self, game_, position: Position):
         attributes = {
             

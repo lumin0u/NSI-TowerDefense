@@ -2,10 +2,9 @@ from abc import ABC, abstractmethod
 
 import pygame
 
-import graphics
 from position import TilePosition, Direction
-import towers.castle
-import pictures
+import towers.castle as castle
+from interface import pictures, graphics
 
 
 class Tile(ABC):
@@ -145,7 +144,7 @@ class CastleTile(BuildingTile):
     def __init__(self, position: TilePosition, max_health):
         super().__init__(position)
         
-        self._tower = towers.castle.Castle(self, max_health)
+        self._tower = castle.Castle(self, max_health)
     
     def is_clickable(self):
         return False

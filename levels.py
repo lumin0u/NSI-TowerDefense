@@ -1,8 +1,8 @@
 import math
 import random
 
-import mobs.robuste_mob
-import mobs.simple_mob
+import mobs.robuste_mob as robuste_mob
+import mobs.simple_mob as simple_mob
 import tiles
 from position import Position, TilePosition, Direction
 
@@ -71,26 +71,31 @@ class Level:
         return self._castle
 
 
-level1 = Level(tiles.SpawnerTile(TilePosition(-4, 0), Direction(1, 0)), tiles.CastleTile(TilePosition(4, 0), 100))
+ALL_LEVELS = ()
 
-level1.tiles.append(tiles.PathTile(TilePosition(-3, 0), Direction(-1, 0), Direction(1, 0)))
-level1.tiles.append(tiles.PathTile(TilePosition(-2, 0), Direction(-1, 0), Direction(1, 0)))
-level1.tiles.append(tiles.PathTile(TilePosition(-1, 0), Direction(-1, 0), Direction(1, 0)))
-level1.tiles.append(tiles.PathTile(TilePosition(0, 0), Direction(-1, 0), Direction(1, 0)))
-level1.tiles.append(tiles.PathTile(TilePosition(1, 0), Direction(-1, 0), Direction(1, 0)))
-level1.tiles.append(tiles.PathTile(TilePosition(2, 0), Direction(-1, 0), Direction(1, 0)))
-level1.tiles.append(tiles.PathTile(TilePosition(3, 0), Direction(-1, 0), Direction(1, 0)))
 
-level1.tiles.append(tiles.BuildingTile(TilePosition(-1, 1)))
-level1.tiles.append(tiles.BuildingTile(TilePosition(0, 1)))
-level1.tiles.append(tiles.BuildingTile(TilePosition(1, 1)))
-level1.tiles.append(tiles.BuildingTile(TilePosition(-2, -1)))
-level1.tiles.append(tiles.BuildingTile(TilePosition(-1, -1)))
-level1.tiles.append(tiles.BuildingTile(TilePosition(0, -1)))
-level1.tiles.append(tiles.BuildingTile(TilePosition(2, -1)))
+def build_levels():
+    global ALL_LEVELS
+    level1 = Level(tiles.SpawnerTile(TilePosition(-4, 0), Direction(1, 0)), tiles.CastleTile(TilePosition(4, 0), 100))
+    
+    level1.tiles.append(tiles.PathTile(TilePosition(-3, 0), Direction(-1, 0), Direction(1, 0)))
+    level1.tiles.append(tiles.PathTile(TilePosition(-2, 0), Direction(-1, 0), Direction(1, 0)))
+    level1.tiles.append(tiles.PathTile(TilePosition(-1, 0), Direction(-1, 0), Direction(1, 0)))
+    level1.tiles.append(tiles.PathTile(TilePosition(0, 0), Direction(-1, 0), Direction(1, 0)))
+    level1.tiles.append(tiles.PathTile(TilePosition(1, 0), Direction(-1, 0), Direction(1, 0)))
+    level1.tiles.append(tiles.PathTile(TilePosition(2, 0), Direction(-1, 0), Direction(1, 0)))
+    level1.tiles.append(tiles.PathTile(TilePosition(3, 0), Direction(-1, 0), Direction(1, 0)))
+    
+    level1.tiles.append(tiles.BuildingTile(TilePosition(-1, 1)))
+    level1.tiles.append(tiles.BuildingTile(TilePosition(0, 1)))
+    level1.tiles.append(tiles.BuildingTile(TilePosition(1, 1)))
+    level1.tiles.append(tiles.BuildingTile(TilePosition(-2, -1)))
+    level1.tiles.append(tiles.BuildingTile(TilePosition(-1, -1)))
+    level1.tiles.append(tiles.BuildingTile(TilePosition(0, -1)))
+    level1.tiles.append(tiles.BuildingTile(TilePosition(2, -1)))
+    
+    level1.waves.extend([
+        Wave({simple_mob.SimpleMob: 20, robuste_mob.RobusteMob: 5}),
+    ])
 
-level1.waves.extend([
-    Wave({mobs.simple_mob.SimpleMob: 20, mobs.robuste_mob.RobusteMob: 5}),
-])
-
-ALL_LEVELS = (level1,)
+    ALL_LEVELS = (level1, )

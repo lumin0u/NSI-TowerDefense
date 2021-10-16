@@ -1,12 +1,11 @@
-import towers.tower
+import towers.tower as tower
 import game
-import pictures
-import pygame
+from interface import pictures
 
 pictures.load_picture("castle", "towers/")
 
 
-class Castle(towers.tower.Tower):
+class Castle(tower.Tower):
     def __init__(self, tile, max_health):
         super().__init__(tile, 0)
         self._max_health = max_health

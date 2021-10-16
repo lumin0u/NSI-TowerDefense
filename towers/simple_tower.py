@@ -1,10 +1,10 @@
-import towers.tower
-import pictures
+import towers.tower as tower
+from interface import pictures
 
 pictures.load_picture("simple_tower", "towers/")
 
 
-class SimpleTower(towers.tower.Tower):
+class SimpleTower(tower.Tower):
     def __init__(self, tile):
         super().__init__(tile, 10)
         

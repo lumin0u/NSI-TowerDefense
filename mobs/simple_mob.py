@@ -1,14 +1,13 @@
-import graphics
-import pictures
-import mobs.mob
-from position import Position, TilePosition, Direction
+from interface import pictures, graphics
+import mobs.mob as mob
+from position import Position
 import main
 import game
 
 pictures.load_picture("carre", "mobs/")
 
 
-class SimpleMob(mobs.mob.Mob):
+class SimpleMob(mob.Mob):
     def __init__(self, game_, position: Position):
         attributes = {
             
@@ -45,4 +44,4 @@ class SimpleMob(mobs.mob.Mob):
         self.advance()
     
     def get_render(self, time):
-        return pictures.PICTURES["carre"].get_img(time)
+        return graphics.scaled(pictures.PICTURES["carre"].get_img(time), 0.35)

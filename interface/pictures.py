@@ -56,7 +56,7 @@ class Picture:
         if len(self._possible_images) == 0:
             raise RuntimeError("Missing resource for image " + name)
     
-    def get_img(self, time, pseudo_random=0):
+    def get_img(self, time, pseudo_random=0) -> pygame.Surface:
         """
             merci de n'utiliser que cette méthode
         """

@@ -1,13 +1,13 @@
-import pictures
-import mobs.mob
-from position import Position, TilePosition, Direction
+from interface import pictures
+import mobs.mob as mob
+from position import Position
 import main
 import game
 
 pictures.load_picture("boss", "mobs/")
 
 
-class BossMob(mobs.mob.Mob):
+class BossMob(mob.Mob):
     def __init__(self, game_, position: Position):
         attributes = {
             

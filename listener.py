@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-import graphics
+from interface import graphics
 import main
 from position import Position
 

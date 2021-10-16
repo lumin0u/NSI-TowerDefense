@@ -4,19 +4,24 @@ import pygame
 
 import levels
 import game
-import graphics
 import listener
-import pictures
-import ui
+from interface import pictures, ui, graphics
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 700
 
 TICK_REAL_TIME = 0.1
 
+current_tick = 0
 
-def tick(current_tick):
-    the_game.tick(current_tick)
+
+def tick():
+    the_game.tick(get_current_tick())
+
+
+def get_current_tick():
+    global current_tick
+    return current_tick
 
 
 def set_hand_reason(reason, value):
@@ -30,6 +35,7 @@ if __name__ == '__main__':
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE, vsync=True)
     
+    levels.build_levels()
     the_game = game.Game(levels.ALL_LEVELS[0], 200)
     
     interface = ui.Interface(the_game)
@@ -37,16 +43,14 @@ if __name__ == '__main__':
     last_frame = time.time()
     last_tick = time.time()
 
-    current_tick = 0
-
     pygame.mixer.init()
-    pygame.mixer.music.load("musics/buck.mp3")
+    pygame.mixer.music.load("musics/HOME - Resting State - 14.mp3")
     pygame.mixer.music.play(1000)
     pygame.mixer.music.set_volume((interface.volume / 4) ** 2)
     
     while True:
         if time.time() > TICK_REAL_TIME + last_tick:
-            tick(current_tick)
+            tick()
             current_tick += 1
             last_tick = time.time()
         
