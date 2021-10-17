@@ -1,4 +1,4 @@
-from interface import pictures
+from interface import pictures, graphics
 import mobs.mob as mob
 from position import Position
 import main
@@ -18,7 +18,7 @@ class RobusteMob(mob.Mob):
             # TICK_REAL_TIME devrait toujours etre 0.1 (secondes) mais il faut toujours utiliser la variable
             # mettre TICK_REAL_TIME comme speed revient a dire que le mob avancera d'une tuile par seconde
             # ici TICK_REAL_TIME / 2 veut dire qu'il mettra 2 secondes a traverser une tuile
-            "speed": main.TICK_REAL_TIME / 3,
+            "speed": main.TICK_REAL_TIME / 4,
             
             # les resistances du mob, pour chaque type d'attaque
             "resistances": {
@@ -44,4 +44,4 @@ class RobusteMob(mob.Mob):
         self.advance()
     
     def get_render(self, time):
-        return pictures.PICTURES["robuste"].get_img(time)
+        return graphics.scaled(pictures.PICTURES["robuste"].get_img(time), 0.3)
