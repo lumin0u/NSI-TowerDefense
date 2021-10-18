@@ -30,7 +30,7 @@ class Wave:
         max_mob_count = max((v for v in self._mobs.values()))
         for mob_type in self._remaining:
             
-            r = max_mob_count / self._mobs[mob_type] * 6 * (math.sin(current_tick / 10) + 1.5)
+            r = max_mob_count / self._mobs[mob_type] * 6 * (math.sin(current_tick / 10) + 2)
             
             if self._remaining[mob_type] > 0 and random.randint(0, max(0, int(r) + random.randint(-1, 1))) <= 0:
                 to_spawn.append(mob_type)
@@ -59,7 +59,7 @@ class Level:
         return self._tiles
     
     @property
-    def waves(self) -> list[Wave]:
+    def waves(self) -> list:
         return self._waves
     
     @property
