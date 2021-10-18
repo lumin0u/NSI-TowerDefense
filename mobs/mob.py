@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from entity import Entity
 from position import Position, TilePosition, Direction
 from copy import copy
 import random
@@ -6,7 +7,7 @@ import game
 import tiles
 
 
-class Mob(ABC):
+class Mob(Entity, ABC):
     def __init__(self, game_, position: Position, attributes: dict):
         # on copie le dictionnaire pour pouvoir le modifier au besoin
         
@@ -60,6 +61,9 @@ class Mob(ABC):
     
     def damage(self, damage: float, type_):
         self._health -= damage / self._attributes["resistances"][type_]
+    
+    def is_dead(self):
+        return self._health <= 0
         
     @abstractmethod
     def get_render(self, time):
