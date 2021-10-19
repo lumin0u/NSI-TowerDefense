@@ -35,7 +35,7 @@ class Game:
     def tick(self, current_tick):
         for mob_type in self.level.waves[self._wave].next_mobs(current_tick):
             shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)
-            self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift))
+            self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, 1))#TODO le loup 
         
         for entity in self._entities:
             if entity.is_dead():
