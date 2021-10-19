@@ -8,7 +8,7 @@ import tiles
 
 
 class Mob(Entity, ABC):
-    def __init__(self, game_, position: Position, attributes: dict):
+    def __init__(self, game_, position: Position, attributes: dict, health_multiplier):
         # on copie le dictionnaire pour pouvoir le modifier au besoin
         
         attributes = attributes.copy()
@@ -21,6 +21,7 @@ class Mob(Entity, ABC):
         
         self._attributes = attributes
         self._attributes["resistances"][game.DAMAGE_TYPE_ABSOLUTE] = 1
+        self._health_multiplier = health_multiplier
         self._health = self.max_health
     
     @abstractmethod
@@ -29,7 +30,7 @@ class Mob(Entity, ABC):
     
     @property
     def max_health(self) -> float:
-        return float(self._attributes["health"])
+        return float(self._attributes["health"])*self._health_multiplier
     
     @property
     def speed(self) -> float:
@@ -68,4 +69,3 @@ class Mob(Entity, ABC):
     @abstractmethod
     def get_render(self, time):
         pass
-    

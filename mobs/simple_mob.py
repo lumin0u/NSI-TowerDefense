@@ -8,7 +8,7 @@ pictures.load_picture("carre", "mobs/")
 
 
 class SimpleMob(mob.Mob):
-    def __init__(self, game_, position: Position):
+    def __init__(self, game_, position: Position, health_multiplier):
         attributes = {
             
             # la vie maximum
@@ -35,7 +35,7 @@ class SimpleMob(mob.Mob):
                 # le type DAMAGE_TYPE_ABSOLUTE est renseigné par défaut dans mob.py
             },
         }
-        super().__init__(game_, position, attributes)
+        super().__init__(game_, position, attributes, health_multiplier)
     
     def tick(self, current_tick):
         # a chaque tick
