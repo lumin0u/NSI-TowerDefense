@@ -37,7 +37,7 @@ class RobusteMob(mob.Mob):
         }
         super().__init__(game_, position, attributes, health_multiplier)
     
-    def tick(self, current_tick):
+    def tick(self, current_tick, game_):
         # a chaque tick
         
         # le mob avance

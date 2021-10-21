@@ -25,7 +25,7 @@ class Mob(Entity, ABC):
         self._health = self.max_health
     
     @abstractmethod
-    def tick(self, current_tick):
+    def tick(self, current_tick, game_):
         pass
     
     @property
