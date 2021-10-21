@@ -13,3 +13,4 @@ class SimpleTower(tower.Tower):
     
     def get_render(self, time):
         return pictures.PICTURES["simple_tower"].get_img(time)
+

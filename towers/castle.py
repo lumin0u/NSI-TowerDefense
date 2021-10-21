@@ -7,7 +7,7 @@ pictures.load_picture("castle", "towers/")
 
 class Castle(tower.Tower):
     def __init__(self, tile, max_health):
-        super().__init__(tile, 0)
+        super().__init__(tile, 0, 0)
         self._max_health = max_health
         self._health = float(max_health)
         

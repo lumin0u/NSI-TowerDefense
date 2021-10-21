@@ -20,7 +20,7 @@ class Projectile(Entity, ABC):
         else:
             return self._target
     
-    def tick(self, current_tick):
+    def tick(self, current_tick, game_):
         if isinstance(self._target, Mob) and self._target.is_dead():
             self._target = self._target.position
         
