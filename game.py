@@ -41,9 +41,9 @@ class Game:
             if entity.is_dead():
                 self.remove_entity(entity)
             else:
-                entity.tick(current_tick)
+                entity.tick(current_tick, self)
         for tower in (tile.tower for tile in self.level.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
-            tower.tick(current_tick)
+            tower.tick(current_tick, self)
         
     @property
     def mobs(self):
