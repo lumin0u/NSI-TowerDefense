@@ -13,6 +13,9 @@ pictures.load_picture("volume_1", "buttons/")
 pictures.load_picture("volume_2", "buttons/")
 
 
+TOOLBOX_WIDTH = 150
+
+
 class HalfState:
     def __init__(self):
         self.camera_pos = Position(0, 0)
@@ -39,7 +42,10 @@ class Interface:
                 button.onclick()
                 self._click_start = "button" + str(hash(button.position))
                 return
-        self._click_start = "free"
+        if pygame.mouse.get_pos()[0] + TOOLBOX_WIDTH > main.SCREEN_WIDTH:
+            self._click_start = "toolbox"
+        else:
+            self._click_start = "free"
     
     def can_free_move(self):
         return self._click_start == "free"
@@ -115,10 +121,11 @@ def show_ui(interface, game_, screen, time, last_frame):
 
     add_button(screen, interface, volume)
     
-    image = graphics.highlight(pygame.Surface((200, main.SCREEN_HEIGHT)), 0.2, 5, 0.4)
-    #TODO faire mieux la
+    image = pygame.Surface((TOOLBOX_WIDTH + 10, main.SCREEN_HEIGHT + 10)).convert_alpha()
+    image.fill((0, 0, 0, 0))
+    image = graphics.highlight(image, 0.15, 2, 0.4)
     
-    screen.blit(image, (main.SCREEN_WIDTH - 200, 0))
+    screen.blit(image, (main.SCREEN_WIDTH - TOOLBOX_WIDTH, -5))
     
     font = pygame.font.Font(None, 30)
     screen.blit(font.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))
