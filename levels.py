@@ -1,14 +1,17 @@
 import math
 import random
+from copy import copy
 
-import mobs.robuste_mob as robuste_mob
-import mobs.simple_mob as simple_mob
+import main
+from mobs import robuste_mob
+from mobs import simple_mob
 import tiles
 from position import Position, TilePosition, Direction
+from towers import simple_tower
 
 
 class Wave:
-    def __init__(self, mobs_):
+    def __init__(self, mobs_: dict[type, int]):
         """
             mobs est un dictionnaire avec:
               pour clés les classes des mobs
@@ -16,26 +19,37 @@ class Wave:
         """
         self._remaining = mobs_.copy()
         self._mobs = mobs_
+        self._scheduler = {}
+        
         # start_date est exprimé en ticks
         self.start_date = 0
     
     def start(self, start_date):
         self.start_date = start_date
+        buffer = copy(self._mobs)
+        max_mob_count = max((v for v in self._mobs.values()))
+        for mob in buffer:
+            t = 0
+            index = 0
+            while buffer[mob] > 0:
+                wait = max(2, int((math.sin(t) * 0.8 + 0.9) ** 2 * random.random() * 12 * max_mob_count / self._mobs[mob]))
+                wait += random.randint(0, 4)
+                wait *= main.TICK_REAL_TIME / 0.1
+                if wait > 0:
+                    index += wait
+                    if index not in self._scheduler:
+                        self._scheduler[index] = []
+                    self._scheduler[index].append(mob)
+                    buffer[mob] -= 1
+                t += 1
     
     def is_ended(self):
         return all((v == 0 for v in self._remaining.values()))
     
     def next_mobs(self, current_tick):
-        to_spawn = []
-        max_mob_count = max((v for v in self._mobs.values()))
-        for mob_type in self._remaining:
-            
-            r = max_mob_count / self._mobs[mob_type] * 6 * (math.sin(current_tick / 10) + 2)
-            
-            if self._remaining[mob_type] > 0 and random.randint(0, max(0, int(r) + random.randint(-1, 1))) <= 0:
-                to_spawn.append(mob_type)
-                self._remaining[mob_type] -= 1
-        return to_spawn
+        if current_tick - self.start_date in self._scheduler:
+            return self._scheduler[current_tick - self.start_date]
+        return []
 
 
 class Level:
@@ -93,6 +107,11 @@ def build_levels():
     level1.tiles.append(tiles.BuildingTile(TilePosition(-1, -1)))
     level1.tiles.append(tiles.BuildingTile(TilePosition(0, -1)))
     level1.tiles.append(tiles.BuildingTile(TilePosition(2, -1)))
+    
+    for tile in level1.tiles:
+        if type(tile) is tiles.BuildingTile:
+            tile.tower = simple_tower.SimpleTower(tile)
+            break
     
     level1.waves.extend([
         Wave({simple_mob.SimpleMob: 20, robuste_mob.RobusteMob: 5}),

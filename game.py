@@ -1,6 +1,7 @@
 import random
 from copy import deepcopy
 
+import main
 import mobs.mob as mob
 import position
 import tiles
@@ -21,6 +22,7 @@ class Game:
         self._money = money
         self._id_inc = 0
         self._wave = 0
+        self._level.waves[0].start(main.get_current_tick())
     
     @property
     def level(self):
@@ -35,7 +37,7 @@ class Game:
     def tick(self, current_tick):
         for mob_type in self.level.waves[self._wave].next_mobs(current_tick):
             shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)
-            self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, 1))#TODO le loup 
+            self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, 1))  # TODO le loup
         
         for entity in self._entities:
             if entity.is_dead():

@@ -15,11 +15,17 @@ class Tower(ABC):
         if current_tick - self._last_shot > self._shoot_delay:
             if self._target is not None:
                 self.shoot()
-                self._last_shot = self._current_tick
-        for mob in game_.mobs:
-            if mob.position.distance(self._tile.position.middle()) <= self._shoot_range:
-                self._target = mob
-            
+                self._last_shot = current_tick
+                
+        # on change de target s'il est trop loin ou mort
+        if self._target is not None and (self._target.is_dead() or self._target.position.distance(self._tile.position.middle()) > self._shoot_range):
+            self._target = None
+        
+        # et on ne change pas sinon
+        if self._target is None:
+            for mob in game_.mobs:
+                if mob.position.distance(self._tile.position.middle()) <= self._shoot_range:
+                    self._target = mob
     
     @abstractmethod
     def shoot(self):
@@ -32,6 +38,3 @@ class Tower(ABC):
     @property
     def tile(self):
         return self._tile
-
-      
-    
