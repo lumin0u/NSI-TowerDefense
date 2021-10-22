@@ -23,10 +23,14 @@ class Mob(Entity, ABC):
         self._attributes["resistances"][game.DAMAGE_TYPE_ABSOLUTE] = 1
         self._health_multiplier = health_multiplier
         self._health = self.max_health
+        self._ticks_lived = 0
     
-    @abstractmethod
+    @property
+    def ticks_lived(self):
+        return self._ticks_lived
+    
     def tick(self, current_tick, game_):
-        pass
+        self._ticks_lived += 1
     
     @property
     def max_health(self) -> float:

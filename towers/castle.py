@@ -2,8 +2,6 @@ import towers.tower as tower
 import game
 from interface import pictures
 
-pictures.load_picture("castle", "towers/")
-
 
 class Castle(tower.Tower):
     def __init__(self, tile, max_health):
@@ -28,5 +26,5 @@ class Castle(tower.Tower):
         source.damage(amount, game.DAMAGE_TYPE_ABSOLUTE)
         
     def get_render(self, time):
-        img = pictures.PICTURES["castle"].get_img(time, hash(self.tile.position))
+        img = pictures.PICTURES["castle"].get_img(hash(self.tile.position))
         return img

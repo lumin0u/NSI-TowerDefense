@@ -4,11 +4,9 @@ from position import Position
 import main
 import game
 
-pictures.load_picture("example_mob", "mobs/")
-
 
 class ExampleMob(mob.Mob):
-    def __init__(self, game_, position: Position):
+    def __init__(self, game_, position: Position, health_multiplier):
         attributes = {
             
             # la vie maximum
@@ -35,13 +33,14 @@ class ExampleMob(mob.Mob):
                 # le type DAMAGE_TYPE_ABSOLUTE est renseigné par défaut dans mob.py
             },
         }
-        super().__init__(game_, position, attributes)
+        super().__init__(game_, position, attributes, health_multiplier)
     
     def tick(self, current_tick, game_):
+        super().tick(current_tick, game_)
         # a chaque tick
         
         # le mob avance
         self.advance()
     
     def get_render(self, time):
-        return graphics.scaled(pictures.PICTURES["example_mob"].get_img(time), 1)
+        return pictures.PICTURES["example_mob"].get_img().final_scaled(1)

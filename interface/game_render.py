@@ -1,29 +1,24 @@
-import pygame
 import math
 
+import pygame
+
 import main
-import interface.ui as ui
-from position import Position, Direction
+from position import Direction
 import interface.graphics as graphics
 
 
 def _render_image_game(screen, interface, image, game_position, centered, image_scale=1.):
-    graphics_settings = interface.graphics_settings
     half_state = interface.half_state
-    
-    if type(image) is tuple:
-        image_scale = image[1] * image_scale
-        image = image[0]
     
     corner_draw = graphics.get_pixel_pos(game_position, half_state.camera_pos, half_state.zoom)
     img_new_size = (math.ceil(graphics.PIXEL_PER_ZOOM * half_state.zoom * image_scale),) * 2
+    n_scale = image.final_size
+    img_new_size = (img_new_size[0] * n_scale[0], img_new_size[1] * n_scale[1])
     
     if centered:
         corner_draw -= Direction(img_new_size[0] / 2, img_new_size[1] / 2)
 
     corner_draw = corner_draw.to_tuple()
-    
-    rect = corner_draw + img_new_size
     
     graphics.draw_image(screen, corner_draw, image, img_new_size)
     
@@ -42,20 +37,14 @@ def _render_game(interface, screen, game_, time, last_frame):
     
     pygame.draw.rect(screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
     
-    elapsed_time = max(0.01, time - last_frame)
+    elapsed_time = max(0.01, (time - last_frame))
     
     half_state.zoom = _pos_lerp(graphics_settings.zoom, half_state.zoom, elapsed_time)
     
     half_state.camera_pos = _pos_lerp(graphics_settings.camera_pos, half_state.camera_pos, elapsed_time)
     
     for tile in game_.level.tiles:
-        img_new_size = _render_image_game(screen, interface, tile.get_render(time), tile.position, False)
-        
-        """if tile.is_clickable():
-            img = pygame.surface.Surface((img_new_size.w, img_new_size.h)).convert_alpha()
-            img.fill((255, 255, 255, 0))
-            button = Button(interface, tile.onclick, (img_new_size.x, img_new_size.y), img, graphics.highlight(img, 0.15, 2, 0.8), "building_" + str(hash(tile.position)))
-            add_button(screen, interface, button)"""
+        _render_image_game(screen, interface, tile.get_render(time), tile.position, False)
         
     for mob in game_.mobs:
         if mob.id_ not in half_state.mobs_position:
@@ -63,4 +52,6 @@ def _render_game(interface, screen, game_, time, last_frame):
         
         half_state.mobs_position[mob.id_] = _pos_lerp(mob.position, half_state.mobs_position[mob.id_], elapsed_time)
         
-        _render_image_game(screen, interface, mob.get_render(time), half_state.mobs_position[mob.id_], True)
+        mob_img = mob.get_render(time).shaded(min(1, (mob.ticks_lived / 20) ** 3 + elapsed_time * 10))
+        
+        _render_image_game(screen, interface, mob_img, half_state.mobs_position[mob.id_], True)

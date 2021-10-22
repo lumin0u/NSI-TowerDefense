@@ -4,8 +4,6 @@ from position import Position
 import main
 import game
 
-pictures.load_picture("boss", "mobs/")
-
 
 class BossMob(mob.Mob):
     def __init__(self, game_, position: Position, health_multiplier):
@@ -38,10 +36,11 @@ class BossMob(mob.Mob):
         super().__init__(game_, position, attributes, health_multiplier)
     
     def tick(self, current_tick, game_):
+        super().tick(current_tick, game_)
         # a chaque tick
         
         # le mob avance
         self.advance()
     
     def get_render(self, time):
-        return pictures.PICTURES["boss"].get_img(time)
+        return pictures.PICTURES["boss"].get_img().final_scaled(0.5)

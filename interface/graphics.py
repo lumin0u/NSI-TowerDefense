@@ -40,11 +40,12 @@ def draw_image(surface: pygame.Surface, position: tuple, image, new_size: tuple 
     # n'afficher que les images qui sont visibles dans la fenetre
     if new_size is not None:
         if surface.get_rect().colliderect(pygame.rect.Rect(*(position + new_size))):
-            image = pygame.transform.smoothscale(image, new_size)
+            image = image.final_image()
+            image = pygame.transform.smoothscale(image, (int(new_size[0]), int(new_size[1])))
             surface.blit(image, position)
     else:
         if surface.get_rect().colliderect(image.get_rect().move(position)):
-            surface.blit(image, position)
+            surface.blit(image.final_image(), position)
 
 
 def highlight(base_image: pygame.Surface, highlight_alpha: float, border_width: float, border_alpha: float):
@@ -65,7 +66,3 @@ def highlight(base_image: pygame.Surface, highlight_alpha: float, border_width: 
     image1 = base_image.copy()
     image1.blit(image, (0, 0))
     return image1
-
-
-def scaled(image, scale):
-    return image, scale

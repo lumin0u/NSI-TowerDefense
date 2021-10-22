@@ -4,8 +4,6 @@ from position import Position
 import main
 import game
 
-pictures.load_picture("carre", "mobs/")
-
 
 class SimpleMob(mob.Mob):
     def __init__(self, game_, position: Position, health_multiplier):
@@ -38,10 +36,11 @@ class SimpleMob(mob.Mob):
         super().__init__(game_, position, attributes, health_multiplier)
     
     def tick(self, current_tick, game_):
+        super().tick(current_tick, game_)
         # a chaque tick
         
         # le mob avance
         self.advance()
     
     def get_render(self, time):
-        return graphics.scaled(pictures.PICTURES["carre"].get_img(time), 0.25)
+        return pictures.PICTURES["carre"].get_img().final_scaled(0.25)

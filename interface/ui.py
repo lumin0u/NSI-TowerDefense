@@ -8,10 +8,6 @@ from position import Position, Direction
 import interface.graphics as graphics
 from interface.game_render import _render_game
 
-pictures.load_picture("volume_0", "buttons/")
-pictures.load_picture("volume_1", "buttons/")
-pictures.load_picture("volume_2", "buttons/")
-
 
 TOOLBOX_WIDTH = 150
 
@@ -97,8 +93,6 @@ def render(interface, game_, screen, time, last_frame):
     
 
 def add_button(screen, interface, button):
-    clicking = pygame.mouse.get_pressed(3)[0]
-    
     if pygame.rect.Rect(button.rect.move(button.position)).collidepoint(
             pygame.mouse.get_pos()):
         graphics.draw_image(screen, button.position, button.hover_img)
@@ -109,9 +103,10 @@ def add_button(screen, interface, button):
     
     interface.buttons.append(button)
 
+
 def show_ui(interface, game_, screen, time, last_frame):
-    volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img(time)
-    volume_hover_img = graphics.highlight(volume_img, 0.15, 0, 0)
+    volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img()
+    volume_hover_img = volume_img.copy().highlighted(0.15, 0, 0)
     
     def volume_onclick():
         interface.volume = (interface.volume - 1) % 3
