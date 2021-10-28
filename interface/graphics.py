@@ -8,20 +8,6 @@ cursor_hand_reasons = {}
 EMPTY_IMAGE = pygame.Surface((0, 0))
 
 
-class GraphicsSettings:
-    def __init__(self):
-        self._zoom = 1
-        self.camera_pos = Position(0, 0)
-    
-    @property
-    def zoom(self):
-        return self._zoom
-    
-    @zoom.setter
-    def zoom(self, value):
-        self._zoom = max(0.3, min(3, value))
-
-
 PIXEL_PER_ZOOM = 40
 
 
@@ -37,15 +23,19 @@ def draw_image(surface: pygame.Surface, position: tuple, image, new_size: tuple 
     if image.get_rect().w == 0 and image.get_rect().h == 0:
         return
     
+    built_image: pygame.Surface = image.build_image()
+    
     # n'afficher que les images qui sont visibles dans la fenetre
     if new_size is not None:
         if surface.get_rect().colliderect(pygame.rect.Rect(*(position + new_size))):
-            image = image.final_image()
-            image = pygame.transform.smoothscale(image, (int(new_size[0]), int(new_size[1])))
-            surface.blit(image, position)
+            if image.smoothscaling:
+                built_image = pygame.transform.smoothscale(built_image, (int(new_size[0]), int(new_size[1])))
+            else:
+                built_image = pygame.transform.scale(built_image, (int(new_size[0]), int(new_size[1])))
+            surface.blit(built_image, position)
     else:
         if surface.get_rect().colliderect(image.get_rect().move(position)):
-            surface.blit(image.final_image(), position)
+            surface.blit(built_image, position)
 
 
 def highlight(base_image: pygame.Surface, highlight_alpha: float, border_width: float, border_alpha: float):

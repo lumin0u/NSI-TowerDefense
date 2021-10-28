@@ -12,6 +12,7 @@ SCREEN_HEIGHT = 700
 
 TICK_REAL_TIME = 0.05
 
+global current_tick
 current_tick = 0
 
 
@@ -20,7 +21,6 @@ def tick():
 
 
 def get_current_tick():
-    global current_tick
     return current_tick
 
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
             last_tick = time.time()
         
         this_frame = time.time()
-        ui.render(interface, the_game, screen, this_frame, last_frame)
+        ui.render(interface, the_game, screen, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
         
         if any((v for v in graphics.cursor_hand_reasons.values())):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)

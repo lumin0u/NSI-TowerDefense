@@ -122,7 +122,6 @@ class BuildingTile(Tile):
     def onclick(self):
         if not self.is_clickable():
             return
-        # TODO show popup
         pass
 
 
