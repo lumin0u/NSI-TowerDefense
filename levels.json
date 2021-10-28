@@ -1,0 +1,31 @@
+[
+  {
+    "spawner": [-4, 0],
+    "castle_health": 100,
+    "path": "EEEEEEEE",
+    "tower_slots": [
+      [-1, 1],
+      [0, 1],
+      [1, 1],
+      [-2, -1],
+      [-1, -1],
+      [0, -1],
+      [2, -1]
+    ],
+    "waves": [
+      {
+        "preparation": 600,
+        "mobs": {
+          "simple": 5
+        }
+      },
+      {
+        "preparation": 400,
+        "mobs": {
+          "boss": 1
+        },
+        "boss_health": 500
+      }
+    ]
+  }
+]

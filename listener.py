@@ -21,7 +21,7 @@ def zoom(interface: ui.Interface, factor):
     shift = interface.camera_pos
     
     # on déplace la caméra pour donner l'impression d'un zoom vers le curseur
-    interface.camera_pos = graphics.get_game_pos(Position(mx, my), shift, last_zoom)
+    interface.camera_pos = graphics.get_game_pos(Position(mx, my), interface)
 
 
 def catch_event(event, interface):
@@ -46,11 +46,15 @@ def catch_event(event, interface):
         if event.button == 1:
             interface.mouse_down(1, pygame.mouse.get_pos())
         elif event.button == 4:
-            if interface.zoom < 5:
+            if interface.zoom < 3:
                 zoom(interface, 10 / 9)
         elif event.button == 5:
-            if interface.zoom > 0.5:
+            if interface.zoom > 0.7:
                 zoom(interface, 9 / 10)
+    
+    elif event.type == pygame.MOUSEBUTTONUP:
+        if event.button == 1:
+            interface.mouse_up(1, pygame.mouse.get_pos())
     
     elif event.type == pygame.VIDEORESIZE:
         main.SCREEN_WIDTH = event.w

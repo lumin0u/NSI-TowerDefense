@@ -4,6 +4,7 @@ import pygame
 
 import interface.pictures as pictures
 import main
+import tiles
 from position import Position, Direction
 import interface.graphics as graphics
 from interface import game_render
@@ -40,13 +41,17 @@ class Interface:
     def mouse_down(self, mouse_button, mouse_pos):
         for button in self.buttons:
             if button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
-                button.onclick()
                 self._click_start = "button" + str(hash(button.position))
                 return
-        if pygame.mouse.get_pos()[0] + TOOLBOX_WIDTH > main.SCREEN_WIDTH:
-            self._click_start = "toolbox"
-        else:
-            self._click_start = "free"
+    
+    def mouse_up(self, mouse_button, mouse_pos):
+        for button in self.buttons:
+            if "button" + str(hash(button.position)) == self._click_start and button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
+                button.onclick()
+                return
+        for tile in self.game.level.tiles:
+            if tile.is_clickable() and tile.get_on_screen_rect(self).collidepoint(pygame.mouse.get_pos()):
+                tile.onclick()
     
     def can_free_move(self):
         return self._click_start == "free"
@@ -71,7 +76,7 @@ class Button:
     @property
     def hover_img(self):
         if self._interface.is_clicking_button(self):
-            return graphics.highlight(self._hover_img, 0.3, 0, 0)
+            return self._hover_img.highlighted(0.3, 0, 0)
         return self._hover_img
     
     @property
@@ -87,16 +92,26 @@ class Button:
         return self._id
 
 
-def render(interface, game_, screen, time, last_frame, relative_time):
+def render(interface, game_, screen, current_tick, time, last_frame, relative_time):
     interface.buttons = []
-    
+
     delta = time - last_frame
+    
+    if pygame.key.get_pressed()[pygame.K_UP] or pygame.key.get_pressed()[pygame.K_z]:
+        interface.camera_pos += Direction(0, -8 * delta / math.sqrt(interface.zoom))
+    if pygame.key.get_pressed()[pygame.K_DOWN] or pygame.key.get_pressed()[pygame.K_s]:
+        interface.camera_pos += Direction(0, 8 * delta / math.sqrt(interface.zoom))
+    if pygame.key.get_pressed()[pygame.K_LEFT] or pygame.key.get_pressed()[pygame.K_q]:
+        interface.camera_pos += Direction(-8 * delta / math.sqrt(interface.zoom), 0)
+    if pygame.key.get_pressed()[pygame.K_RIGHT] or pygame.key.get_pressed()[pygame.K_d]:
+        interface.camera_pos += Direction(8 * delta / math.sqrt(interface.zoom), 0)
+    
     interface.half_zoom = lerp(interface.half_zoom, interface.zoom, delta + 0.1)
     interface.half_camera_pos = lerp(interface.half_camera_pos, interface.camera_pos, delta + 0.1)
     
-    game_render.render_game(interface, screen, game_, time, last_frame, relative_time)
+    game_render.render_game(interface, screen, current_tick, game_, time, last_frame, relative_time)
     
-    show_ui(interface, game_, screen, time, last_frame, relative_time)
+    show_ui(interface, game_, screen, current_tick, time, last_frame, relative_time)
     
     pygame.display.update()
     
@@ -113,7 +128,7 @@ def add_button(screen, interface, button):
     interface.buttons.append(button)
 
 
-def show_ui(interface, game_, screen, time, last_frame, relative_time):
+def show_ui(interface, game_, screen, current_tick, time, last_frame, relative_time):
     volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img()
     volume_hover_img = volume_img.copy().highlighted(0.15, 0, 0)
     
@@ -125,11 +140,10 @@ def show_ui(interface, game_, screen, time, last_frame, relative_time):
 
     add_button(screen, interface, volume)
     
-    image = pygame.Surface((TOOLBOX_WIDTH + 10, main.SCREEN_HEIGHT + 10)).convert_alpha()
+    """image = pygame.Surface((TOOLBOX_WIDTH + 10, main.SCREEN_HEIGHT + 10)).convert_alpha()
     image.fill((0, 0, 0, 0))
     image = graphics.highlight(image, 0.15, 2, 0.4)
     
-    screen.blit(image, (main.SCREEN_WIDTH - TOOLBOX_WIDTH, -5))
+    screen.blit(image, (main.SCREEN_WIDTH - TOOLBOX_WIDTH, -5))"""
     
-    font = pygame.font.Font(None, 30)
-    screen.blit(font.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))
+    screen.blit(graphics.FPS_FONT.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))

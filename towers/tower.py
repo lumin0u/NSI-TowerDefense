@@ -1,4 +1,8 @@
 from abc import ABC, abstractmethod
+
+import pygame
+
+from interface import pictures, graphics
 from position import Position, TilePosition, Direction
 import game
 
@@ -10,6 +14,7 @@ class Tower(ABC):
         self._shoot_delay = shoot_delay
         self._last_shot = 0
         self._shoot_range = shoot_range
+        self._level = 0
     
     def tick(self, current_tick, game_):
         if current_tick - self._last_shot > self._shoot_delay:
@@ -34,6 +39,13 @@ class Tower(ABC):
     @abstractmethod
     def get_render(self, time):
         pass
+    
+    def _add_level(self, img: pictures.MyImage):
+        # if self._level > 0:
+        level_img = pygame.Surface((img.get_width() // 10, img.get_height() // 10))
+        level_img.blit(graphics.TOWER_LVL_FONT.render(str(self._level + 1), True, (0, 200, 0)), (0, 0))
+        img.blit(graphics.TOWER_LVL_FONT.render(str(self._level + 1), True, (0, 200, 0)), (0, 0))
+        return img
     
     @property
     def tile(self):

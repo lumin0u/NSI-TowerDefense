@@ -5,6 +5,7 @@ import main
 import mobs.mob as mob
 import position
 import tiles
+from mobs import boss_mob
 
 DAMAGE_TYPE_RAW = 0
 DAMAGE_TYPE_FIRE = 1
@@ -18,7 +19,7 @@ GAME_INSTANCE = None
 
 
 class Game:
-    def __init__(self, level_, money):
+    def __init__(self, level_, money, current_tick):
         global GAME_INSTANCE
         GAME_INSTANCE = self
         
@@ -27,13 +28,28 @@ class Game:
         self._money = money
         self._id_inc = 0
         self._wave = 0
-        self._level.waves[0].start(main.get_current_tick())
-        self._btwn_waves = False
-        self._next_wave_date = 0
+        self._btwn_waves = True
+        self._next_wave_date = self.current_wave().preparation
     
     @property
     def level(self):
         return self._level
+    
+    @property
+    def wave(self):
+        return self._wave
+    
+    @property
+    def btwn_waves(self):
+        return self._btwn_waves
+    
+    @property
+    def next_wave_date(self):
+        return self._next_wave_date
+    
+    @next_wave_date.setter
+    def next_wave_date(self, value):
+        self._next_wave_date = value
     
     def add_entity(self, entity):
         self._entities.append(entity)
@@ -48,18 +64,21 @@ class Game:
         if self._btwn_waves:
             if self._next_wave_date <= current_tick:
                 self._btwn_waves = False
-                self._wave += 1
                 self.current_wave().start(current_tick)
         
-        elif self.current_wave().is_ended(current_tick):
+        elif self.current_wave().is_ended(current_tick - 1):
             self._btwn_waves = True
-            self._next_wave_date = current_tick + 5 / main.TICK_REAL_TIME
+            self._wave += 1
+            self._next_wave_date = current_tick + self.current_wave().preparation
             
         if not self._btwn_waves:
             count_mult = self._wave // len(self.level.waves)
             for mob_type in self.current_wave().next_mobs(current_tick) * (1 + count_mult):
+                health = 5 + 4 * self._wave
+                if mob_type is boss_mob.BossMob:
+                    health = self.current_wave().boss_health
                 shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)
-                self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, 5 + 4 * self._wave))
+                self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, health))
         
         for entity in self._entities:
             if entity.is_dead():

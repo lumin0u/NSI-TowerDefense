@@ -1,6 +1,7 @@
 import time
 
 import pygame
+pygame.init()
 
 import levels
 import game
@@ -12,36 +13,28 @@ SCREEN_HEIGHT = 700
 
 TICK_REAL_TIME = 0.05
 
-global current_tick
-current_tick = 0
 
-
-def tick():
-    the_game.tick(get_current_tick())
-
-
-def get_current_tick():
-    return current_tick
+def _tick(current_tick):
+    game.GAME_INSTANCE.tick(current_tick)
 
 
 def set_hand_reason(reason, value):
     graphics.cursor_hand_reasons[reason] = value
-
-
-if __name__ == '__main__':
-    pygame.init()
     
+
+def main():
     pictures.load_pictures()
     
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE, vsync=True)
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE)
     
     levels.build_levels()
-    the_game = game.Game(levels.ALL_LEVELS[0], 200)
+    the_game = game.Game(levels.ALL_LEVELS[0], 200, 0)
     
     interface = ui.Interface(the_game)
     
     last_frame = time.time()
     last_tick = time.time()
+    current_tick = 0
 
     pygame.mixer.init()
     pygame.mixer.music.load("musics/HOME - Resting State - 14.mp3")
@@ -50,12 +43,12 @@ if __name__ == '__main__':
     
     while True:
         if time.time() > TICK_REAL_TIME + last_tick:
-            tick()
+            _tick(current_tick)
             current_tick += 1
             last_tick = time.time()
         
         this_frame = time.time()
-        ui.render(interface, the_game, screen, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
+        ui.render(interface, the_game, screen, current_tick, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
         
         if any((v for v in graphics.cursor_hand_reasons.values())):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -67,3 +60,7 @@ if __name__ == '__main__':
         
         time.sleep(max(0.0, 0.01 - this_frame + last_frame))
         last_frame = this_frame
+
+
+if __name__ == '__main__':
+    main()

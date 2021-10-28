@@ -5,11 +5,12 @@ import pygame
 from position import TilePosition, Direction
 import towers.castle as castle
 from interface import pictures, graphics
+from towers import simple_tower
 
 
 class Tile(ABC):
     def __init__(self, position: TilePosition):
-        self._position = position
+        self._position = TilePosition.of(position)
     
     @property
     def position(self):
@@ -26,6 +27,11 @@ class Tile(ABC):
     @abstractmethod
     def onclick(self):
         pass
+    
+    def get_on_screen_rect(self, interface):
+        corner_lu = graphics.get_pixel_pos(self.position, interface)
+        corner_rb = graphics.get_pixel_pos(self.position + Direction(1, 1), interface)
+        return pygame.Rect(*(corner_lu.to_tuple() + (corner_rb - corner_lu).to_tuple()))
 
 
 class EmptyTile(Tile):
@@ -117,12 +123,16 @@ class BuildingTile(Tile):
         return img
     
     def is_clickable(self):
-        return self.is_empty()
+        return True
     
     def onclick(self):
         if not self.is_clickable():
             return
-        pass
+        
+        if self.is_empty():
+            self.tower = simple_tower.SimpleTower(self)
+        else:
+            self.tower._level += 1
 
 
 class SpawnerTile(PathTile):

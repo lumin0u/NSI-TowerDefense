@@ -9,13 +9,12 @@ class Projectile(Entity, ABC):
     def __init__(self, position, target, speed):
         """
             target est une position ou un mob
-            speed est exprimé en tiles/seconde
+            speed est exprimé en tiles/tick
         """
         super().__init__(game.GAME_INSTANCE, position)
         self._target = target
         self._position = position
-        # l'attribut speed est, lui, exprimé en tiles/tick
-        self._speed = speed * main.TICK_REAL_TIME
+        self._speed = speed
         self._dead = False
     
     def target_position(self):

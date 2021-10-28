@@ -66,7 +66,7 @@ class Position:
 	
 	@staticmethod
 	def of(position):
-		if isinstance(position, tuple):
+		if isinstance(position, tuple) or isinstance(position, list):
 			return Position(position[0], position[1])
 		elif isinstance(position, Position):
 			return Position(position.x, position.y)
@@ -88,8 +88,11 @@ class TilePosition(Position):
 		return Position(self.x + 0.5, self.y + 0.5)
 	
 	@staticmethod
-	def of(position: Position):
-		return TilePosition(position.x, position.y)
+	def of(position):
+		if isinstance(position, tuple) or isinstance(position, list):
+			return TilePosition(position[0], position[1])
+		elif isinstance(position, Position):
+			return TilePosition(position.x, position.y)
 
 
 class Direction(Position):

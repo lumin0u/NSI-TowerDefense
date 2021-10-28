@@ -7,16 +7,20 @@ cursor_hand_reasons = {}
 
 EMPTY_IMAGE = pygame.Surface((0, 0))
 
-
 PIXEL_PER_ZOOM = 40
 
+FPS_FONT: pygame.font.Font = pygame.font.Font(None, 30)
+WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 40)
+NEXT_WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 30)
+TOWER_LVL_FONT: pygame.font.Font = pygame.font.Font(None, 20)
 
-def get_pixel_pos(game_pos, shift, zoom):
-    return (game_pos - shift) * PIXEL_PER_ZOOM * zoom + Position(main.SCREEN_WIDTH / 2, main.SCREEN_HEIGHT / 2)
+
+def get_pixel_pos(game_pos, interface):
+    return (game_pos - interface.half_camera_pos) * PIXEL_PER_ZOOM * interface.half_zoom + Position(main.SCREEN_WIDTH / 2, main.SCREEN_HEIGHT / 2)
 
 
-def get_game_pos(pixel_pos, shift, zoom):
-    return (pixel_pos - Position(main.SCREEN_WIDTH / 2, main.SCREEN_HEIGHT / 2)) / PIXEL_PER_ZOOM / zoom + shift
+def get_game_pos(pixel_pos, interface):
+    return (pixel_pos - Position(main.SCREEN_WIDTH / 2, main.SCREEN_HEIGHT / 2)) / PIXEL_PER_ZOOM / interface.half_zoom + interface.half_camera_pos
 
 
 def draw_image(surface: pygame.Surface, position: tuple, image, new_size: tuple = None):

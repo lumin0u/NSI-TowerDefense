@@ -47,7 +47,9 @@ class Mob(Entity, ABC):
             dir_ = tile.direction
             self.move(dir_ * self.speed)
         elif isinstance(tile, tiles.CastleTile):
-            tile.tower.damage(10, self)
+            tile.tower.damage(max(10., self.max_health / 10) / self.max_health * self._attributes["damage"], self)
+            # la tour renvoie les dégats
+            self.damage(max(10., self.max_health / 10), game.DAMAGE_TYPE_ABSOLUTE)
     
     def move(self, direction: Direction):
         self.teleport(self.position + direction)

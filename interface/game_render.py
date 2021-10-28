@@ -10,8 +10,7 @@ from mobs import mob
 
 
 def _render_image_game(screen, interface, image, game_position, centered, relative_time):
-    
-    corner_draw = graphics.get_pixel_pos(game_position, interface.half_camera_pos, interface.half_zoom)
+    corner_draw = graphics.get_pixel_pos(game_position, interface)
     img_new_size = (math.ceil(graphics.PIXEL_PER_ZOOM * interface.half_zoom),) * 2
     n_scale = image.final_size
     img_new_size = (img_new_size[0] * n_scale[0], img_new_size[1] * n_scale[1])
@@ -27,7 +26,7 @@ def _render_image_game(screen, interface, image, game_position, centered, relati
     return rect
 
 
-def render_game(interface, screen, game_, time, last_frame, relative_time):
+def render_game(interface, screen, current_tick, game_, time, last_frame, relative_time):
     pygame.draw.rect(screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
     
     elapsed_time = max(0.001, (time - last_frame))
@@ -54,13 +53,32 @@ def render_game(interface, screen, game_, time, last_frame, relative_time):
 
             bar_nb = entity.health * 13 // entity.max_health
             bar_img = pictures.PICTURES["health" + str(int(bar_nb))].get_img()
-            bar_img = bar_img.final_scaled(bar_img.get_width() / mob_img.get_width() * 1.5)
+            bar_img = bar_img.final_scaled(bar_img.get_width() / 128 * 1.5)
             bar_img.smoothscaling = False
             
-            if entity.ticks_lived * main.TICK_REAL_TIME < 1:
-                mob_img.shaded(min(1, (entity.ticks_lived * main.TICK_REAL_TIME) ** 3))
-                bar_img.shaded(min(1, (entity.ticks_lived * main.TICK_REAL_TIME) ** 3))
+            if (entity.ticks_lived + relative_time) * 0.05 < 1:
+                mob_img.shaded(((entity.ticks_lived + relative_time) * 0.05) ** 3)
+                bar_img.shaded(((entity.ticks_lived + relative_time) * 0.05) ** 3)
             
             _render_image_game(screen, interface, bar_img, pos + Position(0, mob_img.final_size[1] * 0.8), True, relative_time)
         
         _render_image_game(screen, interface, mob_img, pos, True, relative_time)
+    
+    text_img1 = graphics.WAVE_FONT.render("VAGUE " + str(game_.wave + 1), True, (170, 50, 50))
+    screen.blit(text_img1, ((main.SCREEN_WIDTH - text_img1.get_width()) / 2, 10))
+
+    if game_.btwn_waves:
+        next_wave_text = "Vague suivante \u2022 " + str(int((game_.next_wave_date - current_tick) * main.TICK_REAL_TIME + 1))
+        
+        text_img2 = pictures.MyImage(graphics.NEXT_WAVE_FONT.render(next_wave_text, True, (150, 40, 40)))
+        text_img2_hover = pictures.MyImage(graphics.NEXT_WAVE_FONT.render(next_wave_text, True, (200, 60, 60)))
+        
+        button_pos = ((main.SCREEN_WIDTH - text_img2.get_width()) / 2, 10 + text_img1.get_height())
+        
+        def next_wave_action():
+            game_.next_wave_date = current_tick - 1
+        
+        next_wave_button = ui.Button(interface, next_wave_action, button_pos, text_img2, text_img2_hover, "next_wave")
+        ui.add_button(screen, interface, next_wave_button)
+    else:
+        main.set_hand_reason("hover_button_" + str(hash("next_wave")), False)

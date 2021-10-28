@@ -22,8 +22,6 @@ class Castle(tower.Tower):
     
     def damage(self, amount: float, source):
         self._health -= amount
-        # la tour renvoie les dégats
-        source.damage(amount, game.DAMAGE_TYPE_ABSOLUTE)
         
     def get_render(self, time):
         img = pictures.PICTURES["castle"].get_img(hash(self.tile.position))

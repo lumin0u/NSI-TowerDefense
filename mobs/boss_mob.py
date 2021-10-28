@@ -9,13 +9,13 @@ class BossMob(mob.Mob):
     def __init__(self, game_, position: Position, health):
         attributes = {
             
+            "damage": 1000000,
+            
             # la vie maximum
             "health_mul": 1,
             
             # la vitesse, en tuiles/ticks
-            # TICK_REAL_TIME devrait toujours etre 0.1 (secondes) mais il faut toujours utiliser la variable
-            # mettre TICK_REAL_TIME comme speed revient a dire que le mob avancera d'une tuile par seconde
-            "speed": main.TICK_REAL_TIME / 2.5,
+            "speed": 0.02,
             
             # les resistances du mob, pour chaque type d'attaque
             "resistances": {

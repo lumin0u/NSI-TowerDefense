@@ -3,7 +3,7 @@ import random
 from copy import copy
 
 import main
-from mobs import robuste_mob
+from mobs import robuste_mob, boss_mob
 from mobs import simple_mob
 import tiles
 from position import Position, TilePosition, Direction
@@ -11,17 +11,27 @@ from towers import simple_tower
 
 
 class Wave:
-    def __init__(self, mobs_: dict[type, int]):
+    def __init__(self, preparation, mobs_: dict[type, int], boss_health=0):
         """
             mobs est un dictionnaire avec:
               pour clés les classes des mobs
               pour valeurs le nombre de ces mobs
         """
+        self._preparation = preparation
         self._mobs = mobs_
         self._scheduler = {}
         
         # start_date est exprimé en ticks
         self.start_date = 0
+        self._boss_health = boss_health
+    
+    @property
+    def preparation(self):
+        return self._preparation
+    
+    @property
+    def boss_health(self):
+        return self._boss_health
     
     def start(self, start_date):
         self._scheduler = {}
@@ -32,7 +42,7 @@ class Wave:
             t = 0
             index = 0
             while buffer[mob] > 0:
-                r1 = 0.1 / main.TICK_REAL_TIME
+                r1 = 2
                 r2 = (math.sin(t) * 0.8 + 0.9) ** 2
                 r3 = max_mob_count / self._mobs[mob]
                 
@@ -57,11 +67,11 @@ class Wave:
 
 
 class Level:
-    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile):
+    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, tiles_=(), waves=()):
         self._spawner = spawn
         self._castle = castle
-        self._tiles: list[tiles.Tile] = [self._spawner, self._castle]
-        self._waves: list[Wave] = []
+        self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + list(tiles_)
+        self._waves: list[Wave] = list(waves)
     
     def tile_at(self, position: Position):
         # on recherche dans nos tuiles s'il en existe une a cette position
@@ -92,44 +102,44 @@ class Level:
 ALL_LEVELS = ()
 
 
+def cardinal_to_direction(s):
+    return {"S": Direction(0, 1), "N": Direction(0, -1), "E": Direction(1, 0), "W": Direction(-1, 0)}[s]
+
+
+# pour avoir un nom plus court
+ctd = cardinal_to_direction
+
+
 def build_levels():
     global ALL_LEVELS
-    level1 = Level(tiles.SpawnerTile(TilePosition(-4, 0), Direction(1, 0)), tiles.CastleTile(TilePosition(4, 0), 100))
     
-    level1.tiles.append(tiles.PathTile(TilePosition(-3, 0), Direction(-1, 0), Direction(1, 0)))
-    level1.tiles.append(tiles.PathTile(TilePosition(-2, 0), Direction(-1, 0), Direction(1, 0)))
-    level1.tiles.append(tiles.PathTile(TilePosition(-1, 0), Direction(-1, 0), Direction(1, 0)))
-    level1.tiles.append(tiles.PathTile(TilePosition(0, 0), Direction(-1, 0), Direction(1, 0)))
-    level1.tiles.append(tiles.PathTile(TilePosition(1, 0), Direction(-1, 0), Direction(1, 0)))
-    level1.tiles.append(tiles.PathTile(TilePosition(2, 0), Direction(-1, 0), Direction(1, 0)))
-    level1.tiles.append(tiles.PathTile(TilePosition(3, 0), Direction(-1, 0), Direction(1, 0)))
+    mobs_names = {"simple": simple_mob.SimpleMob, "robuste": robuste_mob.RobusteMob, "boss": boss_mob.BossMob}
     
-    level1.tiles.append(tiles.BuildingTile(TilePosition(-1, 1)))
-    level1.tiles.append(tiles.BuildingTile(TilePosition(0, 1)))
-    level1.tiles.append(tiles.BuildingTile(TilePosition(1, 1)))
-    level1.tiles.append(tiles.BuildingTile(TilePosition(-2, -1)))
-    level1.tiles.append(tiles.BuildingTile(TilePosition(-1, -1)))
-    level1.tiles.append(tiles.BuildingTile(TilePosition(0, -1)))
-    level1.tiles.append(tiles.BuildingTile(TilePosition(2, -1)))
+    levels_json = eval(open("levels.json", mode="r").read())
     
-    for tile in level1.tiles:
-        if type(tile) is tiles.BuildingTile:
-            tile.tower = simple_tower.SimpleTower(tile)
+    levels_list = []
     
-    level1.waves.extend([
-        Wave({simple_mob.SimpleMob: 5}),
-        Wave({simple_mob.SimpleMob: 10}),
-        Wave({simple_mob.SimpleMob: 10}),
-        Wave({simple_mob.SimpleMob: 15}),
-        Wave({simple_mob.SimpleMob: 20}),
-        Wave({simple_mob.SimpleMob: 20}),
-        Wave({simple_mob.SimpleMob: 15, robuste_mob.RobusteMob: 2}),
-        Wave({simple_mob.SimpleMob: 15, robuste_mob.RobusteMob: 4}),
-        Wave({simple_mob.SimpleMob: 20, robuste_mob.RobusteMob: 5}),
-        Wave({simple_mob.SimpleMob: 20, robuste_mob.RobusteMob: 5}),
-        Wave({simple_mob.SimpleMob: 0, robuste_mob.RobusteMob: 15}),
-        Wave({simple_mob.SimpleMob: 30, robuste_mob.RobusteMob: 7}),
-        Wave({simple_mob.SimpleMob: 30, robuste_mob.RobusteMob: 10}),
-    ])
+    for level in levels_json:
+        path_current = TilePosition.of(level["spawner"])
+        
+        spawner = tiles.SpawnerTile(path_current, ctd(level["path"][0]))
+        tiles_ = []
+        
+        for i in range(len(level["path"]) - 1):
+            path_current += ctd(level["path"][i])
+            tiles_.append(tiles.PathTile(path_current, -ctd(level["path"][i]), ctd(level["path"][i + 1])))
+            
+        path_current += ctd(level["path"][-1])
+        castle = tiles.CastleTile(path_current, level["castle_health"])
+        
+        for tower_slot in level["tower_slots"]:
+            tiles_.append(tiles.BuildingTile(TilePosition.of(tower_slot)))
+        
+        waves = []
+        
+        for wave in level["waves"]:
+            waves.append(Wave(wave["preparation"], {mobs_names[k]: v for k, v in wave["mobs"].items()}, wave["boss_health"] if "boss_health" in wave else 0))
+        
+        levels_list.append(Level(spawner, castle, tiles_, waves))
 
-    ALL_LEVELS = (level1, )
+    ALL_LEVELS = tuple(levels_list)
