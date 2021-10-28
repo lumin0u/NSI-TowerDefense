@@ -6,27 +6,32 @@ import interface.pictures as pictures
 import main
 from position import Position, Direction
 import interface.graphics as graphics
-from interface.game_render import _render_game
+from interface import game_render
 
 
 TOOLBOX_WIDTH = 150
 
+ZOOM_TRAVEL_TIME = 0.2
 
-class HalfState:
-    def __init__(self):
-        self.camera_pos = Position(0, 0)
-        self.zoom = 1 / 100
-        self.mobs_position = {}
+
+def lerp(a, b, m, nice_m=True):
+    if nice_m:
+        m = max(0, min(1, m))
+    return b * m + a * (1 - m)
 
 
 class Interface:
     def __init__(self, game_):
         self._game = game_
-        self.half_state = HalfState()
-        self.graphics_settings = graphics.GraphicsSettings()
         self.volume = 2
         self.buttons = []
         self._click_start = "free"
+        
+        self.camera_pos = Position(0, 0)
+        self.half_camera_pos = self.camera_pos
+        
+        self.zoom = 2
+        self.half_zoom = 1 / 100
     
     @property
     def game(self):
@@ -82,12 +87,16 @@ class Button:
         return self._id
 
 
-def render(interface, game_, screen, time, last_frame):
+def render(interface, game_, screen, time, last_frame, relative_time):
     interface.buttons = []
     
-    _render_game(interface, screen, game_, time, last_frame)
+    delta = time - last_frame
+    interface.half_zoom = lerp(interface.half_zoom, interface.zoom, delta + 0.1)
+    interface.half_camera_pos = lerp(interface.half_camera_pos, interface.camera_pos, delta + 0.1)
     
-    show_ui(interface, game_, screen, time, last_frame)
+    game_render.render_game(interface, screen, game_, time, last_frame, relative_time)
+    
+    show_ui(interface, game_, screen, time, last_frame, relative_time)
     
     pygame.display.update()
     
@@ -104,7 +113,7 @@ def add_button(screen, interface, button):
     interface.buttons.append(button)
 
 
-def show_ui(interface, game_, screen, time, last_frame):
+def show_ui(interface, game_, screen, time, last_frame, relative_time):
     volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img()
     volume_hover_img = volume_img.copy().highlighted(0.15, 0, 0)
     
