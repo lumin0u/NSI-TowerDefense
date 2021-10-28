@@ -17,7 +17,6 @@ class Wave:
               pour clés les classes des mobs
               pour valeurs le nombre de ces mobs
         """
-        self._remaining = mobs_.copy()
         self._mobs = mobs_
         self._scheduler = {}
         
@@ -25,6 +24,7 @@ class Wave:
         self.start_date = 0
     
     def start(self, start_date):
+        self._scheduler = {}
         self.start_date = start_date
         buffer = copy(self._mobs)
         max_mob_count = max((v for v in self._mobs.values()))
@@ -32,9 +32,13 @@ class Wave:
             t = 0
             index = 0
             while buffer[mob] > 0:
-                wait = max(2, int((math.sin(t) * 0.8 + 0.9) ** 2 * random.random() * 12 * max_mob_count / self._mobs[mob]))
+                r1 = 0.1 / main.TICK_REAL_TIME
+                r2 = (math.sin(t) * 0.8 + 0.9) ** 2
+                r3 = max_mob_count / self._mobs[mob]
+                
+                wait = max(2, int(random.random() * 12 * r1 * r2 * r3))
                 wait += random.randint(0, 4)
-                wait *= main.TICK_REAL_TIME / 0.1
+                
                 if wait > 0:
                     index += wait
                     if index not in self._scheduler:
@@ -43,8 +47,8 @@ class Wave:
                     buffer[mob] -= 1
                 t += 1
     
-    def is_ended(self):
-        return all((v == 0 for v in self._remaining.values()))
+    def is_ended(self, current_tick):
+        return not any((k > current_tick - self.start_date for k in self._scheduler))
     
     def next_mobs(self, current_tick):
         if current_tick - self.start_date in self._scheduler:
@@ -111,10 +115,21 @@ def build_levels():
     for tile in level1.tiles:
         if type(tile) is tiles.BuildingTile:
             tile.tower = simple_tower.SimpleTower(tile)
-            break
     
     level1.waves.extend([
+        Wave({simple_mob.SimpleMob: 5}),
+        Wave({simple_mob.SimpleMob: 10}),
+        Wave({simple_mob.SimpleMob: 10}),
+        Wave({simple_mob.SimpleMob: 15}),
+        Wave({simple_mob.SimpleMob: 20}),
+        Wave({simple_mob.SimpleMob: 20}),
+        Wave({simple_mob.SimpleMob: 15, robuste_mob.RobusteMob: 2}),
+        Wave({simple_mob.SimpleMob: 15, robuste_mob.RobusteMob: 4}),
         Wave({simple_mob.SimpleMob: 20, robuste_mob.RobusteMob: 5}),
+        Wave({simple_mob.SimpleMob: 20, robuste_mob.RobusteMob: 5}),
+        Wave({simple_mob.SimpleMob: 0, robuste_mob.RobusteMob: 15}),
+        Wave({simple_mob.SimpleMob: 30, robuste_mob.RobusteMob: 7}),
+        Wave({simple_mob.SimpleMob: 30, robuste_mob.RobusteMob: 10}),
     ])
 
     ALL_LEVELS = (level1, )
