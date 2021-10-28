@@ -1,40 +1,37 @@
 from abc import ABC, abstractmethod
+
+import pygame
+
 from entity import Entity
 from position import Position, TilePosition, Direction
 from copy import copy
+from interface import pictures
 import random
 import game
 import tiles
 
 
 class Mob(Entity, ABC):
-    def __init__(self, game_, position: Position, attributes: dict, health_multiplier):
+    def __init__(self, game_, position: Position, attributes: dict, health):
+        super().__init__(game_, position)
+
         # on copie le dictionnaire pour pouvoir le modifier au besoin
-        
         attributes = attributes.copy()
         
         self._game = game_
-        self._id = game_.next_id()
-        
-        self._position = position
-        # TODO: stockage de la position relative a la tuile
         
         self._attributes = attributes
         self._attributes["resistances"][game.DAMAGE_TYPE_ABSOLUTE] = 1
-        self._health_multiplier = health_multiplier
+        self._max_health = health * self._attributes["health_mul"]
         self._health = self.max_health
-        self._ticks_lived = 0
-    
-    @property
-    def ticks_lived(self):
-        return self._ticks_lived
-    
-    def tick(self, current_tick, game_):
-        self._ticks_lived += 1
     
     @property
     def max_health(self) -> float:
-        return float(self._attributes["health"])*self._health_multiplier
+        return self._max_health
+    
+    @property
+    def health(self) -> float:
+        return self._health
     
     @property
     def speed(self) -> float:
@@ -42,21 +39,15 @@ class Mob(Entity, ABC):
             la vitesse est exprimé en tuiles/ticks
         """
         return float(self._attributes["speed"])
-    
-    @property
-    def position(self) -> Position:
-        return self._position
-    
-    @property
-    def id_(self):
-        return self._id
         
     def advance(self):
-        #avancer en fonction de la direction de la tuile
+        # avancer en fonction de la direction de la tuile
         tile = self._game.level.tile_at(self._position)
         if isinstance(tile, tiles.PathTile):
             dir_ = tile.direction
             self.move(dir_ * self.speed)
+        elif isinstance(tile, tiles.CastleTile):
+            tile.tower.damage(10, self)
     
     def move(self, direction: Direction):
         self.teleport(self.position + direction)
@@ -69,7 +60,3 @@ class Mob(Entity, ABC):
     
     def is_dead(self):
         return self._health <= 0
-        
-    @abstractmethod
-    def get_render(self, time):
-        pass
