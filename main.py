@@ -30,7 +30,7 @@ def main():
     levels.build_levels()
     the_game = game.Game(levels.ALL_LEVELS[0], 200, 0)
     
-    interface = ui.Interface(the_game)
+    interface = ui.Interface(the_game, screen)
     
     last_frame = time.time()
     last_tick = time.time()
@@ -48,7 +48,7 @@ def main():
             last_tick = time.time()
         
         this_frame = time.time()
-        ui.render(interface, the_game, screen, current_tick, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
+        ui.render(interface, current_tick, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
         
         if any((v for v in graphics.cursor_hand_reasons.values())):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)

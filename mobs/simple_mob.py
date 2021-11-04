@@ -9,6 +9,7 @@ class SimpleMob(mob.Mob):
     def __init__(self, game_, position: Position, health):
         attributes = {
             
+            # les dégats maximums que le mob pourra infliger
             "damage": 1,
             
             # la vie maximum

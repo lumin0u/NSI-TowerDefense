@@ -22,11 +22,13 @@ def lerp(a, b, m, nice_m=True):
 
 
 class Interface:
-    def __init__(self, game_):
+    def __init__(self, game_, screen):
+        self._screen = screen
         self._game = game_
         self.volume = 2
         self.buttons = []
         self._click_start = "free"
+        self.popup_tile: tiles.Tile = None
         
         self.camera_pos = Position(0, 0)
         self.half_camera_pos = self.camera_pos
@@ -37,6 +39,10 @@ class Interface:
     @property
     def game(self):
         return self._game
+    
+    @property
+    def screen(self):
+        return self._screen
     
     def mouse_down(self, mouse_button, mouse_pos):
         for button in self.buttons:
@@ -92,7 +98,7 @@ class Button:
         return self._id
 
 
-def render(interface, game_, screen, current_tick, time, last_frame, relative_time):
+def render(interface, current_tick, time, last_frame, relative_time):
     interface.buttons = []
 
     delta = time - last_frame
@@ -109,26 +115,26 @@ def render(interface, game_, screen, current_tick, time, last_frame, relative_ti
     interface.half_zoom = lerp(interface.half_zoom, interface.zoom, delta + 0.1)
     interface.half_camera_pos = lerp(interface.half_camera_pos, interface.camera_pos, delta + 0.1)
     
-    game_render.render_game(interface, screen, current_tick, game_, time, last_frame, relative_time)
+    game_render.render_game(interface, current_tick, time, last_frame, relative_time)
     
-    show_ui(interface, game_, screen, current_tick, time, last_frame, relative_time)
+    show_ui(interface, current_tick, time, last_frame, relative_time)
     
     pygame.display.update()
     
 
-def add_button(screen, interface, button):
+def add_button(interface, button):
     if pygame.rect.Rect(button.rect.move(button.position)).collidepoint(
             pygame.mouse.get_pos()):
-        graphics.draw_image(screen, button.position, button.hover_img)
+        graphics.draw_image(interface.screen, button.position, button.hover_img)
         main.set_hand_reason("hover_button_" + str(hash(button.id)), True)
     else:
-        graphics.draw_image(screen, button.position, button.img)
+        graphics.draw_image(interface.screen, button.position, button.img)
         main.set_hand_reason("hover_button_" + str(hash(button.id)), False)
     
     interface.buttons.append(button)
 
 
-def show_ui(interface, game_, screen, current_tick, time, last_frame, relative_time):
+def show_ui(interface, current_tick, time, last_frame, relative_time):
     volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img()
     volume_hover_img = volume_img.copy().highlighted(0.15, 0, 0)
     
@@ -138,7 +144,7 @@ def show_ui(interface, game_, screen, current_tick, time, last_frame, relative_t
     
     volume = Button(interface, volume_onclick, (0, main.SCREEN_HEIGHT - volume_img.get_height()), volume_img, volume_hover_img, "volume")
 
-    add_button(screen, interface, volume)
+    add_button(interface, volume)
     
     """image = pygame.Surface((TOOLBOX_WIDTH + 10, main.SCREEN_HEIGHT + 10)).convert_alpha()
     image.fill((0, 0, 0, 0))
@@ -146,4 +152,4 @@ def show_ui(interface, game_, screen, current_tick, time, last_frame, relative_t
     
     screen.blit(image, (main.SCREEN_WIDTH - TOOLBOX_WIDTH, -5))"""
     
-    screen.blit(graphics.FPS_FONT.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))
+    interface.screen.blit(graphics.FPS_FONT.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))

@@ -8,7 +8,8 @@ import game
 class RobusteMob(mob.Mob):
     def __init__(self, game_, position: Position, health):
         attributes = {
-            
+    
+            # les dégats maximums que le mob pourra infliger
             "damage": 2,
             
             # la vie maximum

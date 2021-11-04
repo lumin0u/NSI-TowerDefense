@@ -26,25 +26,35 @@ class Position:
 		self._y = y
 	
 	def __add__(self, other):
-		return Position(self.x + other.x, self.y + other.y)
+		if not isinstance(other, Position):
+			raise TypeError()
+		return self.__class__(self.x + other.x, self.y + other.y)
 	
 	def __sub__(self, other):
-		return Position(self.x - other.x, self.y - other.y)
+		if not isinstance(other, Position):
+			raise TypeError()
+		return self.__class__(self.x - other.x, self.y - other.y)
 	
 	def __mul__(self, other):
-		return Position(self.x * other, self.y * other)
+		if type(other) is not int and type(other) is not float:
+			raise TypeError()
+		return self.__class__(self.x * other, self.y * other)
 	
 	def __truediv__(self, other):
-		return Position(self.x / other, self.y / other)
+		if type(other) is not int and type(other) is not float:
+			raise TypeError()
+		return self.__class__(self.x / other, self.y / other)
 	
 	def __eq__(self, other):
+		if not isinstance(other, Position):
+			return False
 		return self.x == other.x and self.y == other.y
 	
 	def __str__(self):
 		return f'Position(x={self.x}, y={self.y})'
 	
 	def __neg__(self):
-		return Position(-self.x, -self.y)
+		return self.__class__(-self.x, -self.y)
 	
 	def __hash__(self):
 		return hash(self.x * 86281339878799307 + 7 * 8628133987879930 * self.y)
@@ -93,6 +103,16 @@ class TilePosition(Position):
 			return TilePosition(position[0], position[1])
 		elif isinstance(position, Position):
 			return TilePosition(position.x, position.y)
+	
+	def __add__(self, other):
+		if isinstance(other, Position) and type(other) is not TilePosition:
+			return Position(self.x + other.x, self.y + other.y)
+		return super().__add__(other)
+	
+	def __sub__(self, other):
+		if isinstance(other, Position) and type(other) is not TilePosition:
+			return Position(self.x - other.x, self.y - other.y)
+		return super().__sub__(other)
 
 
 class Direction(Position):
@@ -103,5 +123,8 @@ class Direction(Position):
 		return f'Direction(x={self.x}, y={self.y})'
 	
 	@staticmethod
-	def of(position: Position):
-		return Direction(position.x, position.y)
+	def of(position):
+		if isinstance(position, tuple) or isinstance(position, list):
+			return TilePosition(position[0], position[1])
+		elif isinstance(position, Position):
+			return TilePosition(position.x, position.y)

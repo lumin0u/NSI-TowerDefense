@@ -48,8 +48,8 @@ class EmptyTile(Tile):
         pass
 
 
-def matches_no_order(l1, l2):
-    return sorted(l1, key=hash) == sorted(l2, key=hash)
+def matches_no_order(list1, list2):
+    return sorted(list1, key=hash) == sorted(list2, key=hash)
 
 
 class PathTile(Tile):
@@ -85,11 +85,11 @@ class PathTile(Tile):
             if matches_no_order(l, (Direction(1, 0), Direction(0, -1))):
                 return img
             elif matches_no_order(l, (Direction(1, 0), Direction(0, 1))):
-                return pygame.transform.rotate(img, 270)
+                return img.rotated(270)
             elif matches_no_order(l, (Direction(-1, 0), Direction(0, 1))):
-                return pygame.transform.rotate(img, 180)
+                return img.rotated(180)
             else:
-                return pygame.transform.rotate(img, 90)
+                return img.rotated(90)
     
     def is_clickable(self):
         return False
@@ -137,7 +137,7 @@ class BuildingTile(Tile):
 
 class SpawnerTile(PathTile):
     def __init__(self, position: TilePosition, direction: Direction):
-        super().__init__(position, Direction(0, 0), direction)
+        super().__init__(position, None, direction)
     
     def get_render(self, time):
         return pictures.PICTURES["spawner"].get_img(hash(self.position))
