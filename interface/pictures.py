@@ -171,6 +171,10 @@ class MyImage:
     
     def copy(self):
         return MyImage(self._image.copy())
+    
+    def smoothscaled(self, value: bool):
+        self.smoothscaling = value
+        return self
 
 
 PICTURES = {}

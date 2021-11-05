@@ -10,7 +10,7 @@ from interface import pictures
 
 class ExplosiveTower(tower.Tower):
 	def __init__(self, tile):
-		super().__init__(tile, 30, 2.3)  # TODO changer valeurs
+		super().__init__(tile, 30, 2.3)
 	
 	def shoot(self):
 		if self._target:
@@ -22,7 +22,7 @@ class ExplosiveTower(tower.Tower):
 
 class ExplosiveProjectile(projectile.Projectile):
 	def __init__(self, position, target, dmg_multiplier):
-		super().__init__(position, target, 0.1)  # TODO pas 1
+		super().__init__(position, target, 0.1)
 		self._dmg_multiplier = dmg_multiplier
 	
 	def hit(self):
@@ -31,8 +31,6 @@ class ExplosiveProjectile(projectile.Projectile):
 				dmg = (1 - self.target_position().distance(mob.position)) / 1
 				mob.damage((dmg * self._dmg_multiplier) * 3, game.DAMAGE_TYPE_RAW)
 				mob.damage((dmg * self._dmg_multiplier) * 4, game.DAMAGE_TYPE_FIRE)
-				
-	
 	
 	def get_render(self, time):
 		angle = -(self.target_position() - self._position).angle() / math.pi * 180

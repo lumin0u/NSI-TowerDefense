@@ -30,4 +30,4 @@ class SimpleProjectile(projectile.Projectile):
     
     def get_render(self, time):
         angle = -(self.target_position() - self._position).angle() / math.pi * 180
-        return pictures.PICTURES["dart"].get_img().final_scaled(0.1).rotated(angle)
+        return pictures.PICTURES["dart"].get_img().final_scaled(0.06).rotated(angle)
