@@ -78,7 +78,7 @@ class PathTile(Tile):
             if self.direction.y == 0:
                 return img
             else:
-                return pygame.transform.rotate(img, 90)
+                return img.rotated(90)
         else:
             l = [self.direction, self._from_]
             img = pictures.PICTURES["path_NE"].get_img(hash(self.position))

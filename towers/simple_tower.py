@@ -29,5 +29,5 @@ class SimpleProjectile(projectile.Projectile):
             self._target.damage(7 * self._dmg_multiplier, game.DAMAGE_TYPE_RAW)
     
     def get_render(self, time):
-        angle = (self.target_position() - self._position).angle() / math.pi * 180 - 90
+        angle = -(self.target_position() - self._position).angle() / math.pi * 180
         return pictures.PICTURES["dart"].get_img().final_scaled(0.1).rotated(angle)

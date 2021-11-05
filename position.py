@@ -72,7 +72,7 @@ class Position:
 		if other:
 			return (self.angle() - other.angle()) % (2 * math.pi) - math.pi
 		else:
-			return math.atan2(self._x, self._y)
+			return math.atan2(self._y, self._x)
 	
 	@staticmethod
 	def of(position):
