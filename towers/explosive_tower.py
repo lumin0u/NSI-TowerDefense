@@ -10,26 +10,30 @@ from interface import pictures
 
 class ExplosiveTower(tower.Tower):
 	def __init__(self, tile):
-		super().__init__(tile, 1, 1)  # TODO changer valeurs
+		super().__init__(tile, 30, 2.3)  # TODO changer valeurs
 	
 	def shoot(self):
 		if self._target:
-			game.GAME_INSTANCE.add_entity(ExplosiveProjectile(self.tile.position.middle(), self._target))
+			game.GAME_INSTANCE.add_entity(ExplosiveProjectile(self.tile.position.middle(), self._target, self._level + 1))
 	
-	@staticmethod
-	def get_render(time):
-		img = pictures.PICTURES["explosive_tower"].get_img()
-		return img
+	def get_render(self, time):
+		return self._add_level(pictures.PICTURES["explosive_tower"].get_img())
 
 
 class ExplosiveProjectile(projectile.Projectile):
-	def __init__(self, position, target):
-		super().__init__(position, target, 1)  # TODO pas 1
+	def __init__(self, position, target, dmg_multiplier):
+		super().__init__(position, target, 0.1)  # TODO pas 1
+		self._dmg_multiplier = dmg_multiplier
 	
 	def hit(self):
-		pass
-	# TODO
+		for mob in game.GAME_INSTANCE.mobs:
+			if self.target_position().distance(mob.position) < 1:
+				dmg = (1 - self.target_position().distance(mob.position)) / 1
+				mob.damage((dmg * self._dmg_multiplier) * 3, game.DAMAGE_TYPE_RAW)
+				mob.damage((dmg * self._dmg_multiplier) * 4, game.DAMAGE_TYPE_FIRE)
+				
+	
 	
 	def get_render(self, time):
-		angle = (self.target_position() - self._position).angle() / math.pi * 180 - 90
+		angle = -(self.target_position() - self._position).angle() / math.pi * 180
 		return pictures.PICTURES["shell"].get_img().final_scaled(0.1).rotated(angle)

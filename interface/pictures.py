@@ -188,6 +188,7 @@ def load_pictures():
     
     load_picture("simple_tower", "towers/")
     load_picture("castle", "towers/")
+    load_picture("explosive_tower", "towers/")
     
     load_picture("carre", "mobs/")
     load_picture("robuste", "mobs/")
@@ -198,6 +199,7 @@ def load_pictures():
         load_picture("health" + str(i), "mobs/")
 
     load_picture("dart", "projectiles/")
+    load_picture("shell", "projectiles/")
 
 
 def load_picture(name, directory=""):
