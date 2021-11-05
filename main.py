@@ -28,7 +28,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE)
     
     levels.build_levels()
-    the_game = game.Game(levels.ALL_LEVELS[0], 200, 0)
+    the_game = game.Game(levels.ALL_LEVELS[1], 200, 0)
     
     interface = ui.Interface(the_game, screen)
     

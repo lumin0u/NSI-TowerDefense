@@ -5,7 +5,7 @@ import pygame
 from position import TilePosition, Direction
 import towers.castle as castle
 from interface import pictures, graphics
-from towers import simple_tower, explosive_tower
+from towers import simple_tower, explosive_tower, sniper_tower
 
 
 class Tile(ABC):
@@ -130,7 +130,7 @@ class BuildingTile(Tile):
             return
         
         if self.is_empty():
-            self.tower = explosive_tower.ExplosiveTower(self)
+            self.tower = sniper_tower.SniperTower(self)
         else:
             self.tower._level += 1
 
