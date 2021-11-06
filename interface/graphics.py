@@ -13,13 +13,14 @@ FPS_FONT: pygame.font.Font = pygame.font.Font(None, 30)
 WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 40)
 NEXT_WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 30)
 TOWER_LVL_FONT: pygame.font.Font = pygame.font.Font(None, 20)
+PRICES_FONT: pygame.font.Font = pygame.font.Font(None, 23)
 
 
-def get_pixel_pos(game_pos, interface):
+def get_pixel_pos(game_pos, interface) -> Position:
     return (game_pos - interface.half_camera_pos) * PIXEL_PER_ZOOM * interface.half_zoom + Position(main.SCREEN_WIDTH / 2, main.SCREEN_HEIGHT / 2)
 
 
-def get_game_pos(pixel_pos, interface):
+def get_game_pos(pixel_pos, interface) -> Position:
     return (pixel_pos - Position(main.SCREEN_WIDTH / 2, main.SCREEN_HEIGHT / 2)) / PIXEL_PER_ZOOM / interface.half_zoom + interface.half_camera_pos
 
 

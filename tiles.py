@@ -5,7 +5,7 @@ import pygame
 from position import TilePosition, Direction
 import towers.castle as castle
 from interface import pictures, graphics
-from towers import simple_tower, explosive_tower, sniper_tower
+from towers import simple_tower, explosive_tower
 
 
 class Tile(ABC):
@@ -24,10 +24,6 @@ class Tile(ABC):
     def is_clickable(self):
         pass
     
-    @abstractmethod
-    def onclick(self):
-        pass
-    
     def get_on_screen_rect(self, interface):
         corner_lu = graphics.get_pixel_pos(self.position, interface)
         corner_rb = graphics.get_pixel_pos(self.position + Direction(1, 1), interface)
@@ -43,9 +39,6 @@ class EmptyTile(Tile):
     
     def is_clickable(self):
         return False
-    
-    def onclick(self):
-        pass
 
 
 def matches_no_order(list1, list2):
@@ -93,9 +86,6 @@ class PathTile(Tile):
     
     def is_clickable(self):
         return False
-    
-    def onclick(self):
-        pass
 
 
 class BuildingTile(Tile):
@@ -124,15 +114,6 @@ class BuildingTile(Tile):
     
     def is_clickable(self):
         return True
-    
-    def onclick(self):
-        if not self.is_clickable():
-            return
-        
-        if self.is_empty():
-            self.tower = sniper_tower.SniperTower(self)
-        else:
-            self.tower._level += 1
 
 
 class SpawnerTile(PathTile):
@@ -144,9 +125,6 @@ class SpawnerTile(PathTile):
     
     def is_clickable(self):
         return False
-    
-    def onclick(self):
-        pass
 
 
 class CastleTile(BuildingTile):
@@ -154,6 +132,3 @@ class CastleTile(BuildingTile):
         super().__init__(position)
         
         self._tower = castle.Castle(self, max_health)
-    
-    def is_clickable(self):
-        return False

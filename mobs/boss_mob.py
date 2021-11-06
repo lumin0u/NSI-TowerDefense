@@ -38,4 +38,4 @@ class BossMob(mob.Mob):
         self.advance()
     
     def get_render(self, time):
-        return pictures.PICTURES["boss"].get_img().final_scaled(0.5)
+        return pictures.get("boss").final_scaled(0.5)

@@ -68,6 +68,9 @@ class Position:
 	def distance(self, other):
 		return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
 	
+	def normalized(self):
+		return self / self.length()
+	
 	def angle(self, other=None):
 		if other:
 			return (self.angle() - other.angle()) % (2 * math.pi) - math.pi

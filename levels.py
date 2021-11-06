@@ -67,11 +67,12 @@ class Wave:
 
 
 class Level:
-    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, tiles_=(), waves=()):
+    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, money, tiles_=(), waves=()):
         self._spawner = spawn
         self._castle = castle
         self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + list(tiles_)
         self._waves: list[Wave] = list(waves)
+        self._money = money
     
     def tile_at(self, position: Position):
         # on recherche dans nos tuiles s'il en existe une a cette position
@@ -97,6 +98,10 @@ class Level:
     @property
     def castle(self):
         return self._castle
+    
+    @property
+    def money(self):
+        return self._money
 
 
 ALL_LEVELS = ()
@@ -115,11 +120,13 @@ def build_levels():
     
     mobs_names = {"simple": simple_mob.SimpleMob, "robuste": robuste_mob.RobusteMob, "boss": boss_mob.BossMob}
     
-    levels_json = eval(open("levels.json", mode="r").read())
+    levels_json = eval(open("levels/levels.json", mode="r").read())
     
     levels_list = []
     
-    for level in levels_json:
+    for level_file in levels_json:
+        level = eval(open("levels/" + level_file, mode="r").read())
+        
         path_current = TilePosition.of(level["spawner"])
         
         spawner = tiles.SpawnerTile(path_current, ctd(level["path"][0]))
@@ -132,6 +139,8 @@ def build_levels():
         path_current += ctd(level["path"][-1])
         castle = tiles.CastleTile(path_current, level["castle_health"])
         
+        money = level["money"]
+        
         for tower_slot in level["tower_slots"]:
             tiles_.append(tiles.BuildingTile(TilePosition.of(tower_slot)))
         
@@ -140,6 +149,6 @@ def build_levels():
         for wave in level["waves"]:
             waves.append(Wave(wave["preparation"], {mobs_names[k]: v for k, v in wave["mobs"].items()}, wave["boss_health"] if "boss_health" in wave else 0))
         
-        levels_list.append(Level(spawner, castle, tiles_, waves))
+        levels_list.append(Level(spawner, castle, money, tiles_, waves))
 
     ALL_LEVELS = tuple(levels_list)

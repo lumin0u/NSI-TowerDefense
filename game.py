@@ -4,6 +4,7 @@ from copy import deepcopy
 import main
 import mobs.mob as mob
 import position
+import pricing
 import tiles
 from mobs import boss_mob
 
@@ -19,13 +20,13 @@ GAME_INSTANCE = None
 
 
 class Game:
-    def __init__(self, level_, money, current_tick):
+    def __init__(self, level_, current_tick):
         global GAME_INSTANCE
         GAME_INSTANCE = self
         
         self._entities = []
         self._level = deepcopy(level_)
-        self._money = money
+        self.money = level_.money
         self._id_inc = 0
         self._wave = 0
         self._btwn_waves = True
@@ -74,7 +75,7 @@ class Game:
         if not self._btwn_waves:
             count_mult = self._wave // len(self.level.waves)
             for mob_type in self.current_wave().next_mobs(current_tick) * (1 + count_mult):
-                health = 5 + 4 * self._wave
+                health = 5 + self._wave * self._wave
                 if mob_type is boss_mob.BossMob:
                     health = self.current_wave().boss_health
                 shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)

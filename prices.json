@@ -1,0 +1,12 @@
+{
+  "towers": {
+    "simple": [70, 15, 40, 80, 185],
+    "explosive": [140, 30, 55, 110, 245],
+    "sniper": [100, 21, 46, 92, 209]
+  },
+  "mobs_rewards": {
+    "simple": 4,
+    "robuste": 13,
+    "boss": 100
+  }
+}

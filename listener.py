@@ -2,6 +2,7 @@ import sys
 
 import pygame
 
+import game
 from interface import graphics, ui
 import main
 from position import Position
@@ -54,7 +55,7 @@ def catch_event(event, interface):
     
     elif event.type == pygame.MOUSEBUTTONUP:
         if event.button == 1:
-            interface.mouse_up(1, pygame.mouse.get_pos())
+            interface.mouse_up(game.GAME_INSTANCE, 1, pygame.mouse.get_pos())
     
     elif event.type == pygame.VIDEORESIZE:
         main.SCREEN_WIDTH = event.w

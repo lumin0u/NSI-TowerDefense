@@ -5,14 +5,14 @@ import pygame
 import main
 import tiles
 from position import Direction, Position
-from interface import graphics, ui, pictures
+from interface import graphics, ui, pictures, building_popup
 from mobs import mob
 
 
-def _render_image_game(interface, image, game_position, centered, relative_time):
+def render_image_game(interface, image, game_position, centered, relative_time):
     corner_draw = graphics.get_pixel_pos(game_position, interface)
     img_new_size = (math.ceil(graphics.PIXEL_PER_ZOOM * interface.half_zoom),) * 2
-    n_scale = image.final_size
+    n_scale = image.final_scale
     img_new_size = (img_new_size[0] * n_scale[0], img_new_size[1] * n_scale[1])
     
     if centered:
@@ -26,22 +26,18 @@ def _render_image_game(interface, image, game_position, centered, relative_time)
     return rect
 
 
-def render_game(interface, current_tick, time, last_frame, relative_time):
-    pygame.draw.rect(interface.screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
-    
+def render_game(interface, game_, current_tick, time, last_frame, relative_time):
     elapsed_time = max(0.001, (time - last_frame))
-
-    game_ = interface.game
     
     for tile in game_.level.tiles:
-        _render_image_game(interface, tile.get_render(time), tile.position, False, relative_time)
+        render_image_game(interface, tile.get_render(time), tile.position, False, relative_time)
         if isinstance(tile, tiles.CastleTile):
             bar_nb = max(0, tile.tower.health * 13 // tile.tower.max_health)
             bar_img = pictures.PICTURES["health" + str(int(bar_nb))].get_img()
             bar_img.final_scaled(0.8)
             bar_img.smoothscaling = False
             
-            _render_image_game(interface, bar_img, tile.position.middle() + Position(0, 0.6), True, relative_time)
+            render_image_game(interface, bar_img, tile.position.middle() + Position(0, 0.6), True, relative_time)
         
     for entity in game_.entities:
         if entity.is_dead():
@@ -62,9 +58,9 @@ def render_game(interface, current_tick, time, last_frame, relative_time):
                 mob_img.shaded(((entity.ticks_lived + relative_time) * 0.05) ** 3)
                 bar_img.shaded(((entity.ticks_lived + relative_time) * 0.05) ** 3)
             
-            _render_image_game(interface, bar_img, pos + Position(0, mob_img.final_size[1] * 0.8), True, relative_time)
+            render_image_game(interface, bar_img, pos + Position(0, mob_img.final_scale[1] * 0.8), True, relative_time)
         
-        _render_image_game(interface, mob_img, pos, True, relative_time)
+        render_image_game(interface, mob_img, pos, True, relative_time)
     
     text_img1 = graphics.WAVE_FONT.render("VAGUE " + str(game_.wave + 1), True, (170, 50, 50))
     interface.screen.blit(text_img1, ((main.SCREEN_WIDTH - text_img1.get_width()) / 2, 10))
@@ -82,5 +78,9 @@ def render_game(interface, current_tick, time, last_frame, relative_time):
         
         next_wave_button = ui.Button(interface, next_wave_action, button_pos, text_img2, text_img2_hover, "next_wave")
         ui.add_button(interface, next_wave_button)
-    else:
-        main.set_hand_reason("hover_button_" + str(hash("next_wave")), False)
+
+    money_text_img = graphics.PRICES_FONT.render(str(game_.money) + "  ", True, (200, 200, 150))
+    interface.screen.blit(money_text_img, (main.SCREEN_WIDTH - money_text_img.get_width(), 10))
+    
+    if interface.popup_tile:
+        interface.popup_rect = building_popup.render_popup(interface, current_tick, game_, time, last_frame, relative_time)

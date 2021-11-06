@@ -24,5 +24,5 @@ class Castle(tower.Tower):
         self._health -= amount
         
     def get_render(self, time):
-        img = pictures.PICTURES["castle"].get_img(hash(self.tile.position))
+        img = pictures.get("castle", hash(self.tile.position))
         return img

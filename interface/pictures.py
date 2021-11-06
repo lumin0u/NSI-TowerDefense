@@ -77,8 +77,10 @@ class Picture:
 class MyImage:
     def __init__(self, image: pygame.Surface):
         self._image = image
-        self._actions = {"scale": (1, 1), "scale_to": None, "highlight": (0, 0, 0), "shade": 1, "rotation": 0, "blits": []}
-        self._final_size = (1, 1)
+        self._actions = {"scale": (1, 1), "highlight": (0, 0, 0), "shade": 1, "rotation": 0, "blits": [],
+                         "scale_to": None}
+        
+        self._final_scale = (1, 1)
         self.smoothscaling = True
     
     def _scale_it(self, image, size):
@@ -93,12 +95,13 @@ class MyImage:
         shade = self._actions["shade"]
         angle = self._actions["rotation"]
         blits = self._actions["blits"]
+
+        new_size = (self._image.get_width(), self._image.get_height())
         
         if scale_to:
-            self._image = self._scale_it(self._image, scale_to)
+            new_size = scale_to
         
-        new_size = (int(self._image.get_width() * scale[0]), int(self._image.get_height() * scale[1]))
-        self._image = self._scale_it(self._image, new_size)
+        self._image = self._scale_it(self._image, (int(new_size[0] * scale[0]), int(new_size[1] * scale[1])))
 
         self._image.fill((255, 255, 255, int(shade * 255)), special_flags=pygame.BLEND_RGBA_MULT)
         
@@ -107,36 +110,43 @@ class MyImage:
         r_size = math.sqrt(self._image.get_width() * self._image.get_height() / size)
         self.final_scaled(r_size)
         
-        for image, position in blits:
-            if isinstance(image, MyImage):
-                self._image.blit(image.build_image(), position)
-            else:
-                self._image.blit(image, position)
+        for image, position, _ in blits:
+            self._image.blit(image.build_image(), position)
         
         self._actions = {"scale": (1, 1), "scale_to": None, "highlight": (0, 0, 0), "shade": 1, "rotation": 0, "blits": []}
         return self._image
     
     @property
-    def final_size(self):
-        return self._final_size
+    def final_scale(self):
+        return self._final_scale
     
     def scaled(self, scale):
         if type(scale) is int or type(scale) is float:
             self._actions["scale"] = (self._actions["scale"][0] * scale, self._actions["scale"][1] * scale)
+            for tup in self._actions["blits"]:
+                tup[0].scaled(scale)
+                tup[1] = (tup[1][0] * scale, tup[1][1] * scale)
         elif type(scale) is tuple:
             self._actions["scale"] = (self._actions["scale"][0] * scale[0], self._actions["scale"][1] * scale[1])
+            for tup in self._actions["blits"]:
+                tup[0].scaled(scale)
+                tup[1] = (tup[1][0] * scale[0], tup[1][1] * scale[1])
         return self
     
     def scaled_to(self, size):
         self._actions["scale"] = (1, 1)
         self._actions["scale_to"] = size
+        
+        for tup in self._actions["blits"]:
+            tup[0].scaled_to((size[0] * tup[0].get_width() / self._image.get_width(), size[1] * tup[0].get_height() / self._image.get_height()))
+            tup[1] = (tup[2][0] / self._image.get_width() * size[0], tup[2][1] / self._image.get_height() * size[1])
         return self
     
     def final_scaled(self, scale):
         if type(scale) is int or type(scale) is float:
-            self._final_size = (self._final_size[0] * scale, self._final_size[1] * scale)
+            self._final_scale = (self._final_scale[0] * scale, self._final_scale[1] * scale)
         elif type(scale) is tuple:
-            self._final_size = (self._final_size[0] * scale[0], self._final_size[1] * scale[1])
+            self._final_scale = (self._final_scale[0] * scale[0], self._final_scale[1] * scale[1])
         return self
     
     def highlighted(self, highlight_alpha, border_width, border_alpha):
@@ -147,6 +157,8 @@ class MyImage:
     
     def shaded(self, alpha):
         self._actions["shade"] -= (1 - alpha) * self._actions["shade"]
+        for img, pos in self._actions["blits"]:
+            img.shaded(alpha)
         return self
     
     def rotated(self, angle):
@@ -154,7 +166,7 @@ class MyImage:
         return self
     
     def blit(self, surface, pos=(0, 0)):
-        self._actions["blits"].append((surface, pos))
+        self._actions["blits"].append([(surface if isinstance(surface, MyImage) else MyImage(surface)).copy(), pos, pos])
     
     def get_width(self):
         if self._actions["scale_to"]:
@@ -170,11 +182,20 @@ class MyImage:
         return pygame.Rect(0, 0, self.get_width(), self.get_height())
     
     def copy(self):
-        return MyImage(self._image.copy())
+        copy_ = MyImage(self._image.copy())
+        copy_._actions = self._actions.copy()
+        copy_._final_scale = self._final_scale
+        return copy_
     
     def smoothscaled(self, value: bool):
         self.smoothscaling = value
         return self
+    
+    @staticmethod
+    def void(width, height):
+        surf = pygame.Surface((width, height)).convert_alpha()
+        surf.fill((0, 0, 0, 0))
+        return MyImage(surf)
 
 
 PICTURES = {}
@@ -189,10 +210,15 @@ def load_pictures():
     load_picture("volume_0", "buttons/")
     load_picture("volume_1", "buttons/")
     load_picture("volume_2", "buttons/")
+    load_picture("level_up", "buttons/")
     
     load_picture("simple_tower", "towers/")
     load_picture("castle", "towers/")
     load_picture("explosive_tower", "towers/")
+    load_picture("sniper_tower", "towers/")
+
+    load_picture("dart", "projectiles/")
+    load_picture("shell", "projectiles/")
     
     load_picture("carre", "mobs/")
     load_picture("robuste", "mobs/")
@@ -202,9 +228,14 @@ def load_pictures():
     for i in range(14):
         load_picture("health" + str(i), "mobs/")
 
-    load_picture("dart", "projectiles/")
-    load_picture("shell", "projectiles/")
+    load_picture("top", "tower_popup/")
+    load_picture("body", "tower_popup/")
+    load_picture("bottom", "tower_popup/")
 
 
 def load_picture(name, directory=""):
     PICTURES[name] = Picture(name, directory)
+
+
+def get(name, pseudo_random=0):
+    return PICTURES[name].get_img(pseudo_random)

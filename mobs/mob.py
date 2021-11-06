@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 import pygame
 
+import pricing
 from entity import Entity
 from position import Position, TilePosition, Direction
 from copy import copy
@@ -25,6 +26,7 @@ class Mob(Entity, ABC):
         self._attributes["resistances"][game.DAMAGE_TYPE_ABSOLUTE] = 1
         self._max_health = health * self._attributes["health_mul"]
         self._health = self.max_health
+        self._dead = False
     
     @property
     def max_health(self) -> float:
@@ -73,9 +75,16 @@ class Mob(Entity, ABC):
     
     def teleport(self, position: Position):
         self._position = position
-    
-    def damage(self, damage: float, type_):
+        
+    def damage(self, damage: float, type_, earn_money=True):
         self._health -= damage / self._attributes["resistances"][type_]
+        if self._health <= 0:
+            self.kill(earn_money)
+    
+    def kill(self, earn_money):
+        if earn_money:
+            self._game.money += pricing.mobs_rewards[type(self)]
+        self._dead = True
     
     def is_dead(self):
-        return self._health <= 0
+        return self._dead

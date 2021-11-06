@@ -38,4 +38,4 @@ class RobusteMob(mob.Mob):
         self.advance()
     
     def get_render(self, time):
-        return pictures.PICTURES["robuste"].get_img().final_scaled(0.3)
+        return pictures.get("robuste").final_scaled(0.3)

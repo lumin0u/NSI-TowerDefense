@@ -16,7 +16,11 @@ class SimpleTower(tower.Tower):
             game.GAME_INSTANCE.add_entity(SimpleProjectile(self.tile.position.middle(), self._target, self._level + 1))
     
     def get_render(self, time):
-        return self._add_level(pictures.PICTURES["simple_tower"].get_img())
+        return self._add_level(SimpleTower.get_img(self._aim))
+    
+    @staticmethod
+    def get_img(aim):
+        return pictures.get("simple_tower")
 
 
 class SimpleProjectile(projectile.Projectile):
@@ -30,4 +34,4 @@ class SimpleProjectile(projectile.Projectile):
     
     def get_render(self, time):
         angle = -(self.target_position() - self._position).angle() / math.pi * 180
-        return pictures.PICTURES["dart"].get_img().final_scaled(0.06).rotated(angle)
+        return pictures.get("dart").final_scaled(0.06).rotated(angle)

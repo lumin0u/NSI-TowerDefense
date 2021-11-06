@@ -22,13 +22,13 @@ def lerp(a, b, m, nice_m=True):
 
 
 class Interface:
-    def __init__(self, game_, screen):
+    def __init__(self, screen):
         self._screen = screen
-        self._game = game_
         self.volume = 2
         self.buttons = []
         self._click_start = "free"
         self.popup_tile: tiles.Tile = None
+        self.popup_rect: pygame.Rect = None
         
         self.camera_pos = Position(0, 0)
         self.half_camera_pos = self.camera_pos
@@ -37,33 +37,40 @@ class Interface:
         self.half_zoom = 1 / 100
     
     @property
-    def game(self):
-        return self._game
-    
-    @property
     def screen(self):
         return self._screen
     
     def mouse_down(self, mouse_button, mouse_pos):
         for button in self.buttons:
             if button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
-                self._click_start = "button" + str(hash(button.position))
+                self._click_start = button.id
                 return
     
-    def mouse_up(self, mouse_button, mouse_pos):
-        for button in self.buttons:
-            if "button" + str(hash(button.position)) == self._click_start and button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
-                button.onclick()
-                return
-        for tile in self.game.level.tiles:
-            if tile.is_clickable() and tile.get_on_screen_rect(self).collidepoint(pygame.mouse.get_pos()):
-                tile.onclick()
+    def mouse_up(self, game, mouse_button, mouse_pos):
+        if not self.popup_tile or not self.popup_rect or not self.popup_rect.collidepoint(pygame.mouse.get_pos()):
+            self.popup_tile = None
+            self.popup_rect = None
+            for button in self.buttons:
+                if button.id == self._click_start and button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()):
+                    button.onclick()
+                    return
+            
+            for tile in game.level.tiles:
+                if tile.is_clickable() and tile.get_on_screen_rect(self).collidepoint(pygame.mouse.get_pos()):
+                    self.popup_tile = tile
+        else:
+            for button in self.buttons:
+                if button.id == self._click_start \
+                        and button.rect.move(button.position).collidepoint(pygame.mouse.get_pos()) \
+                        and button.id.startswith("buy"):
+                    button.onclick()
+                    return
     
     def can_free_move(self):
         return self._click_start == "free"
     
     def is_clicking_button(self, button):
-        return pygame.mouse.get_pressed(3)[0] and self._click_start == "button" + str(hash(button.position))
+        return pygame.mouse.get_pressed(3)[0] and self._click_start == button.id
 
 
 class Button:
@@ -98,8 +105,11 @@ class Button:
         return self._id
 
 
-def render(interface, current_tick, time, last_frame, relative_time):
+def render(interface, game, current_tick, time, last_frame, relative_time):
+    pygame.draw.rect(interface.screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
+    
     interface.buttons = []
+    main.clear_hand_reasons()
 
     delta = time - last_frame
     
@@ -115,9 +125,9 @@ def render(interface, current_tick, time, last_frame, relative_time):
     interface.half_zoom = lerp(interface.half_zoom, interface.zoom, delta + 0.1)
     interface.half_camera_pos = lerp(interface.half_camera_pos, interface.camera_pos, delta + 0.1)
     
-    game_render.render_game(interface, current_tick, time, last_frame, relative_time)
+    game_render.render_game(interface, game, current_tick, time, last_frame, relative_time)
     
-    show_ui(interface, current_tick, time, last_frame, relative_time)
+    show_ui(interface, game, current_tick, time, last_frame, relative_time)
     
     pygame.display.update()
     
@@ -134,7 +144,7 @@ def add_button(interface, button):
     interface.buttons.append(button)
 
 
-def show_ui(interface, current_tick, time, last_frame, relative_time):
+def show_ui(interface, game, current_tick, time, last_frame, relative_time):
     volume_img = pictures.PICTURES["volume_" + str(interface.volume)].get_img()
     volume_hover_img = volume_img.copy().highlighted(0.15, 0, 0)
     
@@ -152,4 +162,5 @@ def show_ui(interface, current_tick, time, last_frame, relative_time):
     
     screen.blit(image, (main.SCREEN_WIDTH - TOOLBOX_WIDTH, -5))"""
     
-    interface.screen.blit(graphics.FPS_FONT.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))
+    if time != last_frame:
+        interface.screen.blit(graphics.FPS_FONT.render(str(int(1 / (time - last_frame))), True, (150, 0, 200)), (0, 0))
