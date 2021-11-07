@@ -9,14 +9,14 @@ from interface import pictures
 
 class SniperTower(tower.Tower):
     def __init__(self, tile):
-        super().__init__(tile, 130, 8)
+        super().__init__(tile, 80, 8)
     
     def shoot(self):
         if self._target:
             game.GAME_INSTANCE.add_entity(SniperProjectile(self.tile.position.middle(), self._target, self._level + 1))
     
     def get_render(self, time):
-        return self._add_level(SniperTower.get_img(self._aim))
+        return self._add_level(SniperTower.get_img(self._aim_angle))
     
     @staticmethod
     def get_img(aim):
@@ -30,7 +30,7 @@ class SniperProjectile(projectile.Projectile):
     
     def hit(self):
         if not self.target_is_dead():
-            self._target.damage(40 * self._dmg_multiplier, game.DAMAGE_TYPE_RAW)
+            self._target.damage(30 * self._dmg_multiplier, game.DAMAGE_TYPE_RAW)
     
     def get_render(self, time):
         angle = -(self.target_position() - self._position).angle() / math.pi * 180

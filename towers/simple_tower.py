@@ -16,7 +16,7 @@ class SimpleTower(tower.Tower):
             game.GAME_INSTANCE.add_entity(SimpleProjectile(self.tile.position.middle(), self._target, self._level + 1))
     
     def get_render(self, time):
-        return self._add_level(SimpleTower.get_img(self._aim))
+        return self._add_level(SimpleTower.get_img(self._aim_angle))
     
     @staticmethod
     def get_img(aim):

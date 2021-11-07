@@ -16,11 +16,11 @@ class Tower(ABC):
         self._last_shot = 0
         self._shoot_range = shoot_range
         self._level = 0
-        self._aim = Direction(1, 0)
+        self._aim_angle = 0
     
     def tick(self, current_tick, game_):
         if self._target:
-            self._aim = (self._target.position - self._tile.position.middle()).normalized()
+            self._aim_angle = (self._target.position - self._tile.position.middle()).angle()
         
         # on reset le target s'il est trop loin ou mort
         if self._target and (self._target.is_dead() or self._target.position.distance(self._tile.position.middle()) > self._shoot_range):

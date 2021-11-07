@@ -167,6 +167,7 @@ class MyImage:
     
     def blit(self, surface, pos=(0, 0)):
         self._actions["blits"].append([(surface if isinstance(surface, MyImage) else MyImage(surface)).copy(), pos, pos])
+        return self
     
     def get_width(self):
         if self._actions["scale_to"]:
@@ -216,6 +217,8 @@ def load_pictures():
     load_picture("castle", "towers/")
     load_picture("explosive_tower", "towers/")
     load_picture("sniper_tower", "towers/")
+    
+    load_picture("simple_turret", "towers/")
 
     load_picture("dart", "projectiles/")
     load_picture("shell", "projectiles/")
