@@ -22,7 +22,7 @@ class ExplosiveTower(tower.Tower):
     
     @staticmethod
     def get_img(aim):
-        return pictures.get("explosive_tower")
+        return pictures.get("explosive_tower").smoothscaled(False)
 
 
 class ExplosiveProjectile(projectile.Projectile):

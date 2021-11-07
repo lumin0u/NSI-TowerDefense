@@ -7,7 +7,7 @@ from position import Direction
 from towers import castle
 
 
-def render_popup(interface, current_tick, game_, time, last_frame, relative_time):
+def render_popup(interface, game_, time, last_frame, relative_time):
     top: pictures.MyImage = pictures.get("top").smoothscaled(True)
     body: pictures.MyImage = pictures.get("body").smoothscaled(True)
     bottom: pictures.MyImage = pictures.get("bottom").smoothscaled(True)

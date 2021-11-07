@@ -68,7 +68,7 @@ class Mob(Entity, ABC):
             dmg = max(10., self.max_health / 10)
             tile.tower.damage(dmg / self.max_health * self._attributes["damage"], self)
             # la tour renvoie les dégats
-            self.damage(dmg, game.DAMAGE_TYPE_ABSOLUTE)
+            self.damage(dmg, game.DAMAGE_TYPE_ABSOLUTE, earn_money=False)
     
     def move(self, direction: Direction):
         self.teleport(self.position + direction)

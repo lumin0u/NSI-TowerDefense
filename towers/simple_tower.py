@@ -20,7 +20,7 @@ class SimpleTower(tower.Tower):
     
     @staticmethod
     def get_img(aim):
-        return pictures.get("simple_tower")
+        return pictures.get("simple_tower").smoothscaled(False)
 
 
 class SimpleProjectile(projectile.Projectile):

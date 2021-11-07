@@ -17,8 +17,9 @@ SCREEN_HEIGHT = 700
 TICK_REAL_TIME = 0.05
 
 
-def _tick(current_tick):
-    game.GAME_INSTANCE.tick(current_tick)
+def _tick():
+    if game.GAME_INSTANCE:
+        game.GAME_INSTANCE.tick()
 
 
 def set_hand_reason(reason, value):
@@ -36,13 +37,11 @@ def main():
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE)
     
-    the_game = game.Game(levels.ALL_LEVELS[0], 0)
-    
     interface = ui.Interface(screen)
+    interface.volume = 0
     
     last_frame = time.time()
     last_tick = time.time()
-    current_tick = 0
     
     MUSICS_FILES = [
         "musics/HOME - Resting State - 14.mp3",
@@ -50,18 +49,17 @@ def main():
     ]
 
     pygame.mixer.init()
-    #pygame.mixer.music.load("musics/HOME - Resting State - 14.mp3")
-    #pygame.mixer.music.play(1000)
+    pygame.mixer.music.load("musics/HOME - Resting State - 14.mp3")
+    pygame.mixer.music.play(1000)
     pygame.mixer.music.set_volume((interface.volume / 4) ** 2)
     
     while True:
         if time.time() > TICK_REAL_TIME + last_tick:
-            _tick(current_tick)
-            current_tick += 1
+            _tick()
             last_tick = time.time()
         
         this_frame = time.time()
-        ui.render(interface, the_game, current_tick, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
+        ui.render(interface, game.GAME_INSTANCE, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
         
         if any((v for v in graphics.cursor_hand_reasons.values())):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)

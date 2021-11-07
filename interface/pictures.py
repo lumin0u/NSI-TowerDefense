@@ -212,6 +212,7 @@ def load_pictures():
     load_picture("volume_1", "buttons/")
     load_picture("volume_2", "buttons/")
     load_picture("level_up", "buttons/")
+    load_picture("pause", "buttons/")
     
     load_picture("simple_tower", "towers/")
     load_picture("castle", "towers/")
@@ -240,5 +241,5 @@ def load_picture(name, directory=""):
     PICTURES[name] = Picture(name, directory)
 
 
-def get(name, pseudo_random=0):
+def get(name, pseudo_random=0) -> MyImage:
     return PICTURES[name].get_img(pseudo_random)

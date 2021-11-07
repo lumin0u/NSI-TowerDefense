@@ -26,14 +26,14 @@ def render_image_game(interface, image, game_position, centered, relative_time):
     return rect
 
 
-def render_game(interface, game_, current_tick, time, last_frame, relative_time):
+def render_game(interface, game_, time, last_frame, relative_time):
     elapsed_time = max(0.001, (time - last_frame))
     
     for tile in game_.level.tiles:
         render_image_game(interface, tile.get_render(time), tile.position, False, relative_time)
         if isinstance(tile, tiles.CastleTile):
             bar_nb = max(0, tile.tower.health * 13 // tile.tower.max_health)
-            bar_img = pictures.PICTURES["health" + str(int(bar_nb))].get_img()
+            bar_img = pictures.get("health" + str(int(bar_nb)))
             bar_img.final_scaled(0.8)
             bar_img.smoothscaling = False
             
@@ -50,7 +50,7 @@ def render_game(interface, game_, current_tick, time, last_frame, relative_time)
         if isinstance(entity, mob.Mob):
 
             bar_nb = entity.health * 13 // entity.max_health
-            bar_img = pictures.PICTURES["health" + str(int(bar_nb))].get_img()
+            bar_img = pictures.get("health" + str(int(bar_nb)))
             bar_img = bar_img.final_scaled(bar_img.get_width() / 128 * 1.5)
             bar_img.smoothscaling = False
             
@@ -66,7 +66,7 @@ def render_game(interface, game_, current_tick, time, last_frame, relative_time)
     interface.screen.blit(text_img1, ((main.SCREEN_WIDTH - text_img1.get_width()) / 2, 10))
 
     if game_.btwn_waves:
-        next_wave_text = "Vague suivante \u2022 " + str(int((game_.next_wave_date - current_tick) * main.TICK_REAL_TIME + 1))
+        next_wave_text = "Vague suivante \u2022 " + str(int((game_.next_wave_date - game_.game_tick) * main.TICK_REAL_TIME + 1))
         
         text_img2 = pictures.MyImage(graphics.NEXT_WAVE_FONT.render(next_wave_text, True, (150, 40, 40)))
         text_img2_hover = pictures.MyImage(graphics.NEXT_WAVE_FONT.render(next_wave_text, True, (200, 60, 60)))
@@ -74,7 +74,7 @@ def render_game(interface, game_, current_tick, time, last_frame, relative_time)
         button_pos = ((main.SCREEN_WIDTH - text_img2.get_width()) / 2, 10 + text_img1.get_height())
         
         def next_wave_action():
-            game_.next_wave_date = current_tick - 1
+            game_.next_wave_date = game_.game_tick - 1
         
         next_wave_button = ui.Button(interface, next_wave_action, button_pos, text_img2, text_img2_hover, "next_wave")
         ui.add_button(interface, next_wave_button)
@@ -83,4 +83,4 @@ def render_game(interface, game_, current_tick, time, last_frame, relative_time)
     interface.screen.blit(money_text_img, (main.SCREEN_WIDTH - money_text_img.get_width(), 10))
     
     if interface.popup_tile:
-        interface.popup_rect = building_popup.render_popup(interface, current_tick, game_, time, last_frame, relative_time)
+        interface.popup_rect = building_popup.render_popup(interface, game_, time, last_frame, relative_time)

@@ -67,14 +67,14 @@ class PathTile(Tile):
 
     def get_render(self, time):
         if self.direction == -self._from_:
-            img = pictures.PICTURES["path_WE"].get_img(hash(self.position))
+            img = pictures.get("path_WE", hash(self.position))
             if self.direction.y == 0:
                 return img
             else:
                 return img.rotated(90)
         else:
             l = [self.direction, self._from_]
-            img = pictures.PICTURES["path_NE"].get_img(hash(self.position))
+            img = pictures.get("path_NE", hash(self.position))
             if matches_no_order(l, (Direction(1, 0), Direction(0, -1))):
                 return img
             elif matches_no_order(l, (Direction(1, 0), Direction(0, 1))):
@@ -106,7 +106,7 @@ class BuildingTile(Tile):
         return self._tower is None
     
     def get_render(self, time):
-        img = pictures.PICTURES["building_tile"].get_img(hash(self.position))
+        img = pictures.get("building_tile", hash(self.position))
         
         if not self.is_empty():
             img.blit(self.tower.get_render(time).scaled_to(img.get_rect().size))
@@ -121,7 +121,7 @@ class SpawnerTile(PathTile):
         super().__init__(position, None, direction)
     
     def get_render(self, time):
-        return pictures.PICTURES["spawner"].get_img(hash(self.position))
+        return pictures.get("spawner", hash(self.position))
     
     def is_clickable(self):
         return False

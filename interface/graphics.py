@@ -14,6 +14,8 @@ WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 40)
 NEXT_WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 30)
 TOWER_LVL_FONT: pygame.font.Font = pygame.font.Font(None, 20)
 PRICES_FONT: pygame.font.Font = pygame.font.Font(None, 23)
+LEVEL_BUTTON_FONT: pygame.font.Font = pygame.font.Font(None, 50)
+PAUSE_BUTTONS_FONT: pygame.font.Font = pygame.font.Font(None, 40)
 
 
 def get_pixel_pos(game_pos, interface) -> Position:

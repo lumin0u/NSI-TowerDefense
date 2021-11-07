@@ -20,10 +20,7 @@ GAME_INSTANCE = None
 
 
 class Game:
-    def __init__(self, level_, current_tick):
-        global GAME_INSTANCE
-        GAME_INSTANCE = self
-        
+    def __init__(self, level_):
         self._entities = []
         self._level = deepcopy(level_)
         self.money = level_.money
@@ -31,6 +28,8 @@ class Game:
         self._wave = 0
         self._btwn_waves = True
         self._next_wave_date = self.current_wave().preparation
+        self._game_tick = 0
+        self._paused = False
     
     @property
     def level(self):
@@ -39,6 +38,10 @@ class Game:
     @property
     def wave(self):
         return self._wave
+    
+    @property
+    def game_tick(self):
+        return self._game_tick
     
     @property
     def btwn_waves(self):
@@ -52,6 +55,14 @@ class Game:
     def next_wave_date(self, value):
         self._next_wave_date = value
     
+    @property
+    def paused(self):
+        return self._paused
+    
+    @paused.setter
+    def paused(self, value):
+        self._paused = value
+    
     def add_entity(self, entity):
         self._entities.append(entity)
     
@@ -61,20 +72,25 @@ class Game:
     def current_wave(self):
         return self.level.waves[self._wave % len(self.level.waves)]
     
-    def tick(self, current_tick):
-        if self._btwn_waves:
-            if self._next_wave_date <= current_tick:
-                self._btwn_waves = False
-                self.current_wave().start(current_tick)
+    def tick(self):
+        if self.paused:
+            return
         
-        elif self.current_wave().is_ended(current_tick - 1):
+        self._game_tick += 1
+        
+        if self._btwn_waves:
+            if self._next_wave_date <= self._game_tick:
+                self._btwn_waves = False
+                self.current_wave().start(self._game_tick)
+        
+        elif self.current_wave().is_ended(self._game_tick - 1):
             self._btwn_waves = True
             self._wave += 1
-            self._next_wave_date = current_tick + self.current_wave().preparation
+            self._next_wave_date = self._game_tick + self.current_wave().preparation
             
         if not self._btwn_waves:
             count_mult = self._wave // len(self.level.waves)
-            for mob_type in self.current_wave().next_mobs(current_tick) * (1 + count_mult):
+            for mob_type in self.current_wave().next_mobs(self._game_tick) * (1 + count_mult):
                 health = 5 + self._wave * self._wave
                 if mob_type is boss_mob.BossMob:
                     health = self.current_wave().boss_health
@@ -85,9 +101,9 @@ class Game:
             if entity.is_dead():
                 self.remove_entity(entity)
             else:
-                entity.tick(current_tick, self)
+                entity.tick(self._game_tick, self)
         for tower in (tile.tower for tile in self.level.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):
-            tower.tick(current_tick, self)
+            tower.tick(self._game_tick, self)
         
     @property
     def entities(self):
