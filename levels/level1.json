@@ -20,14 +20,13 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
       "mobs": {
-        "robuste": 3,
-        "simple": 2
+        "simple": 7
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
       "mobs": {
         "robuste": 5
       }
@@ -35,23 +34,25 @@
     {
       "preparation": 100,
       "mobs": {
-        "simple": 20
-      }
-    },
-    {
-      "preparation": 200,
-      "mobs": {
-        "simple": 12,
-        "robuste": 6
-      }
-    },
-    {
-      "preparation": 200,
-      "mobs": {
         "simple": 10,
+		"robuste": 5
+      }
+    },
+    {
+      "preparation": 200,
+      "mobs": {
+        "simple": 15,
+        "robuste": 8
+      }
+    },
+    {
+      "preparation": 200,
+      "mobs": {
+        "simple": 20,
+		"robuste": 5,
         "boss": 1
       },
-      "boss_health": 500
+      "boss_health": 300
     }
   ]
 }

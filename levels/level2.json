@@ -2,7 +2,7 @@
   "spawner": [-4, 1],
   "castle_health": 100,
   "path": "ENNNEEEESSSESEE",
-  "money": 150,
+  "money": 100,
   "tower_slots": [
     [-2, 0],
     [-2,-1],
@@ -18,27 +18,28 @@
     {
       "preparation": 600,
       "mobs": {
-        "simple": 5
+        "simple": 5 
       }
     },
     {
       "preparation": 100,
       "mobs": {
-        "simple": 2,
-        "robuste": 4
+        "simple": 6,
+        "robuste": 2
       }
     },
     {
       "preparation": 100,
       "mobs": {
-        "simple": 15
+        "simple": 25,
+		"robuste": 4
       }
     },
     {
       "preparation": 100,
       "mobs": {
-        "simple": 10,
-        "robuste": 6
+        "simple": 30,
+        "robuste": 10
       }
     },
     {
