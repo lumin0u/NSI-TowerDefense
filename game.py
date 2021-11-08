@@ -91,6 +91,8 @@ class Game:
         if not self._btwn_waves:
             count_mult = self._wave // len(self.level.waves)
             for mob_type in self.current_wave().next_mobs(self._game_tick) * (1 + count_mult):
+                if not mob_type:
+                    continue
                 health = 5 + self._wave * self._wave
                 if mob_type is boss_mob.BossMob:
                     health = self.current_wave().boss_health

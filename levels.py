@@ -11,7 +11,7 @@ from towers import simple_tower
 
 
 class Wave:
-    def __init__(self, preparation, mobs_: dict[type, int], boss_health=0):
+    def __init__(self, preparation, mobs_, boss_health=0):
         """
             mobs est un dictionnaire avec:
               pour clés les classes des mobs
@@ -67,12 +67,13 @@ class Wave:
 
 
 class Level:
-    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, money, tiles_=(), waves=()):
+    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, money, tiles_, waves, available_towers):
         self._spawner = spawn
         self._castle = castle
-        self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + list(tiles_)
-        self._waves: list[Wave] = list(waves)
+        self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + tiles_.copy()
+        self._waves: list[Wave] = waves.copy()
         self._money = money
+        self._available_towers = available_towers
     
     def tile_at(self, position: Position):
         # on recherche dans nos tuiles s'il en existe une a cette position
@@ -102,6 +103,10 @@ class Level:
     @property
     def money(self):
         return self._money
+    
+    @property
+    def available_towers(self):
+        return self._available_towers
 
 
 ALL_LEVELS = ()
@@ -118,7 +123,12 @@ ctd = cardinal_to_direction
 def build_levels():
     global ALL_LEVELS
     
-    mobs_names = {"simple": simple_mob.SimpleMob, "robuste": robuste_mob.RobusteMob, "boss": boss_mob.BossMob}
+    mobs_names = {
+        "simple": simple_mob.SimpleMob,
+        "robuste": robuste_mob.RobusteMob,
+        "boss": boss_mob.BossMob,
+        "air": None
+    }
     
     levels_json = eval(open("levels/levels.json", mode="r").read())
     
@@ -150,5 +160,5 @@ def build_levels():
             waves.append(Wave(wave["preparation"], {mobs_names[k]: v for k, v in wave["mobs"].items()}, wave["boss_health"] if "boss_health" in wave else 0))
         
         levels_list.append(Level(spawner, castle, money, tiles_, waves))
-
+    
     ALL_LEVELS = tuple(levels_list)

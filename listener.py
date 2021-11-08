@@ -60,3 +60,7 @@ def catch_event(event, interface):
     elif event.type == pygame.VIDEORESIZE:
         main.SCREEN_WIDTH = event.w
         main.SCREEN_HEIGHT = event.h
+    
+    elif event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_ESCAPE and game.GAME_INSTANCE:
+            game.GAME_INSTANCE.paused = not game.GAME_INSTANCE.paused
