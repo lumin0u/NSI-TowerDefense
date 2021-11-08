@@ -5,8 +5,8 @@
     "sniper": [100, 21, 46, 92, 209]
   },
   "mobs_rewards": {
-    "simple": 4,
-    "robuste": 13,
+    "simple": 3,
+    "robuste": 7,
     "boss": 100
   }
 }
