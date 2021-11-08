@@ -55,6 +55,10 @@ class Tower(ABC):
     def tile(self):
         return self._tile
     
+    @property
+    def shoot_range(self):
+        return self._shoot_range
+    
     def has_next_level(self):
         return self._level + 1 < len(pricing.get_tower_level_prices(self.__class__))
     

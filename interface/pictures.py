@@ -194,9 +194,7 @@ class MyImage:
     
     @staticmethod
     def void(width, height):
-        surf = pygame.Surface((width, height)).convert_alpha()
-        surf.fill((0, 0, 0, 0))
-        return MyImage(surf)
+        return MyImage(pygame.Surface((width, height), pygame.SRCALPHA, 32).convert_alpha())
 
 
 PICTURES = {}

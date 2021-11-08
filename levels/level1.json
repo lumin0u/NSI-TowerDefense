@@ -3,6 +3,7 @@
   "castle_health": 100,
   "path": "EEEEEEEE",
   "money": 100,
+  "towers": ["simple", "sniper"],
   "tower_slots": [
     [-1, 1],
     [0, 1],

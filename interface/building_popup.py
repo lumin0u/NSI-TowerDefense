@@ -1,5 +1,6 @@
 import pygame
 
+import game
 import pricing
 import tiles
 from interface import pictures, game_render, graphics, ui
@@ -7,7 +8,7 @@ from position import Direction
 from towers import castle
 
 
-def render_popup(interface, game_, time, last_frame, relative_time):
+def render_popup(interface, game_: game.Game, time, last_frame, relative_time):
     top: pictures.MyImage = pictures.get("top").smoothscaled(True)
     body: pictures.MyImage = pictures.get("body").smoothscaled(True)
     bottom: pictures.MyImage = pictures.get("bottom").smoothscaled(True)
@@ -15,7 +16,7 @@ def render_popup(interface, game_, time, last_frame, relative_time):
     tower = interface.popup_tile.tower
     
     if not tower:
-        bodies = (len(pricing.tower_prices) + 1) // 2
+        bodies = (len(game_.level.available_towers) + 1) // 2
         
         popup_img = pictures.MyImage.void(64, 8 + 16 + bodies * 32)
         popup_img.blit(top.scaled_to((64, 8)), (0, 0))
@@ -32,7 +33,9 @@ def render_popup(interface, game_, time, last_frame, relative_time):
         
         buttons = []
         i = 0
-        for tower_type, prices in pricing.tower_prices.items():
+        for tower_type in game_.level.available_towers:
+            prices = pricing.tower_prices[tower_type]
+            
             def onclick_(tower_type, prices):
                 def onclick():
                     if game_.money >= prices[0]:
@@ -66,6 +69,15 @@ def render_popup(interface, game_, time, last_frame, relative_time):
         return popup_img.get_rect().move(*draw_pos.to_tuple())
     
     elif type(tower) is not castle.Castle:
+        
+        circle_radius = tower.shoot_range * graphics.PIXEL_PER_ZOOM * interface.half_zoom
+        
+        range_circle = pygame.Surface((2 * circle_radius, 2 * circle_radius), pygame.SRCALPHA, 32).convert_alpha()
+        pygame.draw.circle(range_circle, (200, 190, 0, 50), (int(circle_radius), int(circle_radius)), circle_radius)
+        
+        range_circle_draw_pos = (graphics.get_pixel_pos(tower.tile.position.middle() - Direction(tower.shoot_range, tower.shoot_range), interface))
+        interface.screen.blit(range_circle, range_circle_draw_pos.to_tuple())
+        
         popup_img = pictures.MyImage.void(64, 8 + 16 + 32)
         
         popup_img.blit(top.scaled_to((64, 8)), (0, 0))
@@ -106,4 +118,5 @@ def render_popup(interface, game_, time, last_frame, relative_time):
             ui.add_button(interface, button)
         
         return popup_img.get_rect().move(*draw_pos.to_tuple())
-
+    
+    # TODO afficher vie du chateau

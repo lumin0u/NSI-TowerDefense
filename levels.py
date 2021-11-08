@@ -7,7 +7,7 @@ from mobs import robuste_mob, boss_mob
 from mobs import simple_mob
 import tiles
 from position import Position, TilePosition, Direction
-from towers import simple_tower
+from towers import simple_tower, explosive_tower, sniper_tower
 
 
 class Wave:
@@ -129,6 +129,11 @@ def build_levels():
         "boss": boss_mob.BossMob,
         "air": None
     }
+    towers_names = {
+        "simple": simple_tower.SimpleTower,
+        "explosive": explosive_tower.ExplosiveTower,
+        "sniper": sniper_tower.SniperTower
+    }
     
     levels_json = eval(open("levels/levels.json", mode="r").read())
     
@@ -159,6 +164,8 @@ def build_levels():
         for wave in level["waves"]:
             waves.append(Wave(wave["preparation"], {mobs_names[k]: v for k, v in wave["mobs"].items()}, wave["boss_health"] if "boss_health" in wave else 0))
         
-        levels_list.append(Level(spawner, castle, money, tiles_, waves))
+        authorized_towers = [towers_names[name] for name in level["towers"]]
+        
+        levels_list.append(Level(spawner, castle, money, tiles_, waves, authorized_towers))
     
     ALL_LEVELS = tuple(levels_list)
