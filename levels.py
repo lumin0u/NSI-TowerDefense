@@ -37,6 +37,11 @@ class Wave:
         self._scheduler = {}
         self.start_date = start_date
         buffer = copy(self._mobs)
+        
+        boss_wave = boss_mob.BossMob in buffer and buffer[boss_mob.BossMob]
+        if boss_wave:
+            buffer[boss_mob.BossMob] = 0
+        
         max_mob_count = max((v for v in self._mobs.values()))
         for mob in buffer:
             t = 0
@@ -56,6 +61,9 @@ class Wave:
                     self._scheduler[index].append(mob)
                     buffer[mob] -= 1
                 t += 1
+        
+        if boss_wave:
+            self._scheduler[max(self._scheduler.keys()) + 80] = [boss_mob.BossMob]
     
     def is_ended(self, current_tick):
         return not any((k > current_tick - self.start_date for k in self._scheduler))
@@ -135,12 +143,12 @@ def build_levels():
         "sniper": sniper_tower.SniperTower
     }
     
-    levels_json = eval(open("levels/levels.json", mode="r").read())
+    levels_json = eval(open("resources/levels/levels.json", mode="r").read())
     
     levels_list = []
     
     for level_file in levels_json:
-        level = eval(open("levels/" + level_file, mode="r").read())
+        level = eval(open("resources/levels/" + level_file, mode="r").read())
         
         path_current = TilePosition.of(level["spawner"])
         

@@ -1,6 +1,6 @@
 {
   "spawner": [-4, 1],
-  "castle_health": 100,
+  "castle_health": 10,
   "path": "ENNNEEEESSSESEE",
   "money": 100,
   "towers": ["simple", "sniper", "explosive"],

@@ -12,7 +12,7 @@ from interface import graphics
 
 RANDOM_HASH = random.randint(-2**63, 2**63-1)
 
-_EXTRA_DATA = eval(open("images/animations.json", mode='r').read())
+_EXTRA_DATA = eval(open("resources/images/animations.json", mode='r').read())
 
 
 def pilImageToSurface(pilImage):
@@ -47,7 +47,7 @@ class Picture:
         self._possible_images = []
         self._name = name
         
-        directory_path = "images/" + directory
+        directory_path = "resources/images/" + directory
         self._directory_path = directory_path
         
         for file in [f for f in listdir(directory_path) if isfile(join(directory_path, f))]:

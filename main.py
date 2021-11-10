@@ -49,7 +49,7 @@ def main():
     ]
 
     pygame.mixer.init()
-    pygame.mixer.music.load("musics/HOME - Resting State - 14.mp3")
+    pygame.mixer.music.load("resources/musics/HOME - Resting State - 14.mp3")
     pygame.mixer.music.play(1000)
     pygame.mixer.music.set_volume((interface.volume / 4) ** 2)
     

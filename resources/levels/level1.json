@@ -1,6 +1,6 @@
 {
   "spawner": [-4, 0],
-  "castle_health": 100,
+  "castle_health": 5,
   "path": "EEEEEEEE",
   "money": 100,
   "towers": ["simple", "sniper"],
@@ -40,14 +40,14 @@
       }
     },
     {
-      "preparation": 200,
+      "preparation": 150,
       "mobs": {
-        "simple": 15,
-        "robuste": 8
+        "simple": 20,
+        "robuste": 10
       }
     },
     {
-      "preparation": 200,
+      "preparation": 500,
       "mobs": {
         "simple": 20,
 		"robuste": 5,

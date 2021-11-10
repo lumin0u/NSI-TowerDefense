@@ -27,10 +27,15 @@ class Mob(Entity, ABC):
         self._max_health = health * self._attributes["health_mul"]
         self._health = self.max_health
         self._dead = False
+        self._tiles_travelled = 0
     
     @property
     def max_health(self) -> float:
         return self._max_health
+    
+    @property
+    def tiles_travelled(self) -> float:
+        return self._tiles_travelled
     
     @property
     def health(self) -> float:
@@ -59,7 +64,7 @@ class Mob(Entity, ABC):
                 
                 new_pos = corner + Direction(math.cos(new_angle), math.sin(new_angle)) * rel_pos.length()
                 
-                self.teleport(new_pos)
+                self.move(new_pos - self.position)
             else:
                 dir_ = tile.direction
                 self.move(dir_ * self.speed)
@@ -72,6 +77,7 @@ class Mob(Entity, ABC):
     
     def move(self, direction: Direction):
         self.teleport(self.position + direction)
+        self._tiles_travelled += direction.length()
     
     def teleport(self, position: Position):
         self._position = position

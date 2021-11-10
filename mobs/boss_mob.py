@@ -16,7 +16,7 @@ class BossMob(mob.Mob):
             "health_mul": 1,
             
             # la vitesse, en tuiles/ticks
-            "speed": 0.02,
+            "speed": 0.01,
             
             # les resistances du mob, pour chaque type d'attaque
             "resistances": {

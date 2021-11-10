@@ -26,6 +26,7 @@ class Game:
         self.money = level_.money
         self._id_inc = 0
         self._wave = 0
+        self._just_created = True
         self._btwn_waves = True
         self._next_wave_date = self.current_wave().preparation
         self._game_tick = 0
@@ -70,7 +71,10 @@ class Game:
         self._entities.remove(entity)
     
     def current_wave(self):
-        return self.level.waves[self._wave % len(self.level.waves)]
+        return self.wave_after(0)
+    
+    def wave_after(self, n):
+        return self.level.waves[(self._wave + n) % len(self.level.waves)]
     
     def tick(self):
         if self.paused:
@@ -81,19 +85,23 @@ class Game:
         if self._btwn_waves:
             if self._next_wave_date <= self._game_tick:
                 self._btwn_waves = False
+                if self._just_created:
+                    self._just_created = False
+                else:
+                    self._wave += 1
                 self.current_wave().start(self._game_tick)
         
-        elif self.current_wave().is_ended(self._game_tick - 1):
+        elif self.current_wave().is_ended(self._game_tick - 1) and not any((isinstance(ent, boss_mob.BossMob) for ent in self.entities)):
             self._btwn_waves = True
-            self._wave += 1
-            self._next_wave_date = self._game_tick + self.current_wave().preparation
+            self._next_wave_date = self._game_tick + self.wave_after(1).preparation
             
         if not self._btwn_waves:
             count_mult = self._wave // len(self.level.waves)
             for mob_type in self.current_wave().next_mobs(self._game_tick) * (1 + count_mult):
                 if not mob_type:
                     continue
-                health = 5 + self._wave * self._wave
+                health = 5 + self._wave ** 1.5
+                
                 if mob_type is boss_mob.BossMob:
                     health = self.current_wave().boss_health
                 shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)

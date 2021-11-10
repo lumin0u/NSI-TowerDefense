@@ -28,7 +28,7 @@ class Tower(ABC):
         
         # et on en choisit un nouveau si besoin
         if self._target is None:
-            for mob in sorted(game_.mobs, key=lambda m: m.ticks_lived, reverse=False):
+            for mob in sorted(game_.mobs, key=lambda m: m.tiles_travelled, reverse=False):
                 if mob.position.distance(self._tile.position.middle()) <= self._shoot_range:
                     self._target = mob
         
