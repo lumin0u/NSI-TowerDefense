@@ -1,5 +1,5 @@
 import levels
-from mobs import simple_mob, robuste_mob, boss_mob
+from mobs import simple_mob, robuste_mob, boss_mob, quick_mob
 from towers import simple_tower, explosive_tower, sniper_tower
 
 tower_prices: dict[type, list[int]] = None
@@ -7,7 +7,7 @@ mobs_rewards: dict[type, int] = None
 
 
 def load():
-    prices_json = eval(open("prices.json", mode="r").read())
+    prices_json = eval(open("resources/prices.json", mode="r").read())
     
     global tower_prices, mobs_rewards
     
@@ -19,7 +19,8 @@ def load():
     mobs_names = {
         "simple": simple_mob.SimpleMob,
         "robuste": robuste_mob.RobusteMob,
-        "boss": boss_mob.BossMob
+        "boss": boss_mob.BossMob,
+        "rapide": quick_mob.QuickMob
     }
     
     tower_prices = {towers_names[k]: v for k, v in prices_json["towers"].items()}

@@ -4,7 +4,7 @@ import random
 from copy import copy
 
 import main
-from mobs import robuste_mob, boss_mob
+from mobs import robuste_mob, boss_mob, quick_mob
 from mobs import simple_mob
 import tiles
 from position import Position, TilePosition, Direction
@@ -156,7 +156,8 @@ def build_levels():
         "simple": simple_mob.SimpleMob,
         "robuste": robuste_mob.RobusteMob,
         "boss": boss_mob.BossMob,
-        "air": None
+        "air": None,
+        "rapide": quick_mob.QuickMob
     }
     towers_names = {
         "simple": simple_tower.SimpleTower,

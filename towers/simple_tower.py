@@ -9,7 +9,7 @@ from interface import pictures
 
 class SimpleTower(tower.Tower):
     def __init__(self, tile):
-        super().__init__(tile, 10, 1.8)
+        super().__init__(tile, 17, 1.8)
         
     def shoot(self):
         if self._target:

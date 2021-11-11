@@ -19,7 +19,7 @@
     {
       "preparation": 600,
       "mobs": {
-        "simple": 5 
+        "simple": 5
       }
     },
     {
@@ -48,6 +48,23 @@
       "mobs": {
         "robuste": 15
       }
+    },
+    {
+      "preparation": 100,
+      "mobs": {
+        "robuste": 20,
+        "simple": 30
+      }
+    },
+    {
+      "preparation": 200,
+      "mobs": {
+        "simple" : 15,
+        "robuste" : 10,
+        "boss" : 1
+      },
+      "boss_health": 400
     }
+
   ]
 }

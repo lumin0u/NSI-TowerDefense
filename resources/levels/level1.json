@@ -35,21 +35,21 @@
     {
       "preparation": 100,
       "mobs": {
-        "simple": 10,
-		"robuste": 5
+        "simple": 5,
+		"robuste": 2
       }
     },
     {
       "preparation": 150,
       "mobs": {
-        "simple": 20,
-        "robuste": 10
+        "simple": 10,
+        "robuste": 3
       }
     },
     {
       "preparation": 500,
       "mobs": {
-        "simple": 20,
+        "simple": 10,
 		"robuste": 5,
         "boss": 1
       },

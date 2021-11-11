@@ -226,6 +226,7 @@ def load_pictures():
     load_picture("robuste", "mobs/")
     load_picture("example_mob", "mobs/")
     load_picture("boss", "mobs/")
+    load_picture("triangle", "mobs/")
     
     for i in range(14):
         load_picture("health" + str(i), "mobs/")
