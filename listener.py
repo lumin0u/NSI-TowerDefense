@@ -68,3 +68,6 @@ def catch_event(event, interface):
             
         elif event.key == pygame.K_k:
             levels.UNLOCKED_LEVELS = list(range(10))
+            
+        elif event.key == pygame.K_l:
+            interface.popup_text = ["TEST", "SUR", "DE NOMBREUSES", "LIGNES", "DONT CERTAINES SONT PLUS LONGUES"]

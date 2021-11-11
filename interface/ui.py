@@ -41,6 +41,9 @@ class Interface:
         self.popup_rect: pygame.Rect = None
         self.background_shade = 0
         self.smokes = []
+        self.no_more_levels_shown = False
+        
+        self.popup_text: list[str] = None
         
         self.camera_pos = Position(0, 0)
         self._half_camera_pos = self.camera_pos
@@ -160,6 +163,7 @@ def render(interface: Interface, game_, time, last_frame, relative_time):
             interface.background_shade += 0.001
     else:
         pygame.draw.rect(interface.screen, (0, 0, 0), (0, 0, main.SCREEN_WIDTH, main.SCREEN_HEIGHT))
+        interface.background_shade = 0
     
     interface.buttons = []
     main.clear_hand_reasons()
@@ -186,6 +190,9 @@ def render(interface: Interface, game_, time, last_frame, relative_time):
     show_ui(interface, game_, time, last_frame, relative_time)
 
     for smoke in interface.smokes:
+        if smoke[5] > smoke[7]:
+            interface.smokes.remove(smoke)
+            continue
         graphics.draw_particle(interface, smoke, time - last_frame)
     pygame.display.update()
     
@@ -214,6 +221,41 @@ def show_ui(interface, game_, time, last_frame, relative_time):
         button = Button(interface, volume_onclick, (10, main.SCREEN_HEIGHT - volume_img.get_height() - 10), volume_img, volume_hover_img, "volume")
     
         add_button(interface, button)
+    
+    if interface.popup_text and len(interface.popup_text) > 0:
+        popup_menu = pictures.MyImage.void(4 * 64, 4 * (2 * 8 + 2 * 32))
+        popup_menu.blit(pictures.get("top").scaled_to((4 * 64, 4 * 8)), (0, 0))
+        popup_menu.blit(pictures.get("body").scaled_to((4 * 64, 4 * 32)), (0, 4 * 8))
+        popup_menu.blit(pictures.get("body").scaled_to((4 * 64, 4 * 32)), (0, 4 * (8 + 32)))
+        popup_menu.blit(pictures.get("top").scaled_to((4 * 64, 4 * 8)).rotated(180), (0, 4 * (8 + 2 * 32)))
+    
+        menu_draw_pos = ((main.SCREEN_WIDTH - 4 * 64) / 2, (main.SCREEN_HEIGHT - 4 * (2 * 8 + 2 * 32)) / 2)
+        
+        line_offset = 20
+        for line in interface.popup_text:
+            if line and line != "":
+                text_img = graphics.INFO_FONT.render(line, True, (255, 255, 255, 127))
+                
+                text_pos = ((popup_menu.get_width() - text_img.get_width()) // 2, int(line_offset))
+                popup_menu.blit(text_img, text_pos)
+
+            line_offset += graphics.INFO_FONT.get_height() * 1.5
+    
+        ok_text_img = graphics.PAUSE_BUTTONS_FONT.render("OK", True, (255, 255, 255, 127))
+        ok_img = pictures.MyImage.void(70, ok_text_img.get_height() + 12)
+        ok_img.blit(ok_text_img, ((70 - ok_text_img.get_width()) / 2, 6))
+    
+        ok_img.highlighted(0.15, 2, 0.6)
+        ok_hover_img = ok_img.copy().highlighted(0.15, 0, 0)
+    
+        def ok_onclick():
+            interface.popup_text = None
+    
+        ok_pos = (menu_draw_pos[0] + 160, menu_draw_pos[1] + 4 * 64)
+        button_ok = Button(interface, ok_onclick, ok_pos, ok_img, ok_hover_img, "ok")
+        
+        interface.screen.blit(popup_menu.build_image(), menu_draw_pos)
+        add_button(interface, button_ok)
     
     if game_:
         pause_img = pictures.get("pause")
@@ -266,6 +308,10 @@ def show_ui(interface, game_, time, last_frame, relative_time):
             add_button(interface, button_resume)
             add_button(interface, button_leave)
     else:
+        if any(levels.ALL_LEVELS[lvl] for lvl in levels.UNLOCKED_LEVELS) and not interface.no_more_levels_shown:
+            interface.popup_text = ["Les niveaux suivants", "n'existent pas encore", "", "Merci d'avoir joué !"]
+            interface.no_more_levels_shown = True
+        
         reset_text_img = graphics.RESET_FONT.render("Réinitialiser", True, (70, 70, 70))
         reset_img = pictures.MyImage.void(130, reset_text_img.get_height() + 12)
         reset_img.blit(reset_text_img, ((130 - reset_text_img.get_width()) / 2, 6))

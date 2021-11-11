@@ -3,10 +3,11 @@ from entity import Entity
 from abc import ABC, abstractmethod
 import main
 import game
+from interface import ui
 
 
 class Projectile(Entity, ABC):
-    def __init__(self, position, target, speed):
+    def __init__(self, position, target, speed, magicness=0):
         """
             target est une position ou un mob
             speed est exprimé en tiles/tick
@@ -16,6 +17,7 @@ class Projectile(Entity, ABC):
         self._position = position
         self._speed = speed
         self._dead = False
+        self._magicness = magicness
     
     def target_position(self):
         if isinstance(self._target, mob.Mob):
@@ -36,8 +38,15 @@ class Projectile(Entity, ABC):
             self._dead = True
         
         else:
-            direction /= direction.length()
+            direction = direction.normalized()
             self._position += direction * self._speed
+            
+            if self.tiles_travelled > 0.3:
+                interface = ui.INTERFACE_INSTANCE
+                smokes = int(self._speed / 0.02)
+                for i in range(smokes):
+                    img = "smoke"
+                    interface.new_smoke((self.position - direction * self._speed * i/smokes).to_tuple(), scale=0.2, dir_=(-direction * 0.3).to_tuple(), speed=2, lifetime=0.8, img_name=img)
     
     def is_dead(self):
         return self._dead

@@ -14,7 +14,7 @@ from interface import pictures, ui, graphics
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 700
 
-TICK_REAL_TIME = 0.05
+TICK_REAL_TIME = 0.001
 
 
 def _tick():

@@ -8,14 +8,20 @@ class Entity(ABC):
         self._position = position
         self._last_position = self._position
         self._ticks_lived = 0
+        self._tiles_travelled = 0
     
     def tick(self, current_tick, game_):
+        self._tiles_travelled += self._last_position.distance(self._position)
         self._last_position = self._position
         self._ticks_lived += 1
     
     @abstractmethod
     def is_dead(self):
         pass
+    
+    @property
+    def tiles_travelled(self) -> float:
+        return self._tiles_travelled
     
     @property
     def id_(self):

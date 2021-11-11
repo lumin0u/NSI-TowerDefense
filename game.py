@@ -7,6 +7,7 @@ import mobs.mob as mob
 import position
 import pricing
 import tiles
+from interface import ui
 from mobs import boss_mob
 
 DAMAGE_TYPE_RAW = 0
@@ -80,7 +81,7 @@ class Game:
         return self.level.waves[(self._wave + n) % len(self.level.waves)]
     
     def tick(self):
-        if self.paused:
+        if self.paused or ui.INTERFACE_INSTANCE.popup_text:
             return
         
         self._game_tick += 1
@@ -115,6 +116,7 @@ class Game:
             if entity.is_dead():
                 if isinstance(entity, boss_mob.BossMob):
                     levels.unlock_level(self.level.id + 1)
+                    ui.INTERFACE_INSTANCE.popup_text = ["Boss vaincu !", "", "Vous débloquez", "le niveau suivant !", "", "Vous pouvez quitter", "ou continuer en", "mode infini"]
                     self._game_beaten = True
                 
                 self._entities.remove(entity)

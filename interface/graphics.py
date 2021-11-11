@@ -17,6 +17,7 @@ PRICES_FONT: pygame.font.Font = pygame.font.Font(None, 23)
 LEVEL_BUTTON_FONT: pygame.font.Font = pygame.font.Font(None, 50)
 PAUSE_BUTTONS_FONT: pygame.font.Font = pygame.font.Font(None, 40)
 RESET_FONT: pygame.font.Font = pygame.font.Font(None, 25)
+INFO_FONT: pygame.font.Font = pygame.font.Font(None, 25)
 
 
 def get_pixel_pos(game_pos, interface) -> Position:
@@ -82,6 +83,7 @@ def blitRotateCenter(surf, image, topleft, angle):
 PARTICLES = {
     "smoke": pygame.transform.scale(pygame.image.load("resources/images/smoke.png"), (32, 32)),
     "explosion": pygame.transform.scale(pygame.image.load("resources/images/explosion.png"), (32, 32)),
+    
     "simple_break": pygame.transform.scale(pygame.image.load("resources/images/simple_break.png"), (32, 32)),
     "robuste_break": pygame.transform.scale(pygame.image.load("resources/images/robuste_break.png"), (32, 32)),
     "boss_break": pygame.transform.scale(pygame.image.load("resources/images/boss_break.png"), (32, 32)),
