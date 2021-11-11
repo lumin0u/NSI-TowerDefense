@@ -2,10 +2,10 @@ import time
 
 import pygame
 
-import pricing
-
 pygame.init()
 
+
+import pricing
 import levels
 import game
 import listener

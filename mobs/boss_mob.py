@@ -28,7 +28,7 @@ class BossMob(mob.Mob):
                 # le type DAMAGE_TYPE_ABSOLUTE est renseigné par défaut dans mob.py
             },
         }
-        super().__init__(game_, position, attributes, health)
+        super().__init__(game_, position, attributes, health, "rapide_break")
     
     def tick(self, current_tick, game_):
         super().tick(current_tick, game_)

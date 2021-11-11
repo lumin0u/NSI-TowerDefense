@@ -1,4 +1,5 @@
 import math
+import os.path
 import random
 from copy import copy
 
@@ -75,13 +76,14 @@ class Wave:
 
 
 class Level:
-    def __init__(self, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, money, tiles_, waves, available_towers):
+    def __init__(self, id_, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, money, tiles_, waves, available_towers):
         self._spawner = spawn
         self._castle = castle
         self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + tiles_.copy()
         self._waves: list[Wave] = waves.copy()
         self._money = money
         self._available_towers = available_towers
+        self._id = id_
     
     def tile_at(self, position: Position):
         # on recherche dans nos tuiles s'il en existe une a cette position
@@ -116,8 +118,27 @@ class Level:
     def available_towers(self):
         return self._available_towers
 
+    @property
+    def id(self):
+        return self._id
+
 
 ALL_LEVELS = ()
+
+DATA_PATH = "data"
+
+
+def reset_data():
+    global UNLOCKED_LEVELS
+    
+    open(DATA_PATH, mode="w+").write("{\"unlocked_levels\":[0]}")
+    UNLOCKED_LEVELS = [0]
+
+
+if not os.path.exists(DATA_PATH):
+    reset_data()
+
+UNLOCKED_LEVELS = eval(open(DATA_PATH, mode="r").read())["unlocked_levels"]
 
 
 def cardinal_to_direction(s):
@@ -147,8 +168,8 @@ def build_levels():
     
     levels_list = []
     
-    for level_file in levels_json:
-        level = eval(open("resources/levels/" + level_file, mode="r").read())
+    for lvl_id in range(len(levels_json)):
+        level = eval(open("resources/levels/" + levels_json[lvl_id], mode="r").read())
         
         path_current = TilePosition.of(level["spawner"])
         
@@ -174,6 +195,17 @@ def build_levels():
         
         authorized_towers = [towers_names[name] for name in level["towers"]]
         
-        levels_list.append(Level(spawner, castle, money, tiles_, waves, authorized_towers))
+        levels_list.append(Level(lvl_id, spawner, castle, money, tiles_, waves, authorized_towers))
     
     ALL_LEVELS = tuple(levels_list)
+
+
+def is_level_unlocked(level: int):
+    return level in UNLOCKED_LEVELS
+
+
+def unlock_level(level: int):
+    UNLOCKED_LEVELS.append(level)
+    data = eval(open(DATA_PATH, mode="r").read())
+    data["unlocked_levels"] = UNLOCKED_LEVELS
+    open(DATA_PATH, mode="w").write(str(data))

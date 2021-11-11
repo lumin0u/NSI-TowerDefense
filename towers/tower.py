@@ -1,9 +1,10 @@
+import random
 from abc import ABC, abstractmethod
 
 import pygame
 
 import pricing
-from interface import pictures, graphics
+from interface import pictures, graphics, ui
 from position import Position, TilePosition, Direction
 import game
 
@@ -18,9 +19,12 @@ class Tower(ABC):
         self._level = 0
         self._aim_angle = 0
     
+    def _update_aim(self):
+        self._aim_angle = (self._target.position - self._tile.position.middle()).angle()
+    
     def tick(self, current_tick, game_):
         if self._target:
-            self._aim_angle = (self._target.position - self._tile.position.middle()).angle()
+            self._update_aim()
         
         # on reset le target s'il est trop loin ou mort
         if self._target and (self._target.is_dead() or self._target.position.distance(self._tile.position.middle()) > self._shoot_range):
@@ -31,10 +35,14 @@ class Tower(ABC):
             for mob in sorted(game_.mobs, key=lambda m: m.tiles_travelled, reverse=False):
                 if mob.position.distance(self._tile.position.middle()) <= self._shoot_range:
                     self._target = mob
+                    self._update_aim()
         
         if current_tick - self._last_shot > self._shoot_delay:
             if self._target is not None:
                 self.shoot()
+                for i in range(25):
+                    interface = ui.INTERFACE_INSTANCE
+                    interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.4, dir_=(Position.of_angle(self._aim_angle) * (random.random()*0.3 + 0.3)).to_tuple(), randomizer=1, lifetime=1.6)
                 self._last_shot = current_tick
     
     @abstractmethod
@@ -45,7 +53,7 @@ class Tower(ABC):
     def get_render(self, time):
         pass
     
-    def _add_level(self, img: pictures.MyImage):
+    def _add_level(self, img):
         # if self._level > 0:
         level_img = pictures.MyImage(graphics.TOWER_LVL_FONT.render(str(self._level + 1), True, (0, 200, 0)))
         img.blit(level_img.scaled(img.get_width() / 64), (0, 0))

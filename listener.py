@@ -3,6 +3,7 @@ import sys
 import pygame
 
 import game
+import levels
 from interface import graphics, ui
 import main
 from position import Position
@@ -64,3 +65,6 @@ def catch_event(event, interface):
     elif event.type == pygame.KEYDOWN:
         if event.key == pygame.K_ESCAPE and game.GAME_INSTANCE:
             game.GAME_INSTANCE.paused = not game.GAME_INSTANCE.paused
+            
+        elif event.key == pygame.K_k:
+            levels.UNLOCKED_LEVELS = list(range(10))

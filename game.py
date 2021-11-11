@@ -1,6 +1,7 @@
 import random
 from copy import deepcopy
 
+import levels
 import main
 import mobs.mob as mob
 import position
@@ -31,10 +32,15 @@ class Game:
         self._next_wave_date = self.current_wave().preparation
         self._game_tick = 0
         self._paused = False
+        self._game_beaten = False
     
     @property
     def level(self):
         return self._level
+    
+    @property
+    def game_beaten(self):
+        return self._game_beaten
     
     @property
     def wave(self):
@@ -66,9 +72,6 @@ class Game:
     
     def add_entity(self, entity):
         self._entities.append(entity)
-    
-    def remove_entity(self, entity):
-        self._entities.remove(entity)
     
     def current_wave(self):
         return self.wave_after(0)
@@ -104,12 +107,17 @@ class Game:
                 
                 if mob_type is boss_mob.BossMob:
                     health = self.current_wave().boss_health
+                
                 shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)
                 self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, health))
         
         for entity in self._entities:
             if entity.is_dead():
-                self.remove_entity(entity)
+                if isinstance(entity, boss_mob.BossMob):
+                    levels.unlock_level(self.level.id + 1)
+                    self._game_beaten = True
+                
+                self._entities.remove(entity)
             else:
                 entity.tick(self._game_tick, self)
         for tower in (tile.tower for tile in self.level.tiles if isinstance(tile, tiles.BuildingTile) and not tile.is_empty()):

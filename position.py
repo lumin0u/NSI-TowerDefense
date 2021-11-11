@@ -83,6 +83,10 @@ class Position:
 			return Position(position[0], position[1])
 		elif isinstance(position, Position):
 			return Position(position.x, position.y)
+	
+	@staticmethod
+	def of_angle(angle):
+		return Position(math.cos(angle), math.sin(angle))
 
 
 class TilePosition(Position):

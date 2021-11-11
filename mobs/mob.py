@@ -14,7 +14,7 @@ import tiles
 
 
 class Mob(Entity, ABC):
-    def __init__(self, game_, position: Position, attributes: dict, health):
+    def __init__(self, game_, position: Position, attributes: dict, health, break_img):
         super().__init__(game_, position)
 
         # on copie le dictionnaire pour pouvoir le modifier au besoin
@@ -28,10 +28,15 @@ class Mob(Entity, ABC):
         self._health = self.max_health
         self._dead = False
         self._tiles_travelled = 0
+        self._break_img = break_img
     
     @property
     def max_health(self) -> float:
         return self._max_health
+    
+    @property
+    def break_img(self):
+        return self._break_img
     
     @property
     def tiles_travelled(self) -> float:
