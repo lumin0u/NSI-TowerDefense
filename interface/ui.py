@@ -44,6 +44,7 @@ class Interface:
         self.no_more_levels_shown = False
         
         self.popup_text: list[str] = None
+        self.popup_button_action = None
         
         self.camera_pos = Position(0, 0)
         self._half_camera_pos = self.camera_pos
@@ -249,7 +250,10 @@ def show_ui(interface, game_, time, last_frame, relative_time):
         ok_hover_img = ok_img.copy().highlighted(0.15, 0, 0)
     
         def ok_onclick():
+            if interface.popup_button_action:
+                interface.popup_button_action()
             interface.popup_text = None
+            interface.popup_button_action = None
     
         ok_pos = (menu_draw_pos[0] + 160, menu_draw_pos[1] + 4 * 64)
         button_ok = Button(interface, ok_onclick, ok_pos, ok_img, ok_hover_img, "ok")
@@ -308,7 +312,7 @@ def show_ui(interface, game_, time, last_frame, relative_time):
             add_button(interface, button_resume)
             add_button(interface, button_leave)
     else:
-        if any(levels.ALL_LEVELS[lvl] for lvl in levels.UNLOCKED_LEVELS) and not interface.no_more_levels_shown:
+        if any(lvl >= len(levels.ALL_LEVELS) for lvl in levels.UNLOCKED_LEVELS) and not interface.no_more_levels_shown:
             interface.popup_text = ["Les niveaux suivants", "n'existent pas encore", "", "Merci d'avoir joué !"]
             interface.no_more_levels_shown = True
         

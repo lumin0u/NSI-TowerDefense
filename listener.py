@@ -63,8 +63,13 @@ def catch_event(event, interface):
         main.SCREEN_HEIGHT = event.h
     
     elif event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_ESCAPE and game.GAME_INSTANCE:
-            game.GAME_INSTANCE.paused = not game.GAME_INSTANCE.paused
+        if event.key == pygame.K_ESCAPE:
+            if interface.popup_text:
+                interface.popup_button_action()
+                interface.popup_text = None
+                interface.popup_button_action = None
+            elif game.GAME_INSTANCE:
+                game.GAME_INSTANCE.paused = not game.GAME_INSTANCE.paused
             
         elif event.key == pygame.K_k:
             levels.UNLOCKED_LEVELS = list(range(10))
