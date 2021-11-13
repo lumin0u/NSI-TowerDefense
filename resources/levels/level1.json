@@ -1,8 +1,8 @@
 {
   "spawner": [-4, 0],
-  "castle_health": 5,
+  "castle_health": 10,
   "path": "EEEEEEEE",
-  "money": 100,
+  "money": 90,
   "towers": ["simple", "sniper"],
   "tower_slots": [
     [-1, 1],
@@ -16,44 +16,58 @@
   "waves": [
     {
       "preparation": 600,
+      "gift": 10,
       "mobs": {
         "simple": 5
       }
     },
     {
       "preparation": 200,
+      "gift": 10,
       "mobs": {
         "simple": 7
       }
     },
     {
-      "preparation": 200,
+      "preparation": 400,
+      "gift": 10,
       "mobs": {
-        "robuste": 5
+        "robuste": 4
       }
     },
     {
-      "preparation": 100,
+      "preparation": 400,
+      "gift": 10,
       "mobs": {
         "simple": 5,
 		"robuste": 2
       }
     },
     {
-      "preparation": 150,
+      "preparation": 300,
+      "gift": 10,
       "mobs": {
         "simple": 10,
-        "robuste": 3
+        "robuste": 4
+      }
+    },
+    {
+      "preparation": 400,
+      "gift": 10,
+      "mobs": {
+        "simple": 13,
+        "robuste": 5
       }
     },
     {
       "preparation": 500,
+      "gift": 100,
       "mobs": {
-        "simple": 10,
-		"robuste": 5,
+        "simple": 9,
+		"robuste": 3,
         "boss": 1
       },
-      "boss_health": 300
+      "boss_health": 400
     }
   ]
 }

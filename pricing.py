@@ -1,7 +1,4 @@
-import levels
 import main
-from mobs import simple_mob, robuste_mob, boss_mob, quick_mob
-from towers import simple_tower, explosive_tower, sniper_tower
 
 # un dictionnaire {classe de la tour: prix} où prix est la liste des coûts des améliorations
 # et le premier élément est le prix pour poser la tour

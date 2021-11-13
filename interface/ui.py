@@ -2,17 +2,18 @@ import math
 import random
 from typing import Union
 
-import game
 import pygame
 
+import game
 import interface.pictures as pictures
 import levels
 import main
+import strings
 import tiles
+import userdata
 from position import Position, Direction
 import interface.graphics as graphics
 from interface import game_render
-
 
 TOOLBOX_WIDTH = 150
 
@@ -23,9 +24,6 @@ def lerp(a, b, m, nice_m=True):
     if nice_m:
         m = max(0, min(1, m))
     return b * m + a * (1 - m)
-
-
-INTERFACE_INSTANCE = None
 
 
 class Interface:
@@ -41,7 +39,6 @@ class Interface:
         self.popup_rect: pygame.Rect = None
         self.background_shade = 0
         self.smokes = []
-        self.no_more_levels_shown = False
         
         self.popup_text: list[str] = None
         self.popup_button_action = None
@@ -64,13 +61,13 @@ class Interface:
             angle += math.atan(self._aroundrandom(randomizer)) / dir_change
             x = math.cos(angle) * dir_
             y = math.sin(angle) * dir_
-            smoke = [position, (x, y), random.random() * 360, random.random() * 360, scale, 0, speed, lifetime, img_name]
+            smoke = [position, (x, y), random.random() * 360, random.random() * 720 - 360, scale, 0, speed, lifetime, img_name]
         else:
             dir_ = float(dir_) * (1 + self._aroundrandom(randomizer))
             angle = random.random() * 2 * math.pi
             x = math.cos(angle) * dir_
             y = math.sin(angle) * dir_
-            smoke = [position, (x, y), random.random() * 360, random.random() * 360, scale, 0, speed, lifetime, img_name]
+            smoke = [position, (x, y), random.random() * 360, random.random() * 720 - 360, scale, 0, speed, lifetime, img_name]
             
         self.smokes.append(smoke)
         return smoke
@@ -123,6 +120,9 @@ class Interface:
     
     def is_clicking_button(self, button):
         return pygame.mouse.get_pressed(3)[0] and self._click_start == button.id
+
+
+INTERFACE_INSTANCE: Interface = None
 
 
 class Button:
@@ -250,10 +250,11 @@ def show_ui(interface, game_, time, last_frame, relative_time):
         ok_hover_img = ok_img.copy().highlighted(0.15, 0, 0)
     
         def ok_onclick():
-            if interface.popup_button_action:
-                interface.popup_button_action()
             interface.popup_text = None
+            action = interface.popup_button_action
             interface.popup_button_action = None
+            if action:
+                action()
     
         ok_pos = (menu_draw_pos[0] + 160, menu_draw_pos[1] + 4 * 64)
         button_ok = Button(interface, ok_onclick, ok_pos, ok_img, ok_hover_img, "ok")
@@ -312,9 +313,10 @@ def show_ui(interface, game_, time, last_frame, relative_time):
             add_button(interface, button_resume)
             add_button(interface, button_leave)
     else:
-        if any(lvl >= len(levels.ALL_LEVELS) for lvl in levels.UNLOCKED_LEVELS) and not interface.no_more_levels_shown:
-            interface.popup_text = ["Les niveaux suivants", "n'existent pas encore", "", "Merci d'avoir joué !"]
-            interface.no_more_levels_shown = True
+        if any(lvl >= len(levels.ALL_LEVELS) for lvl in userdata.UNLOCKED_LEVELS) and userdata.TUTO_INFO["no_more_levels"]:
+            interface.popup_text = strings.get("no_more_levels")
+            userdata.TUTO_INFO["no_more_levels"] = False
+            userdata.save()
         
         reset_text_img = graphics.RESET_FONT.render("Réinitialiser", True, (70, 70, 70))
         reset_img = pictures.MyImage.void(130, reset_text_img.get_height() + 12)
@@ -322,7 +324,7 @@ def show_ui(interface, game_, time, last_frame, relative_time):
         reset_hover_img = reset_img.copy().highlighted(0.15, 0, 0)
         
         def reset_onclick():
-            levels.reset_data()
+            userdata.reset()
         
         reset_pos = (main.SCREEN_WIDTH - reset_img.get_width() - 10, main.SCREEN_HEIGHT - reset_img.get_height() - 10)
         button_reset = Button(interface, reset_onclick, reset_pos, reset_img, reset_hover_img, "reset")

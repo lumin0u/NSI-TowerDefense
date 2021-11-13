@@ -1,8 +1,7 @@
 import math
 
 import game
-import main
-from interface import pictures, ui
+from interface import ui
 from towers import projectile, tower
 from interface import pictures
 
@@ -14,6 +13,8 @@ class SimpleTower(tower.Tower):
     def shoot(self):
         if self._target:
             game.GAME_INSTANCE.add_entity(SimpleProjectile(self.tile.position.middle(), self._target, self._level / 2 + 1))
+            return True
+        return False
     
     def get_render(self, time):
         return self._add_level(SimpleTower.get_img(self._aim_angle))

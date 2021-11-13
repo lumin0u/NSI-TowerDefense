@@ -1,7 +1,6 @@
-from interface import pictures, graphics
+from interface import pictures
 import mobs.mob as mob
 from position import Position
-import main
 import game
 
 
@@ -20,7 +19,7 @@ class RobusteMob(mob.Mob):
             
             # les resistances du mob, pour chaque type d'attaque
             "resistances": {
-                game.DAMAGE_TYPE_FIRE: 2,
+                game.DAMAGE_TYPE_FIRE: 5/3,
                 game.DAMAGE_TYPE_ICE: 1,
                 game.DAMAGE_TYPE_RAW: 1,
                 game.DAMAGE_TYPE_MAGIC: 0.5,

@@ -5,7 +5,6 @@ import pygame
 from position import TilePosition, Direction
 import towers.castle as castle
 from interface import pictures, graphics
-from towers import simple_tower, explosive_tower
 
 
 class Tile(ABC):

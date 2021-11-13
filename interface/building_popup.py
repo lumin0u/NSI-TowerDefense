@@ -1,9 +1,9 @@
 import pygame
 
-import game
 import pricing
-import tiles
-from interface import pictures, game_render, graphics, ui
+import strings
+import userdata
+from interface import pictures, graphics, ui
 from position import Direction
 from towers import castle
 
@@ -42,6 +42,10 @@ def render_popup(interface, game_, time, last_frame, relative_time):
                         game_.money -= prices[0]
                         interface.popup_tile.tower = tower_type(interface.popup_tile)
                         interface.popup_tile = None
+                        if userdata.TUTO_INFO["money"]:
+                            interface.popup_text = strings.get("money")
+                            userdata.TUTO_INFO["money"] = False
+                            userdata.save()
                 return onclick
             
             deflation = 0.7

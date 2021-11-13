@@ -1,12 +1,9 @@
 import random
 from abc import ABC, abstractmethod
 
-import pygame
-
 import pricing
 from interface import pictures, graphics, ui
-from position import Position, TilePosition, Direction
-import game
+from position import Position
 
 
 class Tower(ABC):
@@ -39,10 +36,10 @@ class Tower(ABC):
         
         if current_tick - self._last_shot > self._shoot_delay:
             if self._target is not None:
-                self.shoot()
-                for i in range(25):
-                    interface = ui.INTERFACE_INSTANCE
-                    interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.4, dir_=(Position.of_angle(self._aim_angle) * (random.random()*0.3 + 0.3)).to_tuple(), randomizer=1, lifetime=1.6)
+                if self.shoot():
+                    for i in range(25):
+                        interface = ui.INTERFACE_INSTANCE
+                        interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.4, dir_=(Position.of_angle(self._aim_angle) * (random.random()*0.3 + 0.3)).to_tuple(), randomizer=1, lifetime=1.6)
                 self._last_shot = current_tick
     
     @abstractmethod
@@ -68,10 +65,10 @@ class Tower(ABC):
         return self._shoot_range
     
     def has_next_level(self):
-        return self._level + 1 < len(pricing.get_tower_level_prices(self.__class__))
+        return self._level < len(pricing.get_tower_level_prices(self.__class__))
     
     def get_next_level_price(self):
-        return pricing.get_tower_level_prices(self.__class__)[self._level + 1]
+        return pricing.get_tower_level_prices(self.__class__)[self._level]
     
     def level_up(self):
         self._level += 1

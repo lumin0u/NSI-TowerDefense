@@ -1,14 +1,12 @@
 import math
-from abc import ABC, abstractmethod
-
-import pygame
+from abc import ABC
 
 import pricing
+import strings
+import userdata
 from entity import Entity
-from position import Position, TilePosition, Direction
-from copy import copy
-from interface import pictures
-import random
+from interface import ui
+from position import Position, Direction
 import game
 import tiles
 
@@ -29,6 +27,7 @@ class Mob(Entity, ABC):
         self._dead = False
         self._break_img = break_img
         self._rotation = 0
+        self._freeze_time = 0
     
     @property
     def max_health(self) -> float:
@@ -47,7 +46,12 @@ class Mob(Entity, ABC):
         """
             la vitesse est exprimé en tuiles/ticks
         """
-        return float(self._attributes["speed"])
+        return float(self._attributes["speed"]) * (0.6 if self._freeze_time > 0 else 1)
+    
+    def tick(self, current_tick, game_):
+        super().tick(current_tick, game_)
+        if self._freeze_time > 0:
+            self._freeze_time -= 1
         
     def advance(self):
         # avancer en fonction de la direction de la tuile
@@ -72,9 +76,14 @@ class Mob(Entity, ABC):
             
         elif isinstance(tile, tiles.CastleTile):
             dmg = max(10., self.max_health / 10)
-            tile.tower.damage(dmg / self.max_health * self._attributes["damage"], self)
+            tile.tower.damage(min(self.health, dmg) / self.max_health * self._attributes["damage"], self)
             # la tour renvoie les dégats
             self.damage(dmg, game.DAMAGE_TYPE_ABSOLUTE, earn_money=False)
+            
+            if self.is_dead() and userdata.TUTO_INFO["damaged"]:
+                ui.INTERFACE_INSTANCE.popup_text = strings.get("damaged")
+                userdata.TUTO_INFO["damaged"] = False
+                userdata.save()
     
     def move(self, direction: Direction):
         self.teleport(self.position + direction)
@@ -94,3 +103,6 @@ class Mob(Entity, ABC):
     
     def is_dead(self):
         return self._dead
+    
+    def set_freeze_time(self, time):
+        self._freeze_time = time

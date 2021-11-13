@@ -1,0 +1,9 @@
+{
+  "win": ["Boss vaincu !", "", "Vous débloquez", "le niveau suivant !", "", "Vous pouvez quitter", "ou continuer en", "mode infini"],
+  "lose": ["Vous avez perdu ...", "", "Cliquez sur OK", "pour recommencer"],
+  "no_more_levels": ["Les niveaux suivants", "n'existent pas encore", "", "Merci d'avoir joué !"],
+  "basic1": ["Bienvenue en tower defence !", "Votre but est de", "défendre le chateau", "des monstres", "", "Vous pouvez cliquer", "sur les emplacements", "bleus pour choisir", "une tour à placer"],
+  "money": ["Vous possédez une", "somme d'argent limitée", "", "Les tours et leurs", "améliorations coûtent de", "l'argent", "Vous pouvez voir", "votre compte en haut à droite"],
+  "controls": ["Vous pouvez vous", "déplacer avec les", "flèches ou ZQSD", "", "et zoomer/dézoomer", "avec la molette"],
+  "damaged": ["Votre château a", "pris des dégats !", "Ce n'est pas la", "fin, votre chateau", "a plusieurs points", "de vie.", "", "Prenez garde !"]
+}

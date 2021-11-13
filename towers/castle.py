@@ -1,4 +1,5 @@
 import levels
+import strings
 import towers.tower as tower
 import game
 from interface import pictures, ui
@@ -25,7 +26,7 @@ class Castle(tower.Tower):
         self._health -= amount
         
         if self._health <= 0:
-            ui.INTERFACE_INSTANCE.popup_text = ["Vous avez perdu ...", "", "Cliquez sur OK", "pour recommencer"]
+            ui.INTERFACE_INSTANCE.popup_text = strings.get("lose")
             
             def popup_button_action():
                 game.GAME_INSTANCE = game.Game(levels.ALL_LEVELS[game.GAME_INSTANCE.level.id])

@@ -1,9 +1,8 @@
 import math
 
 import game
-import main
 import towers.tower as tower
-from interface import pictures, ui
+from interface import ui
 from towers import projectile
 from interface import pictures
 
@@ -15,6 +14,8 @@ class ExplosiveTower(tower.Tower):
     def shoot(self):
         if self._target:
             game.GAME_INSTANCE.add_entity(ExplosiveProjectile(self.tile.position.middle(), self._target, self._level / 2 + 1))
+            return True
+        return False
     
     def get_render(self, time):
         return self._add_level(ExplosiveTower.get_img(self._aim_angle))

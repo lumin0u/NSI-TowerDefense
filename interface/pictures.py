@@ -216,8 +216,7 @@ def load_pictures():
     load_picture("castle", "towers/")
     load_picture("explosive_tower", "towers/")
     load_picture("sniper_tower", "towers/")
-    
-    load_picture("simple_turret", "towers/")
+    load_picture("freeze_tower", "towers/")
 
     load_picture("dart", "projectiles/")
     load_picture("shell", "projectiles/")

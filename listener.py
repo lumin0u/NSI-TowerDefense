@@ -3,8 +3,8 @@ import sys
 import pygame
 
 import game
-import levels
-from interface import graphics, ui
+import userdata
+from interface import graphics
 import main
 from position import Position
 
@@ -76,4 +76,4 @@ def catch_event(event, interface):
         
         # k: touche de débug qui permet de débloquer tout les niveaux
         elif event.key == pygame.K_k:
-            levels.UNLOCKED_LEVELS = list(range(10))
+            userdata.UNLOCKED_LEVELS = list(range(10))

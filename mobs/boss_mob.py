@@ -1,7 +1,6 @@
 from interface import pictures
 import mobs.mob as mob
 from position import Position
-import main
 import game
 
 

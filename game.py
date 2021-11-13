@@ -2,11 +2,11 @@ import random
 from copy import deepcopy
 
 import levels
-import main
 import mobs.mob as mob
 import position
-import pricing
+import strings
 import tiles
+import userdata
 from interface import ui
 from mobs import boss_mob
 
@@ -18,8 +18,6 @@ DAMAGE_TYPE_MAGIC = 3
 
 # ce type existe juste pour infliger des dégats fixes, indépendamment de la résistance des mobs
 DAMAGE_TYPE_ABSOLUTE = 4
-
-GAME_INSTANCE = None
 
 
 class Game:
@@ -35,6 +33,18 @@ class Game:
         self._game_tick = 0
         self._paused = False
         self._game_beaten = False
+        
+        if self.level.id == 0 and userdata.TUTO_INFO["basic"]:
+            ui.INTERFACE_INSTANCE.popup_text = strings.get("basic1")
+            userdata.TUTO_INFO["basic"] = False
+            userdata.save()
+            userdata.save()
+            userdata.save()
+            
+        if self.level.id == 1 and userdata.TUTO_INFO["controls"]:
+            ui.INTERFACE_INSTANCE.popup_text = strings.get("controls")
+            userdata.TUTO_INFO["controls"] = False
+            userdata.save()
     
     @property
     def level(self):
@@ -93,6 +103,7 @@ class Game:
                 if self._just_created:
                     self._just_created = False
                 else:
+                    self.money += self.current_wave().gift
                     self._wave += 1
                 self.current_wave().start(self._game_tick)
         
@@ -117,7 +128,7 @@ class Game:
             if entity.is_dead():
                 if isinstance(entity, boss_mob.BossMob):
                     levels.unlock_level(self.level.id + 1)
-                    ui.INTERFACE_INSTANCE.popup_text = ["Boss vaincu !", "", "Vous débloquez", "le niveau suivant !", "", "Vous pouvez quitter", "ou continuer en", "mode infini"]
+                    ui.INTERFACE_INSTANCE.popup_text = strings.get("win")
                     self._game_beaten = True
                 
                 self._entities.remove(entity)
@@ -137,3 +148,6 @@ class Game:
     def next_id(self):
         self._id_inc += 1
         return self._id_inc
+
+
+GAME_INSTANCE: Game = None

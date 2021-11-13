@@ -1,28 +1,28 @@
 import math
-import os.path
 import random
 from copy import copy
 
 import main
-from mobs import robuste_mob, boss_mob, quick_mob
-from mobs import simple_mob
+import userdata
+from mobs import boss_mob
 import tiles
-from position import Position, TilePosition, Direction
-from towers import simple_tower, explosive_tower, sniper_tower
+from position import TilePosition, Direction
 
 
 class Wave:
     """
         Représente une vague, l'objet en lui-même peut être réutilisé, mais doit être réinitialisé avant utilisation
     """
-    def __init__(self, preparation, mobs_, boss_health=0):
+    def __init__(self, preparation, mobs_, gift, boss_health=0):
         """
         :param preparation: int - temps en ticks de préparation à la vague
         :param mobs_: dictionnaire - {classe du mob: nombre d'apparitions}
+        :param gift: nombre - argent gagné à la fin de la vague
         :param boss_health: nombre - vie du boss, ignorer si la vague n'en contient pas
         """
         self._preparation = preparation
         self._mobs = mobs_
+        self._gift = gift
         self._scheduler = {}
         
         self.start_date = 0
@@ -35,6 +35,10 @@ class Wave:
     @property
     def boss_health(self):
         return self._boss_health
+    
+    @property
+    def gift(self):
+        return self._gift
     
     def start(self, start_date):
         """
@@ -184,26 +188,6 @@ class Level:
 # tout les niveaux, chargés dans build_levels()
 ALL_LEVELS = ()
 
-# chemin d'accès du fichier de données
-DATA_PATH = "data"
-
-
-def reset_data():
-    """
-        Supprime les données sauvegardées
-    """
-    global UNLOCKED_LEVELS
-    
-    open(DATA_PATH, mode="w+").write("{\"unlocked_levels\":[0]}")
-    UNLOCKED_LEVELS = [0]
-
-
-if not os.path.exists(DATA_PATH):
-    reset_data()
-
-# le json est parfaitement interprétable en python
-UNLOCKED_LEVELS = eval(open(DATA_PATH, mode="r").read())["unlocked_levels"]
-
 
 def cardinal_to_direction(s):
     """
@@ -269,7 +253,7 @@ def build_levels():
             # les noms simplifiés ("boss", "simple", ...) sont convertis en leur classe (BossMob, SimpleMob, ...)
             mobs = {main.MOBS_NAMES[k]: v for k, v in wave["mobs"].items()}
             boss_health = wave["boss_health"] if "boss_health" in wave else 0
-            waves.append(Wave(wave["preparation"], mobs, boss_health))
+            waves.append(Wave(wave["preparation"], mobs, wave["gift"], boss_health))
 
         # les noms simplifiés ("explosive", "sniper", ...) sont convertis en leur classe (ExplosiveTower,
         # SniperTower, ...)
@@ -286,7 +270,7 @@ def is_level_unlocked(level):
     :param level: int - le niveau
     :return: bool - si le niveau est débloqué
     """
-    return level in UNLOCKED_LEVELS
+    return level in userdata.UNLOCKED_LEVELS
 
 
 def unlock_level(level):
@@ -294,7 +278,5 @@ def unlock_level(level):
         Débloque le niveau level et le sauvegarde dans le ficher de données
     :param level: int - le niveau
     """
-    UNLOCKED_LEVELS.append(level)
-    data = eval(open(DATA_PATH, mode="r").read())
-    data["unlocked_levels"] = UNLOCKED_LEVELS
-    open(DATA_PATH, mode="w").write(str(data))
+    userdata.UNLOCKED_LEVELS.append(level)
+    userdata.save()

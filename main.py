@@ -8,7 +8,7 @@ import game
 import listener
 from interface import pictures, ui, graphics
 from mobs import simple_mob, robuste_mob, boss_mob, quick_mob
-from towers import simple_tower, explosive_tower, sniper_tower
+from towers import simple_tower, explosive_tower, sniper_tower, freeze_tower
 
 # ces variables ne sont pas des constantes, elles peuvent être modifiées par un event de type VIDEO_RESIZE
 SCREEN_WIDTH = 1000
@@ -21,7 +21,8 @@ TICK_REAL_TIME = 0.05
 TOWERS_NAMES = {
     "simple": simple_tower.SimpleTower,
     "explosive": explosive_tower.ExplosiveTower,
-    "sniper": sniper_tower.SniperTower
+    "sniper": sniper_tower.SniperTower,
+    "freeze": freeze_tower.FreezeTower
 }
 MOBS_NAMES = {
     "simple": simple_mob.SimpleMob,

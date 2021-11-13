@@ -96,13 +96,14 @@ def blitRotateCenter(surf, image, topleft, angle):
 
 
 PARTICLES = {
-    "smoke": pygame.transform.scale(pygame.image.load("resources/images/smoke.png"), (32, 32)),
-    "explosion": pygame.transform.scale(pygame.image.load("resources/images/explosion.png"), (32, 32)),
+    "smoke": pygame.transform.scale(pygame.image.load("resources/images/particles/smoke.png"), (32, 32)),
+    "explosion": pygame.transform.scale(pygame.image.load("resources/images/particles/explosion.png"), (32, 32)),
+    "freeze": pygame.transform.scale(pygame.image.load("resources/images/particles/freeze.png"), (32, 32)),
     
-    "simple_break": pygame.transform.scale(pygame.image.load("resources/images/simple_break.png"), (32, 32)),
-    "robuste_break": pygame.transform.scale(pygame.image.load("resources/images/robuste_break.png"), (32, 32)),
-    "boss_break": pygame.transform.scale(pygame.image.load("resources/images/boss_break.png"), (32, 32)),
-    "rapide_break": pygame.transform.scale(pygame.image.load("resources/images/rapide_break.png"), (32, 32))
+    "simple_break": pygame.transform.scale(pygame.image.load("resources/images/particles/simple_break.png"), (32, 32)),
+    "robuste_break": pygame.transform.scale(pygame.image.load("resources/images/particles/robuste_break.png"), (32, 32)),
+    "boss_break": pygame.transform.scale(pygame.image.load("resources/images/particles/boss_break.png"), (32, 32)),
+    "rapide_break": pygame.transform.scale(pygame.image.load("resources/images/particles/rapide_break.png"), (32, 32))
 }
 
 

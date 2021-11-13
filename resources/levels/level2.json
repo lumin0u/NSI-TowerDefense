@@ -2,7 +2,7 @@
   "spawner": [-4, 1],
   "castle_health": 10,
   "path": "ENNNEEEESSSESEE",
-  "money": 100,
+  "money": 80,
   "towers": ["simple", "sniper", "explosive"],
   "tower_slots": [
     [-2, 0],
@@ -18,53 +18,99 @@
   "waves": [
     {
       "preparation": 600,
+      "gift": 8,
       "mobs": {
         "simple": 5
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
+      "gift": 8,
       "mobs": {
         "simple": 6,
         "robuste": 2
       }
     },
     {
-      "preparation": 100,
+      "preparation": 400,
+      "gift": 13,
       "mobs": {
-        "simple": 25,
-		"robuste": 4
+        "simple": 10,
+		"robuste": 3
       }
     },
     {
-      "preparation": 100,
+      "preparation": 300,
+      "gift": 5,
       "mobs": {
-        "simple": 30,
+        "simple": 15,
+        "robuste": 5
+      }
+    },
+    {
+      "preparation": 300,
+      "gift": 13,
+      "mobs": {
         "robuste": 10
       }
     },
     {
-      "preparation": 100,
+      "preparation": 400,
+      "gift": 18,
       "mobs": {
-        "robuste": 15
+        "simple": 20,
+        "robuste": 8
       }
     },
     {
-      "preparation": 100,
+      "preparation": 400,
+      "gift": 20,
       "mobs": {
-        "robuste": 20,
-        "simple": 30
+        "simple": 25,
+        "robuste": 10
       }
     },
     {
-      "preparation": 200,
+      "preparation": 300,
+      "gift": 13,
       "mobs": {
-        "simple" : 15,
-        "robuste" : 10,
+        "simple": 28,
+        "robuste": 10
+      }
+    },
+    {
+      "preparation": 300,
+      "gift": 8,
+      "mobs": {
+        "simple": 28,
+        "robuste": 10
+      }
+    },
+    {
+      "preparation": 400,
+      "gift": 26,
+      "mobs": {
+        "simple": 40,
+        "robuste": 16
+      }
+    },
+    {
+      "preparation": 350,
+      "gift": 20,
+      "mobs": {
+        "simple": 38,
+        "robuste": 14
+      }
+    },
+    {
+      "preparation": 500,
+      "gift": 200,
+      "mobs": {
+        "simple" : 18,
+        "robuste" : 6,
         "boss" : 1
       },
-      "boss_health": 400
+      "boss_health": 1900
     }
-
   ]
 }

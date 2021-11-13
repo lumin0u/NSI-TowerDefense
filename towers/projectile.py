@@ -1,7 +1,7 @@
+from abc import ABC, abstractmethod
+
 import mobs.mob as mob
 from entity import Entity
-from abc import ABC, abstractmethod
-import main
 import game
 from interface import ui
 

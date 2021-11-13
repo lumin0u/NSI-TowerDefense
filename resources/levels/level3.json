@@ -18,12 +18,14 @@
   "waves": [
     {
       "preparation": 600,
+      "gift": 10,
       "mobs": {
         "rapide": 1
       }
     },
     {
       "preparation": 100,
+      "gift": 10,
       "mobs": {
         "simple": 6,
         "robuste": 2
@@ -31,6 +33,7 @@
     },
     {
       "preparation": 100,
+      "gift": 10,
       "mobs": {
         "simple": 25,
 		"robuste": 4
@@ -38,6 +41,7 @@
     },
     {
       "preparation": 100,
+      "gift": 10,
       "mobs": {
         "simple": 30,
         "robuste": 10
@@ -45,9 +49,12 @@
     },
     {
       "preparation": 100,
+      "gift": 10,
       "mobs": {
-        "robuste": 15
-      }
+        "robuste": 15,
+        "boss": 1
+      },
+      "boss_health": 1
     }
   ]
 }
