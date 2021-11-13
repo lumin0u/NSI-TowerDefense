@@ -10,6 +10,7 @@ import tiles
 from interface import ui
 from mobs import boss_mob
 
+# les types de dégats
 DAMAGE_TYPE_RAW = 0
 DAMAGE_TYPE_FIRE = 1
 DAMAGE_TYPE_ICE = 2

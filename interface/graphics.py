@@ -9,15 +9,30 @@ EMPTY_IMAGE = pygame.Surface((0, 0))
 
 PIXEL_PER_ZOOM = 40
 
-FPS_FONT: pygame.font.Font = pygame.font.Font(None, 30)
-WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 40)
-NEXT_WAVE_FONT: pygame.font.Font = pygame.font.Font(None, 30)
-TOWER_LVL_FONT: pygame.font.Font = pygame.font.Font(None, 20)
-PRICES_FONT: pygame.font.Font = pygame.font.Font(None, 23)
-LEVEL_BUTTON_FONT: pygame.font.Font = pygame.font.Font(None, 50)
-PAUSE_BUTTONS_FONT: pygame.font.Font = pygame.font.Font(None, 40)
-RESET_FONT: pygame.font.Font = pygame.font.Font(None, 25)
-INFO_FONT: pygame.font.Font = pygame.font.Font(None, 25)
+FPS_FONT: pygame.font.Font = None
+WAVE_FONT: pygame.font.Font = None
+NEXT_WAVE_FONT: pygame.font.Font = None
+TOWER_LVL_FONT: pygame.font.Font = None
+PRICES_FONT: pygame.font.Font = None
+LEVEL_BUTTON_FONT: pygame.font.Font = None
+PAUSE_BUTTONS_FONT: pygame.font.Font = None
+RESET_FONT: pygame.font.Font = None
+INFO_FONT: pygame.font.Font = None
+
+
+def load_fonts():
+    global FPS_FONT, WAVE_FONT, NEXT_WAVE_FONT, TOWER_LVL_FONT, PRICES_FONT, LEVEL_BUTTON_FONT, PAUSE_BUTTONS_FONT, \
+        RESET_FONT, INFO_FONT
+
+    FPS_FONT = pygame.font.Font(None, 30)
+    WAVE_FONT = pygame.font.Font(None, 40)
+    NEXT_WAVE_FONT = pygame.font.Font(None, 30)
+    TOWER_LVL_FONT = pygame.font.Font(None, 20)
+    PRICES_FONT = pygame.font.Font(None, 23)
+    LEVEL_BUTTON_FONT = pygame.font.Font(None, 50)
+    PAUSE_BUTTONS_FONT = pygame.font.Font(None, 40)
+    RESET_FONT = pygame.font.Font(None, 25)
+    INFO_FONT = pygame.font.Font(None, 25)
 
 
 def get_pixel_pos(game_pos, interface) -> Position:

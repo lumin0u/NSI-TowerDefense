@@ -12,17 +12,19 @@ from towers import simple_tower, explosive_tower, sniper_tower
 
 
 class Wave:
+    """
+        Représente une vague, l'objet en lui-même peut être réutilisé, mais doit être réinitialisé avant utilisation
+    """
     def __init__(self, preparation, mobs_, boss_health=0):
         """
-            mobs est un dictionnaire avec:
-              pour clés les classes des mobs
-              pour valeurs le nombre de ces mobs
+        :param preparation: int - temps en ticks de préparation à la vague
+        :param mobs_: dictionnaire - {classe du mob: nombre d'apparitions}
+        :param boss_health: nombre - vie du boss, ignorer si la vague n'en contient pas
         """
         self._preparation = preparation
         self._mobs = mobs_
         self._scheduler = {}
         
-        # start_date est exprimé en ticks
         self.start_date = 0
         self._boss_health = boss_health
     
@@ -35,49 +37,100 @@ class Wave:
         return self._boss_health
     
     def start(self, start_date):
+        """
+            Marque le début de la vague et précise quels mobs appairaitront à chaque ticks
+        :param start_date: int - date en ticks du début de la vague
+        """
+        # scheduler: {date en ticks: liste de mobs}
+        # contient, pour chaque date où au moins un mob apparait, la liste des mobs qui apparaissent à cette date
         self._scheduler = {}
         self.start_date = start_date
+        
+        # buffer est une copie de mobs, ce qui permet de modifier buffer sans altérer la structure de la vague
+        # pour les prochaines utilisations
         buffer = copy(self._mobs)
         
+        # si la vague fait apparaitre au moins un boss, c'est une vague boss
+        # il est retiré de buffer car le boss apparait à la fin
         boss_wave = boss_mob.BossMob in buffer and buffer[boss_mob.BossMob]
         if boss_wave:
             buffer[boss_mob.BossMob] = 0
         
+        # on stocke le mob qui apparait le plus dans cette vague
         max_mob_count = max((v for v in self._mobs.values()))
         for mob in buffer:
-            t = 0
-            index = 0
+            # l'algorithme suivant permet de choisir à quels dates apparaitront des instances de mob
+            # celui-ci va avancer par période de temps aléatoires pour placer ces instances par date
+            
+            i = 0
+            time = 0
+            
             while buffer[mob] > 0:
-                r1 = 2
-                r2 = (math.sin(t) * 0.8 + 0.9) ** 2
+                # ces trois valeurs altèrent la période de temps entre deux apparitions
+                # r1 est une constante
+                r1 = 24
+                
+                # r2 permet de faire des 'vagues dans la vague' à l'aide de la fonction sinus
+                r2 = (math.sin(i) * 0.8 + 0.9) ** 2
+                
+                # r3 premet de réguler les mobs moins présents dans la vague, de manière à ce qu'ils n'apparaissent
+                # pas tous dans les premières secondes
                 r3 = max_mob_count / self._mobs[mob]
                 
-                wait = max(2, int(random.random() * 12 * r1 * r2 * r3))
-                wait += random.randint(0, 4)
+                # la période est comprise entre 2 et 40 ticks
+                time += min(40, max(2, int(random.random() * r1 * r2 * r3)))
+                # on ajoute aussi de l'aléatoire non altéré
+                time += random.randint(0, 4)
                 
-                if wait > 0:
-                    index += wait
-                    if index not in self._scheduler:
-                        self._scheduler[index] = []
-                    self._scheduler[index].append(mob)
-                    buffer[mob] -= 1
-                t += 1
+                if time not in self._scheduler:
+                    self._scheduler[time] = []
+                self._scheduler[time].append(mob)
+                
+                # il reste un mob de moins a faire apparaitre
+                buffer[mob] -= 1
+                
+                i += 1
         
         if boss_wave:
+            # le boss apparait toujours 80 ticks (4 secondes) après tout les autres mobs
             self._scheduler[max(self._scheduler.keys()) + 80] = [boss_mob.BossMob]
     
     def is_ended(self, current_tick):
+        """
+            Dit s'il reste des mobs à faire apparaitre après le tick current_tick ou non
+        :param current_tick: int - le tick actuel, ou pas
+        :return: bool - si la vague est terminé au tick current_tick
+        """
         return not any((k > current_tick - self.start_date for k in self._scheduler))
     
     def next_mobs(self, current_tick):
+        """
+            Retourne la liste des mobs à faire apparaitre au tick current_tick, ou une liste vide s'il n'y en a aucun
+        :param current_tick: int - le tick actuel, ou pas
+        :return: list[Mob] - Les mobs à faire apparaitre au tick current_tick
+        """
         if current_tick - self.start_date in self._scheduler:
             return self._scheduler[current_tick - self.start_date]
         return []
 
 
 class Level:
-    def __init__(self, id_, spawn: tiles.SpawnerTile, castle: tiles.CastleTile, money, tiles_, waves, available_towers):
-        self._spawner = spawn
+    """
+        Représente un niveau, celui-ci contient toutes les tuiles présentes sur ce niveau, l'argent possédé au début \
+        de de celui-ci, les points de vie du chateau et les vagues
+    """
+    def __init__(self, id_, spawner, castle, money, tiles_, waves, available_towers):
+        """
+        :param id_: int - numéro du niveau, unique
+        :param spawner: SpawnerTile - la tuile d'apparition des mobs
+        :param castle: CastleTile - la tuile du chateau
+        :param money: int - l'argent possédé au début du niveau
+        :param tiles_: list[Tile] - toutes les autres tuiles de ce niveau, soit les tuiles constructibles et les \
+            chemins.
+        :param waves: list[Wave] - la liste des vagues
+        :param available_towers: list[type] - la liste des tours disponibles pour ce niveau
+        """
+        self._spawner = spawner
         self._castle = castle
         self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + tiles_.copy()
         self._waves: list[Wave] = waves.copy()
@@ -85,7 +138,12 @@ class Level:
         self._available_towers = available_towers
         self._id = id_
     
-    def tile_at(self, position: Position):
+    def tile_at(self, position):
+        """
+            Retourne la tuile à cette position. S'il n'y en a aucune, retourne une EmptyTile
+        :param position: Position | TilePosition - la position où rechercher une tuile
+        :return: Tile - la tuile à la position position
+        """
         # on recherche dans nos tuiles s'il en existe une a cette position
         for tile in self._tiles:
             if tile.position == TilePosition.of(position):
@@ -123,12 +181,17 @@ class Level:
         return self._id
 
 
+# tout les niveaux, chargés dans build_levels()
 ALL_LEVELS = ()
 
+# chemin d'accès du fichier de données
 DATA_PATH = "data"
 
 
 def reset_data():
+    """
+        Supprime les données sauvegardées
+    """
     global UNLOCKED_LEVELS
     
     open(DATA_PATH, mode="w+").write("{\"unlocked_levels\":[0]}")
@@ -138,10 +201,15 @@ def reset_data():
 if not os.path.exists(DATA_PATH):
     reset_data()
 
+# le json est parfaitement interprétable en python
 UNLOCKED_LEVELS = eval(open(DATA_PATH, mode="r").read())["unlocked_levels"]
 
 
 def cardinal_to_direction(s):
+    """
+    :param s: str - "S", "N", "E" ou "W" pour South, North, Est, West
+    :return: Direction - la direction équivalente
+    """
     return {"S": Direction(0, 1), "N": Direction(0, -1), "E": Direction(1, 0), "W": Direction(-1, 0)}[s]
 
 
@@ -150,28 +218,34 @@ ctd = cardinal_to_direction
 
 
 def build_levels():
+    """
+        Construit les niveaux depuis les fichiers json en ressources
+    """
     global ALL_LEVELS
-    
-    mobs_names = {
-        "simple": simple_mob.SimpleMob,
-        "robuste": robuste_mob.RobusteMob,
-        "boss": boss_mob.BossMob,
-        "air": None,
-        "rapide": quick_mob.QuickMob
-    }
-    towers_names = {
-        "simple": simple_tower.SimpleTower,
-        "explosive": explosive_tower.ExplosiveTower,
-        "sniper": sniper_tower.SniperTower
-    }
-    
+
+    # le json est parfaitement interprétable en python
+    # levels_json: [0: chemin d'accès au fichier contenant les données du niveau 0, 1: ...]
     levels_json = eval(open("resources/levels/levels.json", mode="r").read())
     
     levels_list = []
     
     for lvl_id in range(len(levels_json)):
+        # le json est parfaitement interprétable en python
         level = eval(open("resources/levels/" + levels_json[lvl_id], mode="r").read())
         
+        """
+        Le chemin des mobs - et donc la position et direction des tuiles de chemins, de spawner et de chateau -
+        sont définis par une chaine de caractères représentant des directions.
+        La position du spawner est donnée par ses coordonnées x et y
+        Par exemple, "SEE" signifie que le chemin partira du spawner, descendra, ira à droite une fois, puis atteindra
+        le chateau.
+        Schéma:
+        
+        S
+        P P C
+        
+        S: spawner, C: chateau, P: tuile chemin
+        """
         path_current = TilePosition.of(level["spawner"])
         
         spawner = tiles.SpawnerTile(path_current, ctd(level["path"][0]))
@@ -192,20 +266,34 @@ def build_levels():
         waves = []
         
         for wave in level["waves"]:
-            waves.append(Wave(wave["preparation"], {mobs_names[k]: v for k, v in wave["mobs"].items()}, wave["boss_health"] if "boss_health" in wave else 0))
-        
-        authorized_towers = [towers_names[name] for name in level["towers"]]
+            # les noms simplifiés ("boss", "simple", ...) sont convertis en leur classe (BossMob, SimpleMob, ...)
+            mobs = {main.MOBS_NAMES[k]: v for k, v in wave["mobs"].items()}
+            boss_health = wave["boss_health"] if "boss_health" in wave else 0
+            waves.append(Wave(wave["preparation"], mobs, boss_health))
+
+        # les noms simplifiés ("explosive", "sniper", ...) sont convertis en leur classe (ExplosiveTower,
+        # SniperTower, ...)
+        authorized_towers = [main.TOWERS_NAMES[name] for name in level["towers"]]
         
         levels_list.append(Level(lvl_id, spawner, castle, money, tiles_, waves, authorized_towers))
     
     ALL_LEVELS = tuple(levels_list)
 
 
-def is_level_unlocked(level: int):
+def is_level_unlocked(level):
+    """
+        Indique si le niveau level est débloqué ou non
+    :param level: int - le niveau
+    :return: bool - si le niveau est débloqué
+    """
     return level in UNLOCKED_LEVELS
 
 
-def unlock_level(level: int):
+def unlock_level(level):
+    """
+        Débloque le niveau level et le sauvegarde dans le ficher de données
+    :param level: int - le niveau
+    """
     UNLOCKED_LEVELS.append(level)
     data = eval(open(DATA_PATH, mode="r").read())
     data["unlocked_levels"] = UNLOCKED_LEVELS

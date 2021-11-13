@@ -2,7 +2,15 @@ from abc import ABC, abstractmethod
 
 
 class Entity(ABC):
+    """
+        Classe abstraite représentant une entité, c'est à dire soit un mob soit un projectile
+        Une entité possède quelques attributs: un id unique et une position
+    """
     def __init__(self, game_, position):
+        """
+        :param game_: Game - l'instance du jeu
+        :param position: Position - la position d'apparition de l'entité
+        """
         self._id = game_.next_id()
         
         self._position = position
@@ -11,12 +19,25 @@ class Entity(ABC):
         self._tiles_travelled = 0
     
     def tick(self, current_tick, game_):
+        """
+        :param current_tick: int - non utilisé ici
+        :param game_: Game - non utilisé ici
+        """
+        # la distance parcourue depuis l'apparition est sauvegardée et permet notamment le choix de cible des tours
         self._tiles_travelled += self._last_position.distance(self._position)
+        
+        # la sauvegarde de la dernière position permet à l'étape du dessin de faire un mouvement fluide entre sa
+        # dernière position et la prochaine
         self._last_position = self._position
+        
         self._ticks_lived += 1
     
     @abstractmethod
     def is_dead(self):
+        """
+            Indique si l'entité vit encore ou non. Une entité morte n'est plus référencée dans l'instance du jeu
+        :return: bool - si l'entité est morte ou non
+        """
         pass
     
     @property
@@ -41,4 +62,9 @@ class Entity(ABC):
         
     @abstractmethod
     def get_render(self, time):
+        """
+            Construit et retourne le rendu de l'entité à la date time
+        :param time: nombre - la date actuelle
+        :return: MyImage - le rendu de l'entité
+        """
         pass

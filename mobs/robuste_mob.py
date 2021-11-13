@@ -13,7 +13,7 @@ class RobusteMob(mob.Mob):
             "damage": 2,
             
             # la vie maximum
-            "health_mul": 2,
+            "health_mul": 4,
             
             # la vitesse, en tuiles/ticks
             "speed": 0.0125,
@@ -21,9 +21,9 @@ class RobusteMob(mob.Mob):
             # les resistances du mob, pour chaque type d'attaque
             "resistances": {
                 game.DAMAGE_TYPE_FIRE: 2,
-                game.DAMAGE_TYPE_ICE: 2,
-                game.DAMAGE_TYPE_RAW: 2,
-                game.DAMAGE_TYPE_MAGIC: 0.7,
+                game.DAMAGE_TYPE_ICE: 1,
+                game.DAMAGE_TYPE_RAW: 1,
+                game.DAMAGE_TYPE_MAGIC: 0.5,
                 
                 # le type DAMAGE_TYPE_ABSOLUTE est renseigné par défaut dans mob.py
             },
