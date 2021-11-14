@@ -173,7 +173,6 @@ class Game:
                 if mob_type is boss_mob.BossMob:
                     health = self.current_wave().boss_health
                 
-                # TODO expliquer loi normale la
                 shift = position.Position((random.random() - 0.5) * random.random() * 0.7, (random.random() - 0.5) * random.random() * 0.7)
                 
                 self.add_entity(mob_type(self, self.level.spawner.position.middle() + shift, health))

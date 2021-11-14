@@ -9,6 +9,19 @@ from towers import castle
 
 
 def render_popup(interface, game_, time, last_frame, relative_time):
+    """
+        Dessine le rendu et ajoute les boutons de la popup d'achat et d'amélioration des tours
+    :param interface: Interface - l'instance de l'interface
+    :param game_: Game - l'instance du jeu
+    :param time: nombre - la date actuelle en secondes
+    :param last_frame: nombre - la date de la dernière frame
+    :param relative_time: nombre - nombre - (la date de cette frame - la date du dernier tick) / la durée d'un tick
+    """
+    
+    # l'image 'top' est au format 8:1
+    # l'image 'body' est au format 8:4
+    # l'image 'bottom' est au format 8:2
+    
     top: pictures.MyImage = pictures.get("top").smoothscaled(True)
     body: pictures.MyImage = pictures.get("body").smoothscaled(True)
     bottom: pictures.MyImage = pictures.get("bottom").smoothscaled(True)
@@ -16,6 +29,8 @@ def render_popup(interface, game_, time, last_frame, relative_time):
     tower = interface.popup_tile.tower
     
     if not tower:
+        
+        # on affiche 2 tours par ligne
         bodies = (len(game_.level.available_towers) + 1) // 2
         
         popup_img = pictures.MyImage.void(64, 8 + 16 + bodies * 32)
@@ -27,7 +42,7 @@ def render_popup(interface, game_, time, last_frame, relative_time):
         popup_img.blit(bottom.scaled_to((64, 16)), (0, 8 + bodies * 32))
         
         popup_img.scaled(3)
-
+        
         draw_pos = graphics.get_pixel_pos(interface.popup_tile.position + Vector2(0.5, 0.1), interface) \
                    - Vector2(popup_img.get_width() / 2, popup_img.get_height())
         
@@ -37,6 +52,7 @@ def render_popup(interface, game_, time, last_frame, relative_time):
             prices = pricing.tower_prices[tower_type]
             
             def onclick_(tower_type, prices):
+                # pour éviter les problèmes de portée des variables, on fait cette étrange chose
                 def onclick():
                     if game_.money >= prices[0]:
                         game_.money -= prices[0]
@@ -47,9 +63,11 @@ def render_popup(interface, game_, time, last_frame, relative_time):
                             userdata.TUTO_INFO["money"] = False
                             userdata.save()
                 return onclick
+
+            # le code parle de lui même, difficile d'être plus clair ici
             
             deflation = 0.7
-            
+
             tower_img = tower_type.get_img(0).scaled_to((32 * 3 * deflation, 32 * 3 * deflation))
             button_pos = (3 * 32 * (i % 2) + draw_pos.x, 3 * 32 * (i // 2) + 8 + draw_pos.y)
             button_pos = (button_pos[0] + 32 * 3 * (1 - deflation) / 2, button_pos[1] + 32 * 3 * (1 - deflation) / 2)
@@ -74,6 +92,7 @@ def render_popup(interface, game_, time, last_frame, relative_time):
     
     elif type(tower) is not castle.Castle:
         
+        # dessin de la portée de la tour
         circle_radius = tower.shoot_range * graphics.PIXEL_PER_ZOOM * interface.half_zoom
         
         range_circle = pygame.Surface((2 * circle_radius, 2 * circle_radius), pygame.SRCALPHA, 32).convert_alpha()
@@ -82,6 +101,7 @@ def render_popup(interface, game_, time, last_frame, relative_time):
         range_circle_draw_pos = (graphics.get_pixel_pos(tower.tile.position.middle() - Vector2(tower.shoot_range, tower.shoot_range), interface))
         interface.screen.blit(range_circle, range_circle_draw_pos.to_tuple())
         
+        # dessin de la boite
         popup_img = pictures.MyImage.void(64, 8 + 16 + 32)
         
         popup_img.blit(top.scaled_to((64, 8)), (0, 0))
@@ -96,6 +116,7 @@ def render_popup(interface, game_, time, last_frame, relative_time):
                    - Vector2(popup_img.get_width() / 2, popup_img.get_height())
         
         if tower.has_next_level():
+            # ajout du bouton d'amélioration
             price = tower.get_next_level_price()
     
             def onclick():
@@ -122,5 +143,3 @@ def render_popup(interface, game_, time, last_frame, relative_time):
             interface.add_button(button)
         
         return popup_img.get_rect().move(*draw_pos.to_tuple())
-    
-    # TODO afficher vie du chateau

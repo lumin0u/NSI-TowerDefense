@@ -31,8 +31,7 @@ def lerp(a, b, delta):
 
 def _aroundrandom(scale):
     """
-        Retourne une valeur aléatoire choisie selon
-    :return:
+    :return: nombre - une valeur aléatoire choisie selon une loi non uniforme dans l'intervalle [-scale; scale[
     """
     return random.random() * (random.random() * scale - scale / 2)
 
@@ -131,8 +130,8 @@ class Interface:
             Recalcule les zoom et position de caméra pour donner un mouvement fluide
         :param delta: nombre - temps écoulé depuis la dernière frame
         """
-        self._half_zoom = lerp(self.half_zoom, self.zoom, delta + 0.1)
-        self._half_camera_pos = lerp(self.half_camera_pos, self.camera_pos, delta + 0.1)
+        self._half_zoom = lerp(self.half_zoom, self.zoom, delta * 15)
+        self._half_camera_pos = lerp(self.half_camera_pos, self.camera_pos, delta * 15)
     
     def mouse_down(self, mouse_button, mouse_pos):
         """
@@ -296,7 +295,7 @@ class Interface:
             # affichage de la notification
             
             # l'image 'top' est au format 8:1
-            # l'image 'body' est au format 8:2
+            # l'image 'body' est au format 8:4
             
             # création de la boite
             popup_menu = pictures.MyImage.void(4 * 64, 4 * (2 * 8 + 2 * 32))

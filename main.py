@@ -34,7 +34,7 @@ MOBS_NAMES = {
 
 def set_hand_reason(reason, value):
     """
-        Défini si la souris doit apparaitre en main pour une clé donnée
+        Définit si la souris doit apparaitre en main pour une clé donnée
         La souris apparait en main si au moins une clé est à True
     :param reason: str - la clé
     :param value: bool - si la souris doit apparaitre en main ou en pointeur
