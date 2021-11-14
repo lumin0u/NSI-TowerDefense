@@ -5,8 +5,8 @@ import pricing
 import strings
 import userdata
 from entity import Entity
-from interface import ui
-from position import Position, Direction
+from interface import user_interface
+from position import Position, Vector2
 import game
 import tiles
 
@@ -67,7 +67,7 @@ class Mob(Entity, ABC):
                 
                 new_angle = rel_pos.angle() + (self.speed / rel_pos.length()) * (-1 if clockwise else 1)
                 
-                new_pos = corner + Direction(math.cos(new_angle), math.sin(new_angle)) * rel_pos.length()
+                new_pos = corner + Vector2(math.cos(new_angle), math.sin(new_angle)) * rel_pos.length()
                 
                 self.move(new_pos - self.position)
             else:
@@ -81,11 +81,11 @@ class Mob(Entity, ABC):
             self.damage(dmg, game.DAMAGE_TYPE_ABSOLUTE, earn_money=False)
             
             if self.is_dead() and userdata.TUTO_INFO["damaged"]:
-                ui.INTERFACE_INSTANCE.popup_text = strings.get("damaged")
+                user_interface.INTERFACE_INSTANCE.popup_text = strings.get("damaged")
                 userdata.TUTO_INFO["damaged"] = False
                 userdata.save()
     
-    def move(self, direction: Direction):
+    def move(self, direction: Vector2):
         self.teleport(self.position + direction)
     
     def teleport(self, position: Position):

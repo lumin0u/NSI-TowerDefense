@@ -2,7 +2,7 @@ import levels
 import strings
 import towers.tower as tower
 import game
-from interface import pictures, ui
+from interface import pictures, user_interface
 
 
 class Castle(tower.Tower):
@@ -26,12 +26,12 @@ class Castle(tower.Tower):
         self._health -= amount
         
         if self._health <= 0:
-            ui.INTERFACE_INSTANCE.popup_text = strings.get("lose")
+            user_interface.INTERFACE_INSTANCE.popup_text = strings.get("lose")
             
             def popup_button_action():
                 game.GAME_INSTANCE = game.Game(levels.ALL_LEVELS[game.GAME_INSTANCE.level.id])
                 
-            ui.INTERFACE_INSTANCE.popup_button_action = popup_button_action
+            user_interface.INTERFACE_INSTANCE.popup_button_action = popup_button_action
     
     def get_render(self, time):
         img = pictures.get("castle", hash(self.tile.position))

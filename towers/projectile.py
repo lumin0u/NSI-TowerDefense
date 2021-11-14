@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 import mobs.mob as mob
 from entity import Entity
 import game
-from interface import ui
+from interface import user_interface
+from position import Position
 
 
 class Projectile(Entity, ABC):
@@ -19,7 +20,7 @@ class Projectile(Entity, ABC):
         self._dead = False
         self._magicness = magicness
     
-    def target_position(self):
+    def target_position(self) -> Position:
         if isinstance(self._target, mob.Mob):
             return self._target.position
         else:
@@ -42,7 +43,7 @@ class Projectile(Entity, ABC):
             self._position += direction * self._speed
             
             if self.tiles_travelled > 0.3:
-                interface = ui.INTERFACE_INSTANCE
+                interface = user_interface.INTERFACE_INSTANCE
                 smokes = int(self._speed / 0.02)
                 for i in range(smokes):
                     img = "smoke"

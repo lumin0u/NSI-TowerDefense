@@ -2,8 +2,8 @@ import random
 from abc import ABC, abstractmethod
 
 import pricing
-from interface import pictures, graphics, ui
-from position import Position
+from interface import pictures, graphics, user_interface
+from position import Vector2
 
 
 class Tower(ABC):
@@ -38,8 +38,8 @@ class Tower(ABC):
             if self._target is not None:
                 if self.shoot():
                     for i in range(25):
-                        interface = ui.INTERFACE_INSTANCE
-                        interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.4, dir_=(Position.of_angle(self._aim_angle) * (random.random()*0.3 + 0.3)).to_tuple(), randomizer=1, lifetime=1.6)
+                        interface = user_interface.INTERFACE_INSTANCE
+                        interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.4, dir_=(Vector2.of_angle(self._aim_angle) * (random.random()*0.3 + 0.3)).to_tuple(), randomizer=1, lifetime=1.6)
                 self._last_shot = current_tick
     
     @abstractmethod

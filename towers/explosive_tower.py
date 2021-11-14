@@ -2,7 +2,7 @@ import math
 
 import game
 import towers.tower as tower
-from interface import ui
+from interface import user_interface
 from towers import projectile
 from interface import pictures
 
@@ -41,7 +41,7 @@ class ExplosiveProjectile(projectile.Projectile):
                 mob.damage((dmg * self._dmg_multiplier) * 5, game.DAMAGE_TYPE_RAW)
                 mob.damage((dmg * self._dmg_multiplier) * 9, game.DAMAGE_TYPE_FIRE)
         
-        interface = ui.INTERFACE_INSTANCE
+        interface = user_interface.INTERFACE_INSTANCE
         interface.new_smoke(self.position.to_tuple(), scale=1, dir_=0, speed=1, lifetime=0.4, img_name="explosion")
     
     def get_render(self, time):

@@ -1,8 +1,8 @@
 import random
 
 import game
-from interface import ui
-from position import Position
+from interface import user_interface
+from position import Vector2
 from towers import tower
 from interface import pictures
 
@@ -14,8 +14,8 @@ class FreezeTower(tower.Tower):
     def shoot(self):
         if self._target:
             for i in range(70):
-                interface = ui.INTERFACE_INSTANCE
-                interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.9, dir_=(Position.of_angle(self._aim_angle) * (random.random()*1.5 + 0.3)).to_tuple(), randomizer=1.4, speed=10, lifetime=2, img_name="freeze")
+                interface = user_interface.INTERFACE_INSTANCE
+                interface.new_smoke(self.tile.position.middle().to_tuple(), scale=0.9, dir_=(Vector2.of_angle(self._aim_angle) * (random.random()*1.5 + 0.3)).to_tuple(), randomizer=1.4, speed=10, lifetime=2, img_name="freeze")
         
         for mob in game.GAME_INSTANCE.mobs:
             if mob.position.distance(self.tile.position.middle()) < self.shoot_range:

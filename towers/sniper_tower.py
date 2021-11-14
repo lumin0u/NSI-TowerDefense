@@ -1,7 +1,7 @@
 import math
 
 import game
-from interface import ui
+from interface import user_interface
 from towers import projectile, tower
 from interface import pictures
 
@@ -37,7 +37,7 @@ class SniperProjectile(projectile.Projectile):
         if not self.target_is_dead():
             self._target.damage(40 * self._dmg_multiplier, game.DAMAGE_TYPE_RAW)
 
-            interface = ui.INTERFACE_INSTANCE
+            interface = user_interface.INTERFACE_INSTANCE
             direction = (self.target_position() - self._last_position).normalized() * 0.7
             for i in range(10):
                 interface.new_smoke(self.position.to_tuple(), scale=0.1, dir_=direction.to_tuple(), speed=1, randomizer=2, lifetime=0.4, img_name=self._target.break_img)

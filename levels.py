@@ -6,7 +6,7 @@ import main
 import userdata
 from mobs import boss_mob
 import tiles
-from position import TilePosition, Direction
+from position import TilePosition, Vector2
 
 
 class Wave:
@@ -194,7 +194,7 @@ def cardinal_to_direction(s):
     :param s: str - "S", "N", "E" ou "W" pour South, North, Est, West
     :return: Direction - la direction équivalente
     """
-    return {"S": Direction(0, 1), "N": Direction(0, -1), "E": Direction(1, 0), "W": Direction(-1, 0)}[s]
+    return {"S": Vector2(0, 1), "N": Vector2(0, -1), "E": Vector2(1, 0), "W": Vector2(-1, 0)}[s]
 
 
 # pour avoir un nom plus court

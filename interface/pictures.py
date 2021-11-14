@@ -100,15 +100,20 @@ class MyImage:
         
         if scale_to:
             new_size = scale_to
-        
-        self._image = self._scale_it(self._image, (int(new_size[0] * scale[0]), int(new_size[1] * scale[1])))
 
-        self._image.fill((255, 255, 255, int(shade * 255)), special_flags=pygame.BLEND_RGBA_MULT)
+        new_size = (int(new_size[0] * scale[0]), int(new_size[1] * scale[1]))
         
-        size = self._image.get_width() * self._image.get_height()
-        self._image = pygame.transform.rotate(self._image, angle)
-        r_size = math.sqrt(self._image.get_width() * self._image.get_height() / size)
-        self.final_scaled(r_size)
+        if new_size != (self._image.get_width(), self._image.get_height()):
+            self._image = self._scale_it(self._image, new_size)
+        
+        if shade != 1:
+            self._image.fill((255, 255, 255, int(shade * 255)), special_flags=pygame.BLEND_RGBA_MULT)
+        
+        if angle != 0:
+            size = self._image.get_width() * self._image.get_height()
+            self._image = pygame.transform.rotate(self._image, angle)
+            r_size = math.sqrt(self._image.get_width() * self._image.get_height() / size)
+            self.final_scaled(r_size)
         
         for image, position, _ in blits:
             self._image.blit(image.build_image(), position)

@@ -12,7 +12,7 @@ from position import Position
 def zoom(interface, factor):
     """
         Augmente ou diminue le zoom du jeu et déplace la caméra vers la souris
-    :param interface: Interface
+    :param interface: Interface - l'instance de l'interface
     :param factor: nombre - facteur d'augmentation du zoom
     """
     last_zoom = interface.zoom
@@ -34,7 +34,7 @@ def catch_event(event, interface):
     """
         Récupère et gère l'événement event
     :param event: l'événement de pygame
-    :param interface: Interface
+    :param interface: Interface - l'instance de l'interface
     """
     if event.type == pygame.QUIT:
         pygame.quit()

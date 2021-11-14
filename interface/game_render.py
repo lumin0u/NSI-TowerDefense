@@ -4,8 +4,8 @@ import pygame
 
 import main
 import tiles
-from position import Direction, Position
-from interface import graphics, ui, pictures, building_popup
+from position import Vector2, Position
+from interface import graphics, user_interface, pictures, building_popup
 from mobs import mob
 
 
@@ -16,7 +16,7 @@ def render_image_game(interface, image, game_position, centered, relative_time):
     img_new_size = (img_new_size[0] * n_scale[0], img_new_size[1] * n_scale[1])
     
     if centered:
-        corner_draw -= Direction(img_new_size[0] / 2, img_new_size[1] / 2)
+        corner_draw -= Vector2(img_new_size[0] / 2, img_new_size[1] / 2)
 
     corner_draw = corner_draw.to_tuple()
     
@@ -43,7 +43,7 @@ def render_game(interface, game_, time, last_frame, relative_time):
         if entity.is_dead():
             continue
         
-        pos = ui.lerp(entity.last_position, entity.position, relative_time)
+        pos = user_interface.lerp(entity.last_position, entity.position, relative_time)
         
         mob_img = entity.get_render(time)
         
@@ -77,8 +77,8 @@ def render_game(interface, game_, time, last_frame, relative_time):
         def next_wave_action():
             game_.next_wave_date = game_.game_tick - 1
         
-        next_wave_button = ui.Button(interface, next_wave_action, button_pos, text_img2, text_img2_hover, "next_wave")
-        ui.add_button(interface, next_wave_button)
+        next_wave_button = user_interface.Button(interface, next_wave_action, button_pos, text_img2, text_img2_hover, "next_wave")
+        interface.add_button(next_wave_button)
 
     money_text_img = graphics.PRICES_FONT.render(str(game_.money) + "  ", True, (200, 200, 150))
     interface.screen.blit(money_text_img, (main.SCREEN_WIDTH - money_text_img.get_width(), 10))

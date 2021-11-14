@@ -6,7 +6,7 @@ import pricing
 import levels
 import game
 import listener
-from interface import pictures, ui, graphics
+from interface import pictures, user_interface, graphics
 from mobs import simple_mob, robuste_mob, boss_mob, quick_mob
 from towers import simple_tower, explosive_tower, sniper_tower, freeze_tower
 
@@ -62,7 +62,7 @@ def main():
     # initialisation de la fenêtre, redimensionnable
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.RESIZABLE)
     
-    interface = ui.Interface(screen)
+    interface = user_interface.Interface(screen)
     interface.volume = 0
     
     last_frame = time.time()
@@ -70,10 +70,10 @@ def main():
     
     # chargement du module de son de pygame et lancement de la musique
     pygame.mixer.init()
+    pygame.mixer.music.set_volume(0)
     # les copyrights de cette musique nous permettent de l'utiliser
     pygame.mixer.music.load("resources/musics/HOME - Resting State - 14.mp3")
     pygame.mixer.music.play(1000)
-    pygame.mixer.music.set_volume((interface.volume / 4) ** 2)
     
     # boucle principale
     while True:
@@ -86,7 +86,7 @@ def main():
         this_frame = time.time()
         
         # affichage de l'interface et du jeu
-        ui.render(interface, game.GAME_INSTANCE, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
+        interface.render(game.GAME_INSTANCE, this_frame, last_frame, min(1., (this_frame - last_tick) / TICK_REAL_TIME))
         
         # si une des clés est à True, le curseur apparait en main
         if any((v for v in graphics.cursor_hand_reasons.values())):
