@@ -65,7 +65,7 @@ class Interface:
         self.smokes = []
         
         # lignes de texte de la notification, une valeur à None indique qu'il n'y a pas de notification à afficher
-        self.popup_text: list[str] = None
+        self.popup_text = None
         # popup_button_action est une fonction à appeler en plus de la fermeture de la notification lors de la pression\
         # sur le bouton OK
         self.popup_button_action = None
@@ -462,7 +462,7 @@ class Interface:
 
 
 # l'instance unique de l'interface, dans une variable globale
-INTERFACE_INSTANCE: Interface = None
+INTERFACE_INSTANCE = None
 
 
 class Button:

@@ -2,10 +2,10 @@ import main
 
 # un dictionnaire {classe de la tour: prix} où prix est la liste des coûts des améliorations
 # et le premier élément est le prix pour poser la tour
-tower_prices: dict[type, list[int]] = None
+tower_prices = None
 
 # un dictionnaire {classe du mob: récompense}
-mobs_rewards: dict[type, int] = None
+mobs_rewards = None
 
 
 def load():

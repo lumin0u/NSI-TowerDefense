@@ -12,7 +12,7 @@ import tiles
 
 
 class Mob(Entity, ABC):
-    def __init__(self, game_, position: Position, attributes: dict, health, break_img):
+    def __init__(self, game_, position: Position, attributes, health, break_img):
         super().__init__(game_, position)
 
         # on copie le dictionnaire pour pouvoir le modifier au besoin

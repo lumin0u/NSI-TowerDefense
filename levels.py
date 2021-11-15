@@ -136,7 +136,7 @@ class Level:
         """
         self._spawner = spawner
         self._castle = castle
-        self._tiles: list[tiles.Tile] = [self._spawner, self._castle] + tiles_.copy()
+        self._tiles = [self._spawner, self._castle] + tiles_.copy()
         self._waves: list[Wave] = waves.copy()
         self._money = money
         self._available_towers = available_towers

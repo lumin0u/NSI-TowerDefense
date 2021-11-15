@@ -211,4 +211,4 @@ class Game:
 
 # l'instance du jeu est stockée dans une variable globale pour être accessible tout le temps
 # il n'est sensé y avoir qu'une seule instance de Game à tout instant de l'éxécution
-GAME_INSTANCE: Game = None
+GAME_INSTANCE = None
