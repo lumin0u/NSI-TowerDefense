@@ -99,6 +99,13 @@ class Game:
     @paused.setter
     def paused(self, value):
         self._paused = value
+        
+        interface = user_interface.INTERFACE_INSTANCE
+        if interface.popup_text:
+            if interface.popup_button_action:
+                interface.popup_button_action()
+            interface.popup_text = None
+            interface.popup_button_action = None
     
     def add_entity(self, entity):
         """

@@ -68,7 +68,8 @@ def catch_event(event, interface):
         # ou de mettre en pause et de l'enlever facilement sinon
         if event.key == pygame.K_ESCAPE:
             if interface.popup_text:
-                interface.popup_button_action()
+                if interface.popup_button_action:
+                    interface.popup_button_action()
                 interface.popup_text = None
                 interface.popup_button_action = None
             elif game.GAME_INSTANCE:
