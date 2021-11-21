@@ -17,7 +17,7 @@ class ExplosiveTower(tower.Tower):
             return True
         return False
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         return self._add_level(ExplosiveTower.get_img(self._aim_angle))
     
     def level_up(self):
@@ -44,6 +44,6 @@ class ExplosiveProjectile(projectile.Projectile):
         interface = user_interface.INTERFACE_INSTANCE
         interface.new_smoke(self.position.to_tuple(), scale=1, dir_=0, speed=1, lifetime=0.4, img_name="explosion")
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         angle = -(self.target_position() - self._position).angle() / math.pi * 180
         return pictures.get("shell").final_scaled(0.1).rotated(angle)

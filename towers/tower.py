@@ -47,7 +47,7 @@ class Tower(ABC):
         pass
     
     @abstractmethod
-    def get_render(self, time):
+    def get_render(self, relative_time):
         pass
     
     def _add_level(self, img):

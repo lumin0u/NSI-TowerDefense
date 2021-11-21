@@ -26,6 +26,7 @@ class Mob(Entity, ABC):
         self._health = self.max_health
         self._dead = False
         self._break_img = break_img
+        self._last_rotation = 0
         self._rotation = 0
         self._freeze_time = 0
     
@@ -54,6 +55,7 @@ class Mob(Entity, ABC):
             self._freeze_time -= 1
         
     def advance(self):
+        self._last_rotation = self._rotation
         # avancer en fonction de la direction de la tuile
         tile = self._game.level.tile_at(self._position)
         
@@ -84,6 +86,8 @@ class Mob(Entity, ABC):
                 user_interface.INTERFACE_INSTANCE.popup_text = strings.get("damaged")
                 userdata.TUTO_INFO["damaged"] = False
                 userdata.save()
+                
+        self._rotation = (self.position - self.last_position).angle(invert_y=True)
     
     def move(self, direction: Vector2):
         self.teleport(self.position + direction)

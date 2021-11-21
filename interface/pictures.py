@@ -96,7 +96,18 @@ class Picture:
             surface = img.copy()
         
         return MyImage(surface)
-        
+
+
+def rotation_deformation(rad_angle, width, height):
+    rad_angle = rad_angle % math.pi
+    if rad_angle == 0:
+        return width, height
+    elif rad_angle == math.pi / 2:
+        return height, width
+    rad_angle = rad_angle % (math.pi / 2)
+    c = abs(height * math.sin(rad_angle) + width * math.cos(rad_angle)), abs(height * math.cos(rad_angle) + width * math.sin(rad_angle))
+    return c
+
 
 class MyImage:
     """
@@ -134,7 +145,7 @@ class MyImage:
     def build_image(self):
         """
             Construit l'image et la retourne, c'est-à-dire applique toutes les actions à effectuer
-        :return:
+        :return: Surface - l'image construite
         """
         scale = self._actions["scale"]
         scale_to = self._actions["scale_to"]
@@ -157,10 +168,7 @@ class MyImage:
             self._image.fill((255, 255, 255, int(fade * 255)), special_flags=pygame.BLEND_RGBA_MULT)
         
         if angle != 0:
-            size = self._image.get_width() * self._image.get_height()
             self._image = pygame.transform.rotate(self._image, angle)
-            r_size = math.sqrt(self._image.get_width() * self._image.get_height() / size)
-            self.final_scaled(r_size)
         
         for image, position, _ in blits:
             self._image.blit(image.build_image(), position)
@@ -246,6 +254,11 @@ class MyImage:
         :return: MyImage - self
         """
         self._actions["rotation"] += angle
+        rad_angle = angle * math.pi / 180
+        deformx, deformy = rotation_deformation(rad_angle, self.get_width(), self.get_height())
+        deformx /= self.get_width()
+        deformy /= self.get_height()
+        self.final_scaled((deformx, deformy))
         return self
     
     def blit(self, surface, pos=(0, 0)):

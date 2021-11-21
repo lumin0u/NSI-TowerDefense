@@ -36,5 +36,5 @@ class SimpleMob(mob.Mob):
         # le mob avance
         self.advance()
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         return pictures.get("carre").final_scaled(0.25)

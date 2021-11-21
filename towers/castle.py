@@ -33,6 +33,6 @@ class Castle(tower.Tower):
                 
             user_interface.INTERFACE_INSTANCE.popup_button_action = popup_button_action
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         img = pictures.get("castle", hash(self.tile.position))
         return img

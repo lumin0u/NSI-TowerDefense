@@ -36,5 +36,5 @@ class RobusteMob(mob.Mob):
         # le mob avance
         self.advance()
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         return pictures.get("robuste").final_scaled(0.3)

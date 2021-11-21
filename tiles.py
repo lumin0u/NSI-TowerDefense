@@ -22,10 +22,10 @@ class Tile(ABC):
         return self._position
     
     @abstractmethod
-    def get_render(self, time):
+    def get_render(self, relative_time):
         """
             Construit et retourne le rendu de la tuile à la date time
-        :param time: nombre - la date actuelle
+        :param relative_time: nombre - le temps relatif au tick
         :return: MyImage - le rendu de la tuile
         """
         pass
@@ -52,7 +52,7 @@ class EmptyTile(Tile):
     def __init__(self, position: TilePosition):
         super().__init__(position)
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         return pictures.MyImage.void(0, 0)
     
     def is_clickable(self):
@@ -87,7 +87,7 @@ class PathTile(Tile):
     def from_(self):
         return self._from_
 
-    def get_render(self, time):
+    def get_render(self, relative_time):
         # chemin droit
         if self.direction == -self._from_:
             img = pictures.get("path_WE", hash(self.position))
@@ -133,11 +133,11 @@ class BuildingTile(Tile):
     def is_empty(self):
         return self._tower is None
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         img = pictures.get("building_tile", hash(self.position))
         
         if not self.is_empty():
-            img.blit(self.tower.get_render(time).scaled_to(img.get_rect().size))
+            img.blit(self.tower.get_render(relative_time).scaled_to(img.get_rect().size))
         return img
     
     def is_clickable(self):
@@ -151,7 +151,7 @@ class SpawnerTile(PathTile):
     def __init__(self, position: TilePosition, direction: Vector2):
         super().__init__(position, None, direction)
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         return pictures.get("spawner", hash(self.position))
     
     def is_clickable(self):

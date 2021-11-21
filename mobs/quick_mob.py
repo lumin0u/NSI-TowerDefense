@@ -1,4 +1,6 @@
-from interface import pictures
+import math
+
+from interface import pictures, user_interface
 import mobs.mob as mob
 from position import Position
 import game
@@ -36,5 +38,6 @@ class QuickMob(mob.Mob):
         # le mob avance
         self.advance()
     
-    def get_render(self, time):
-        return pictures.get("triangle").final_scaled(0.25)
+    def get_render(self, relative_time):
+        angle = user_interface.lerp(self._last_rotation, self._rotation, relative_time)
+        return pictures.get("triangle").final_scaled(0.25).rotated(angle / math.pi * 180)

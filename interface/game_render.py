@@ -30,7 +30,7 @@ def render_game(interface, game_, time, last_frame, relative_time):
     elapsed_time = max(0.001, (time - last_frame))
     
     for tile in game_.level.tiles:
-        render_image_game(interface, tile.get_render(time), tile.position, False, relative_time)
+        render_image_game(interface, tile.get_render(relative_time), tile.position, False, relative_time)
         if isinstance(tile, tiles.CastleTile):
             bar_nb = max(0, tile.tower.health * 13 // tile.tower.max_health)
             bar_img = pictures.get("health" + str(int(bar_nb)))
@@ -45,7 +45,7 @@ def render_game(interface, game_, time, last_frame, relative_time):
         
         pos = user_interface.lerp(entity.last_position, entity.position, relative_time)
         
-        mob_img = entity.get_render(time)
+        mob_img = entity.get_render(relative_time)
         
         if isinstance(entity, mob.Mob) and entity.health != entity.max_health:
             bar_nb = entity.health * 13 // entity.max_health

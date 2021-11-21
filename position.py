@@ -55,18 +55,19 @@ class Position:
 		"""
 		return Vector2.of(self) / self.length()
 	
-	def angle(self, other=None):
+	def angle(self, other=None, invert_y=False):
 		"""
 			Cette méthode s'applique aux vecteurs mais a les mêmes effets sur une position.
 			Retourne l'angle formé entre ce vecteur et le vecteur other, ou le vecteur (1, 0) si indéfini.
 			L'angle est exprimé en radians
 		:param other: Vector2 | None - un autre vecteur
+		:param invert_y: bool | inversion de l'ordonnée
 		:return: nombre - l'angle formé en radians
 		"""
 		if other:
-			return (self.angle() - other.angle()) % (2 * math.pi) - math.pi
+			return (self.angle(invert_y=invert_y) - other.angle(invert_y=invert_y)) % (2 * math.pi) - math.pi
 		else:
-			return math.atan2(self._y, self._x)
+			return math.atan2(-self._y if invert_y else self._y, self._x)
 	
 	@staticmethod
 	def of(position):

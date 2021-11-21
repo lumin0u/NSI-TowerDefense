@@ -24,7 +24,7 @@ class FreezeTower(tower.Tower):
                 mob.set_freeze_time(60)
         return False
     
-    def get_render(self, time):
+    def get_render(self, relative_time):
         return self._add_level(FreezeTower.get_img(self._aim_angle))
     
     def level_up(self):

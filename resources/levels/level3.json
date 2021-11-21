@@ -28,7 +28,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
       "gift": 10,
       "mobs": {
         "simple": 6,
@@ -36,7 +36,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 300,
       "gift": 10,
       "mobs": {
         "simple": 15,
@@ -45,7 +45,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
       "gift": 10,
       "mobs": {
         "simple": 20,
@@ -53,7 +53,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 300,
       "gift": 10,
       "mobs": {
         "rapide": 30,
@@ -61,7 +61,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
       "gift": 10,
       "mobs": {
         "simple": 25,
@@ -70,7 +70,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 300,
       "gift": 10,
       "mobs": {
         "robuste": 25,
@@ -78,7 +78,7 @@
       }
     },
     {
-      "preparation": 100,
+      "preparation": 200,
       "gift": 10,
       "mobs": {
         "simple": 20,

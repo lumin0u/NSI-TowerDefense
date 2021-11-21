@@ -61,10 +61,10 @@ class Entity(ABC):
         return self._ticks_lived
         
     @abstractmethod
-    def get_render(self, time):
+    def get_render(self, relative_time):
         """
             Construit et retourne le rendu de l'entité à la date time
-        :param time: nombre - la date actuelle
+        :param relative_time: nombre - le temps relatif au tick
         :return: MyImage - le rendu de l'entité
         """
         pass
